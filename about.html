@@ -18,7 +18,7 @@ header-img: "img/about-bg.jpg"
     <blockquote><p>写写代码，做做设计，看看产品。<br>
     世界那么大，我想去看看。</p></blockquote>
 
-    <p>Hey，我是<strong>李泽慢</strong>，预备程序员 &amp; 设计师，<a href="http://https://zhuanlan.zhihu.com/p/21280918">演说.io</a> 作者，前淘宝网 · <a href="http://alitrip.com">阿里旅行·去啊</a>前端团队资深实习生，<a href="http://by.cuc.edu.cn/">中国传媒大学</a> · 数字媒体艺术 2012 级。目前任职于微影时代 · 微票儿，负责<a href="http://wepiaoFEI.github.io">前端基础工程团队</a>。</p>
+    <p id ="123">Hey，我是<strong>李泽慢</strong>，预备程序员 &amp; 设计师，<a href="http://https://zhuanlan.zhihu.com/p/21280918">演说.io</a> 作者，前淘宝网 · <a href="http://alitrip.com">阿里旅行·去啊</a>前端团队资深实习生，<a href="http://by.cuc.edu.cn/">中国传媒大学</a> · 数字媒体艺术 2012 级。目前任职于微影时代 · 微票儿，负责<a href="http://wepiaoFEI.github.io">前端基础工程团队</a>。</p>
 
     <p>一些作品和开源项目，👉 戳 <a href="/portfolio">Portfolio</a> 与 <a href="http://github.com/huxpro">Github</a>；除了在博客写点东西外，我也是 <a href="http://www.gfansub.com/">GDG 字幕组</a>的译者之一、<a href="http://zhuanlan.zhihu.com/FrontendMagazine">前端外刊评论 · 知乎专栏</a>的维护译者之一、<a href="http://zhuanlan.zhihu.com/huxblog">知乎专栏 · 一生想做浪漫极客</a> 的创办者。</p>
 
@@ -101,69 +101,23 @@ header-img: "img/about-bg.jpg"
             window.location.hash = "#en"
         }
     }
-
-    // init
-    _render();
-</script>
-
-
-
 {% if site.duoshuo_username %}
 <!-- 多说评论框 start -->
-<div class="comment">
-    <div class="ds-thread"
-    {% if site.duoshuo_username == "lizeman" %}
-        data-thread-id="1187623191091085319"
-    {% else %}
-        data-thread-key="{{lizeman}}/about"
-    {% endif %}
-
-    data-title="{{page.title}}"
-    data-url="{{site.url}}/about/"></div>
-</div>
-<!-- 多说评论框 end -->
-
-<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
-<script type="text/javascript">
-    // dynamic User hacking by Hux
-    var _user = '{{site.duoshuo_username}}';
-
-    // duoshuo comment query.
-    var duoshuoQuery = {short_name: _user };
-    (function() {
-        var ds = document.createElement('script');
-        ds.type = 'text/javascript';ds.async = true;
-        ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-        ds.charset = 'UTF-8';
-        (document.getElementsByTagName('head')[0]
-         || document.getElementsByTagName('body')[0]).appendChild(ds);
-    })();
-</script>
-<!-- 多说公共JS代码 end -->
+	<div class="ds-thread" data-thread-key="123" data-title="随便说说" data-url="http://lizeman.github.io/about"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"lizeman123"};
+		(function() {
+					var ds = document.createElement('script');
+							ds.type = 'text/javascript';ds.async = true;
+									ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+											ds.charset = 'UTF-8';
+													(document.getElementsByTagName('head')[0] 
+															 || document.getElementsByTagName('body')[0]).appendChild(ds);
+															 	})();
+																	</script>
+																	<!-- 多说公共JS代码 end -->>>]]}}>>>>>
 {% endif %}
 
 
-{% if site.disqus_username %}
-<!-- disqus 评论框 start -->
-<div class="comment">
-    <div id="disqus_thread" class="disqus-thread">
-
-    </div>
-</div>
-<!-- disqus 评论框 end -->
-
-<!-- disqus 公共JS代码 start (一个网页只需插入一次) -->
-<script type="text/javascript">
-    /* * * CONFIGURATION VARIABLES * * */
-    var disqus_shortname = "{{site.disqus_username}}";
-    var disqus_identifier = "{{site.disqus_username}}/{{page.url}}";
-    var disqus_url = "{{site.url}}{{page.url}}";
-
-    (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-</script>
-<!-- disqus 公共JS代码 end -->
-{% endif %}
