@@ -1,8 +1,8 @@
 # Site settings
-title: David Blog
-SEOTitle: 李泽慢的博客 | David Blog
+title: Zman Blog
+SEOTitle: 李泽慢的博客 | Zman Blog
 header-img: img/home-bg.jpg
-email: huxpro@gmail.com
+email: lizeman123@outlook.com
 description: "关于前端与设计、黑客与画家 | 李泽慢，Web & Mobile Lover，Front-End Engineer，UX Designer | 这里是 @Hux黄玄 的个人博客，与你一起发现更大的世界。"
 keyword: "李泽慢, 李泽慢, David, 鬼栈, huxpro, @huxpro, 黄玄的博客, Hux Blog, 博客, 个人网站, 互联网, 前端, 设计, 产品, 肖玉, Lynn, 肖玉的男朋友"
 url: "www.lizeman123.com"              # your host, for absolute URL
@@ -12,11 +12,11 @@ baseurl: ""                             # for example, '/blog' if your blog host
 
 # SNS settings
 RSS: false
-weibo_username:     huxpro
-zhihu_username:     huxpro
-github_username:    huxpro
-#twitter_username:  huxpro
-facebook_username:  huxpro
+weibo_username:     lizeman
+zhihu_username:     lizeman
+github_username:    lizeman
+#twitter_username:  
+facebook_username:  lizeman
 # linkedin_username:  firstname-lastname-idxxxx
 
 
