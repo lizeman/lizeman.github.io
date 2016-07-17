@@ -1,4 +1,4 @@
-#David Blog
+123#David Blog
 
 ###[View Live Hux Blog &rarr;](http://huxpro.github.io)
 
