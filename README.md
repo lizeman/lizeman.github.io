@@ -1,6 +1,6 @@
-123#David Blog
+###David Blog
 
-###[View Live Hux Blog &rarr;](http://huxpro.github.io)
+###[View Live David Blog &rarr;](http://lizeman.github.io)
 
 ![](http://huangxuan.me/img/blog-desktop.jpg)
 
