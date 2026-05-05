@@ -449,6 +449,59 @@ code {
   #bio .lede::first-letter { font-size: 3em; }
 }
 
+/* ---------- Playground (homepage section) ---------- */
+.playground-intro {
+  color: var(--muted);
+  margin: 0 0 1.1rem;
+}
+.playground-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.9rem;
+}
+.play-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 1.1rem 1rem 1.2rem;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--text);
+  text-decoration: none;
+  background-image: none;
+  transition: transform 0.5s var(--ease),
+              border-color 0.4s var(--ease),
+              box-shadow 0.5s var(--ease);
+}
+.play-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+  box-shadow: 0 14px 32px -22px rgba(0, 0, 0, 0.45);
+  color: var(--text);
+}
+.play-glyph {
+  font-size: 1.5rem;
+  color: var(--accent);
+  line-height: 1;
+}
+.play-name {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.005em;
+}
+.play-desc {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+@media (max-width: 600px) {
+  .playground-grid { grid-template-columns: 1fr; }
+}
+
 /* ============== game pages share base typography ============== */
 body.game {
   background: var(--bg);

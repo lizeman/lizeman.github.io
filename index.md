@@ -18,3 +18,7 @@ title: Home
 <section id="vita">
 {% include vita.html %}
 </section>
+
+<section id="playground">
+{% include playground.html %}
+</section>
