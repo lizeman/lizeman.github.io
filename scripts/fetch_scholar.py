@@ -1,10 +1,14 @@
 #!/usr/bin/env python3
-"""Fetch publications and write _data/publications.yml.
+"""Fetch publications and write _data/publications.yml + _data/coauthors.yml.
 
-Strategy: scrape Google Scholar profile HTML directly (fast, no JS,
-no Selenium), and fall back to the Semantic Scholar Graph API if
-Google Scholar blocks or returns nothing. Both paths use stdlib HTTP
-plus PyYAML — no `scholarly`, no `requests`, no `bs4` required.
+Primary source: Semantic Scholar Graph API (full author names + IDs, no JS,
+no scraping, deterministic ordering). Google Scholar HTML is kept as a
+fallback only — it returns abbreviated initials so it cannot satisfy v2.
+
+Per paper we emit a list of author objects with full name, profile URL, and
+an `is_self` flag. New coauthor IDs are looked up once and cached in
+_data/coauthors.yml so subsequent runs do not re-fetch (and stay under the
+SS rate limit).
 
 Run: python scripts/fetch_scholar.py
 Override IDs via env: SCHOLAR_ID, SEMANTIC_SCHOLAR_AUTHOR_ID.
@@ -26,7 +30,10 @@ import yaml
 
 DEFAULT_GS_ID = "3cHbgQQAAAAJ"
 DEFAULT_SS_ID = "2000315380"
-OUTPUT_PATH = Path(__file__).resolve().parent.parent / "_data" / "publications.yml"
+ROOT = Path(__file__).resolve().parent.parent
+PUBS_PATH = ROOT / "_data" / "publications.yml"
+COAUTHORS_PATH = ROOT / "_data" / "coauthors.yml"
+VENUE_OVERRIDES_PATH = ROOT / "_data" / "venue_overrides.yml"
 
 UA = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
@@ -34,167 +41,231 @@ UA = (
 )
 
 
-def _http_get(url: str, retries: int = 3, backoff: float = 5.0) -> str:
+def _http_get(url: str, retries: int = 4, backoff: float = 2.0) -> str:
     last_err: Exception | None = None
     for attempt in range(retries):
         try:
             req = Request(url, headers={"User-Agent": UA, "Accept-Language": "en-US,en"})
             with urlopen(req, timeout=30) as resp:
                 return resp.read().decode("utf-8", errors="replace")
-        except (HTTPError, URLError) as e:
+        except HTTPError as e:
             last_err = e
-            print(f"  ! {url[:60]}... attempt {attempt + 1}/{retries}: {e}", file=sys.stderr)
+            sleep_for = backoff * (attempt + 1)
+            if e.code == 429:
+                sleep_for = max(sleep_for, 5.0 * (attempt + 1))
+            print(f"  ! {url[:80]}... attempt {attempt + 1}/{retries}: HTTP {e.code}", file=sys.stderr)
+            time.sleep(sleep_for)
+        except URLError as e:
+            last_err = e
+            print(f"  ! {url[:80]}... attempt {attempt + 1}/{retries}: {e}", file=sys.stderr)
             time.sleep(backoff * (attempt + 1))
     raise RuntimeError(f"all retries failed: {last_err}")
 
 
-# ---------- Google Scholar (HTML scrape) ----------
+# ---------- Semantic Scholar (primary) ----------
 
-# Two-stage parse: first split into rows, then extract fields within
-# each row. This avoids non-greedy `.*?` matches walking across rows.
-GS_ROW_BLOCK = re.compile(r'<tr class="gsc_a_tr">(.*?)</tr>', re.DOTALL)
-GS_TITLE = re.compile(r'<a href="([^"]+)" class="gsc_a_at">([^<]+)</a>')
-GS_GRAY = re.compile(r'<div class="gs_gray">(.*?)</div>', re.DOTALL)
-GS_STRIP_TAGS = re.compile(r"<[^>]+>")
-GS_YEAR = re.compile(r'<span class="gsc_a_h[^"]*">([0-9]+)</span>')
-GS_CITES = re.compile(r'class="gsc_a_ac[^"]*"[^>]*>([0-9]+)</a>')
+SS_PAPERS_FIELDS = (
+    "title,year,venue,publicationVenue,externalIds,url,citationCount,"
+    "authors.name,authors.authorId"
+)
 
 
-def fetch_google_scholar(scholar_id: str) -> list[dict]:
+def _arxiv_to_url(arxiv_id: str) -> str:
+    return f"https://arxiv.org/abs/{arxiv_id}"
+
+
+def _ss_author_url(author_id: str) -> str:
+    return f"https://www.semanticscholar.org/author/{author_id}"
+
+
+def _normalize_url(u: str) -> str:
+    u = (u or "").strip()
+    if not u:
+        return ""
+    if u.startswith(("http://", "https://", "//")):
+        return u
+    return "https://" + u
+
+
+def fetch_papers(ss_id: str) -> list[dict]:
     url = (
-        f"https://scholar.google.com/citations?user={scholar_id}"
-        "&hl=en&cstart=0&pagesize=100"
-    )
-    page = _http_get(url)
-    pubs: list[dict] = []
-    for block in GS_ROW_BLOCK.findall(page):
-        t = GS_TITLE.search(block)
-        if not t:
-            continue
-        href, title = t.groups()
-        grays = GS_GRAY.findall(block)
-        authors = GS_STRIP_TAGS.sub("", grays[0]) if len(grays) > 0 else ""
-        venue_raw = grays[1] if len(grays) > 1 else ""
-        # The venue cell often ends with "<span class='gs_oph'>, 2025</span>";
-        # strip all inner tags then trailing ", year" suffix.
-        venue = GS_STRIP_TAGS.sub("", venue_raw)
-        venue = re.sub(r",\s*\d{4}\s*$", "", venue).strip()
-        year_m = GS_YEAR.search(block)
-        year = year_m.group(1) if year_m else ""
-        cites_m = GS_CITES.search(block)
-        cites = int(cites_m.group(1)) if cites_m else 0
-        link = (
-            "https://scholar.google.com" + html.unescape(href)
-            if href.startswith("/")
-            else href
-        )
-        pubs.append(
-            {
-                "title": html.unescape(title).strip(),
-                "authors": html.unescape(authors).strip(),
-                "venue": html.unescape(venue).strip(),
-                "year": year.strip(),
-                "url": link,
-                "citations": cites,
-            }
-        )
-    return pubs
-
-
-# ---------- Semantic Scholar (JSON API) ----------
-
-SS_FIELDS = "title,authors,year,venue,externalIds,url,openAccessPdf,citationCount,publicationVenue"
-
-
-def fetch_semantic_scholar(author_id: str) -> list[dict]:
-    url = (
-        f"https://api.semanticscholar.org/graph/v1/author/{author_id}/papers"
-        f"?fields={SS_FIELDS}&limit=100"
+        f"https://api.semanticscholar.org/graph/v1/author/{ss_id}/papers"
+        f"?fields={SS_PAPERS_FIELDS}&limit=100"
     )
     payload = _json.loads(_http_get(url))
-    raw = payload.get("data", [])
+    return payload.get("data", [])
+
+
+def enrich_coauthors(
+    paper_authors: list[list[dict]], cache: dict, self_id: str, sleep_between: float = 1.2
+) -> dict:
+    """Look up homepage / canonical URL for each unique coauthor.
+
+    Mutates and returns `cache` (authorId -> {name, url, homepage}).
+    Skips lookups that are already cached. SS rate-limits aggressively, so we
+    sleep between calls and silently fall back to the SS profile URL on 429.
+    """
+    seen_ids: set[str] = set()
+    for authors in paper_authors:
+        for a in authors:
+            aid = str(a.get("authorId") or "").strip()
+            if aid:
+                seen_ids.add(aid)
+
+    new_ids = sorted(seen_ids - set(cache.keys()))
+    if not new_ids:
+        return cache
+
+    print(f"  enriching {len(new_ids)} new coauthor(s)...")
+    for aid in new_ids:
+        url = (
+            f"https://api.semanticscholar.org/graph/v1/author/{aid}"
+            "?fields=name,url,homepage"
+        )
+        try:
+            data = _json.loads(_http_get(url, retries=2))
+            cache[aid] = {
+                "name": (data.get("name") or "").strip(),
+                "homepage": _normalize_url(data.get("homepage") or "") or None,
+                "url": _normalize_url(data.get("url") or _ss_author_url(aid)),
+            }
+        except Exception as e:  # noqa: BLE001
+            print(f"    coauthor {aid} lookup failed: {e}", file=sys.stderr)
+            cache[aid] = {"name": "", "homepage": None, "url": _ss_author_url(aid)}
+        time.sleep(sleep_between)
+    return cache
+
+
+def build_publications(papers: list[dict], coauthors: dict, venue_overrides: dict, self_id: str) -> list[dict]:
     pubs: list[dict] = []
-    for p in raw:
+    for p in papers:
         title = (p.get("title") or "").strip()
         if not title:
             continue
-        authors = ", ".join(a.get("name", "") for a in p.get("authors", []) if a.get("name"))
-        venue = (p.get("venue") or "").strip()
-        if not venue:
-            pv = p.get("publicationVenue") or {}
-            venue = (pv.get("name") or "").strip() if isinstance(pv, dict) else ""
+
         ext = p.get("externalIds") or {}
-        link = (
-            p.get("url")
-            or (p.get("openAccessPdf") or {}).get("url")
-            or (f"https://arxiv.org/abs/{ext['ArXiv']}" if ext.get("ArXiv") else "")
-            or (f"https://doi.org/{ext['DOI']}" if ext.get("DOI") else "")
-            or ""
-        )
+        arxiv_id = (ext.get("ArXiv") or "").strip()
+
+        # canonical link: arxiv if available, otherwise SS paper URL
+        link = _arxiv_to_url(arxiv_id) if arxiv_id else (p.get("url") or "").strip()
+
+        # venue: override by arxiv id, else SS venue, else publicationVenue.name
+        venue = ""
+        if arxiv_id and arxiv_id in venue_overrides:
+            venue = venue_overrides[arxiv_id]
+        else:
+            venue = (p.get("venue") or "").strip()
+            if not venue or venue.lower() == "arxiv.org":
+                pv = p.get("publicationVenue") or {}
+                pv_name = (pv.get("name") or "").strip() if isinstance(pv, dict) else ""
+                if pv_name and pv_name.lower() != "arxiv.org":
+                    venue = pv_name
+                elif arxiv_id:
+                    venue = "arXiv (preprint)"
+
+        # authors: list of {name, url, is_self}
+        author_objs = []
+        for a in p.get("authors", []):
+            aid = str(a.get("authorId") or "").strip()
+            name = (a.get("name") or "").strip()
+            cached = coauthors.get(aid, {})
+            if cached.get("name"):
+                name = cached["name"]
+            if aid:
+                url_for_author = _normalize_url(
+                    cached.get("homepage") or cached.get("url") or _ss_author_url(aid)
+                )
+            else:
+                url_for_author = ""
+            author_objs.append(
+                {
+                    "name": name,
+                    "url": url_for_author,
+                    "is_self": aid == self_id,
+                }
+            )
+
         pubs.append(
             {
                 "title": title,
-                "authors": authors,
+                "authors": author_objs,
                 "venue": venue,
                 "year": str(p.get("year") or "").strip(),
                 "url": link,
+                "arxiv": arxiv_id or None,
                 "citations": int(p.get("citationCount") or 0),
             }
         )
+
+    pubs.sort(key=lambda x: (-int(x["year"] or 0), x["title"].lower()))
     return pubs
 
 
-# ---------- main ----------
+# ---------- file I/O ----------
 
 
-def write(pubs: list[dict], source: str) -> None:
-    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+def load_yaml(path: Path, default):
+    if not path.exists():
+        return default
+    with path.open("r", encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+    return data if data is not None else default
+
+
+def write_publications(pubs: list[dict], source: str) -> None:
+    PUBS_PATH.parent.mkdir(parents=True, exist_ok=True)
     header = (
         "# Auto-generated by scripts/fetch_scholar.py - do not hand-edit.\n"
         f"# Source: {source}\n"
     )
     body = yaml.safe_dump(pubs, sort_keys=False, allow_unicode=True, width=100)
-    OUTPUT_PATH.write_text(header + body, encoding="utf-8")
+    PUBS_PATH.write_text(header + body, encoding="utf-8")
+
+
+def write_coauthors(cache: dict) -> None:
+    COAUTHORS_PATH.parent.mkdir(parents=True, exist_ok=True)
+    header = (
+        "# Auto-generated by scripts/fetch_scholar.py - do not hand-edit.\n"
+        "# Map: Semantic Scholar authorId -> {name, url, homepage}.\n"
+    )
+    ordered = {k: cache[k] for k in sorted(cache.keys())}
+    body = yaml.safe_dump(ordered, sort_keys=False, allow_unicode=True, width=100)
+    COAUTHORS_PATH.write_text(header + body, encoding="utf-8")
+
+
+# ---------- main ----------
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--scholar-id", default=os.environ.get("SCHOLAR_ID", DEFAULT_GS_ID))
     ap.add_argument(
         "--semantic-scholar-author-id",
         default=os.environ.get("SEMANTIC_SCHOLAR_AUTHOR_ID", DEFAULT_SS_ID),
     )
+    ap.add_argument("--scholar-id", default=os.environ.get("SCHOLAR_ID", DEFAULT_GS_ID))
     args = ap.parse_args()
 
-    pubs: list[dict] = []
-    source = ""
+    self_id = args.semantic_scholar_author_id
 
-    print(f"[1/2] trying Google Scholar (id={args.scholar_id})...")
-    try:
-        pubs = fetch_google_scholar(args.scholar_id)
-        if pubs:
-            source = f"Google Scholar (id={args.scholar_id})"
-        else:
-            print("  Google Scholar returned 0 publications.", file=sys.stderr)
-    except Exception as e:
-        print(f"  Google Scholar failed: {e}", file=sys.stderr)
-
-    if not pubs:
-        print(f"[2/2] falling back to Semantic Scholar (id={args.semantic_scholar_author_id})...")
-        try:
-            pubs = fetch_semantic_scholar(args.semantic_scholar_author_id)
-            if pubs:
-                source = f"Semantic Scholar (id={args.semantic_scholar_author_id})"
-        except Exception as e:
-            print(f"  Semantic Scholar failed: {e}", file=sys.stderr)
-
-    if not pubs:
-        print("Both sources failed; leaving existing _data/publications.yml unchanged.", file=sys.stderr)
+    print(f"[1/3] fetching papers for SS author {self_id}...")
+    papers = fetch_papers(self_id)
+    if not papers:
+        print("  no papers returned; leaving existing files unchanged.", file=sys.stderr)
         return 0
+    print(f"  got {len(papers)} papers.")
 
-    pubs.sort(key=lambda p: (-int(p["year"] or 0), p["title"].lower()))
-    write(pubs, source)
-    print(f"Wrote {len(pubs)} publications from {source}")
+    print("[2/3] enriching coauthors (homepage / canonical URL)...")
+    coauthors = load_yaml(COAUTHORS_PATH, {}) or {}
+    coauthors = enrich_coauthors(
+        [p.get("authors", []) for p in papers], coauthors, self_id
+    )
+    write_coauthors(coauthors)
+
+    print("[3/3] building publications.yml...")
+    overrides = load_yaml(VENUE_OVERRIDES_PATH, {}) or {}
+    pubs = build_publications(papers, coauthors, overrides, self_id)
+    write_publications(pubs, f"Semantic Scholar (id={self_id})")
+    print(f"Wrote {len(pubs)} publications and {len(coauthors)} coauthors.")
     return 0
 
 

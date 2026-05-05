@@ -1,11 +1,25 @@
 <h2>Publications</h2>
-<ul>
+<ol class="pubs" reversed>
 {% for pub in site.data.publications %}
-  <li>
-    <strong>{{ pub.title }}</strong><br/>
-    {{ pub.authors }}<br/>
-    <em>{{ pub.venue }}</em>, {{ pub.year }}
-    {% if pub.url %} · <a href="{{ pub.url }}">link</a>{% endif %}
+  <li data-reveal>
+    <div class="pub-title">{{ pub.title }}</div>
+    <div class="pub-authors">
+      {%- for a in pub.authors -%}
+        {%- if a.is_self -%}
+          <strong>{{ a.name }}</strong>
+        {%- elsif a.url and a.url != "" -%}
+          <a href="{{ a.url }}" rel="noopener" target="_blank">{{ a.name }}</a>
+        {%- else -%}
+          {{ a.name }}
+        {%- endif -%}
+        {%- unless forloop.last %}, {% endunless -%}
+      {%- endfor -%}
+    </div>
+    <div class="pub-meta">
+      <em>{{ pub.venue }}</em>{% if pub.year %} · {{ pub.year }}{% endif %}
+      {% if pub.url %} · <a href="{{ pub.url }}" rel="noopener" target="_blank">paper</a>{% endif %}
+      {% if pub.citations and pub.citations > 0 %} · {{ pub.citations }} citation{% if pub.citations != 1 %}s{% endif %}{% endif %}
+    </div>
   </li>
 {% endfor %}
-</ul>
+</ol>

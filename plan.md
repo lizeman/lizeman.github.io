@@ -251,6 +251,32 @@ The v1 site is live but feels too plain. Goals for v2:
 7. Latest commit pushed to `main`; HTTP 200 at https://lizeman.github.io and the page visibly contains `id="bio"`, `id="news"`, `id="publications"`, `id="vita"` anchors.
 8. plan.md "v2 Progress Log" shows ✅ for every item.
 
+### G. Hidden games (Easter eggs)
+Two standalone pages, **not linked from the homepage nav** (the user must know the URL or trigger a shortcut). Both written as Jekyll pages with their own minimal layouts so they share the typography but not the homepage chrome.
+
+1. **Typing speed test** — `/typing/`
+   - A small paragraph appears (rotating from a 5–10 quote pool drawn from Zeman's own paper abstracts and a few academic classics).
+   - User types into the page; the matching characters turn green, mistakes turn red, the next character is highlighted.
+   - Live counters: **WPM**, **accuracy %**, **elapsed seconds**. On finish (last char correct), final score panel + "try again" button.
+   - Pure vanilla JS, no deps. Keyboard-trapped (no global shortcuts during play). Honors prefers-reduced-motion (no cursor pulse).
+
+2. **Busy Beaver visualization** — `/beaver/`
+   - Canvas-based animation of an n-state, 2-symbol Turing machine running on an infinite tape. Pre-loaded with the canonical champions: BB(2)=6 steps, BB(3)=21 steps, BB(4)=107 steps (numbers per Aaronson 2020 reference).
+   - Controls: machine selector (BB-2 / BB-3 / BB-4), Play / Pause / Step / Reset, speed slider.
+   - Visualization: tape as a row of cells with the read-write head highlighted; below the tape, the current state and transition table with the firing row pulsing each step.
+   - Vanilla `<canvas>` + JS, no deps. Falls back to a static image if `prefers-reduced-motion: reduce`.
+
+Discoverability: a tiny "✦" link in the footer goes to `/typing/`; the Konami code or `Shift+B` keystroke on the homepage navigates to `/beaver/`. Both pages have a `← back` link to `/`.
+
+## v2 Critical Files (cont.)
+- `typing/index.html` (Jekyll page) + `assets/js/typing.js` + small CSS scoped via `body.game-typing`.
+- `beaver/index.html` (Jekyll page) + `assets/js/beaver.js`.
+- `_layouts/game.html` — minimal layout for the hidden games (shares head + footer, no anchor nav).
+
+## v2 Verification (extended)
+9. `https://lizeman.github.io/typing/` returns HTTP 200 and the response body contains both `WPM` and a `<script` referencing typing logic.
+10. `https://lizeman.github.io/beaver/` returns HTTP 200 and contains both `Busy Beaver` and a `<canvas` element.
+
 ## v2 Progress Log
 - [ ] A. Publication enrichment (SS-primary, full names + links, venue overrides)
 - [ ] B. Awards / education fix
@@ -258,3 +284,4 @@ The v1 site is live but feels too plain. Goals for v2:
 - [ ] D. Animation (load stagger, section reveal, hover, reduced-motion)
 - [ ] E. Visitor widget (ipapi.co + localStorage + GoatCounter)
 - [ ] F. Daily automation (coauthors.yml)
+- [ ] G. Hidden games (typing test + Busy Beaver)

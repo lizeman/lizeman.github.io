@@ -1,0 +1,11 @@
+# Map an arXiv id to a human-readable venue. Used by scripts/fetch_scholar.py
+# to replace generic "arXiv.org" with the actual conference / journal once a
+# paper has been accepted. Hand-edit when a new paper lands.
+"2511.07343": "ICLR 2026 (Spotlight)"
+"2502.06244": "NeurIPS 2026 (Spotlight)"
+"2502.17607": "ICML 2025"
+"2410.06441": "ICLR 2025"
+"2306.15056": "ICML 2024"
+"2505.23735": "arXiv (preprint)"
+"2602.24281": "arXiv (preprint)"
+"2604.07279": "arXiv (preprint)"
