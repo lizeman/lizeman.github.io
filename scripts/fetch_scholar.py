@@ -136,7 +136,46 @@ def enrich_coauthors(
     return cache
 
 
+def _dedup_papers(papers: list[dict]) -> list[dict]:
+    """Collapse SS records that describe the same paper.
+
+    Two records describe the same paper when their author-ID sets are equal
+    (and non-empty). From a duplicate cluster we keep the one with an arXiv
+    id; otherwise the one with the most citations; otherwise the latest year.
+    """
+    def _key(p: dict) -> tuple:
+        ids = tuple(
+            sorted(
+                str(a.get("authorId") or "").strip()
+                for a in p.get("authors", [])
+                if (a.get("authorId") or "").strip()
+            )
+        )
+        return ids
+
+    def _rank(p: dict) -> tuple:
+        ext = p.get("externalIds") or {}
+        has_arxiv = 1 if (ext.get("ArXiv") or "").strip() else 0
+        citations = int(p.get("citationCount") or 0)
+        year = int(p.get("year") or 0)
+        return (has_arxiv, citations, year)
+
+    clusters: dict[tuple, dict] = {}
+    out: list[dict] = []
+    for p in papers:
+        k = _key(p)
+        if not k:
+            out.append(p)
+            continue
+        cur = clusters.get(k)
+        if cur is None or _rank(p) > _rank(cur):
+            clusters[k] = p
+    out.extend(clusters.values())
+    return out
+
+
 def build_publications(papers: list[dict], coauthors: dict, venue_overrides: dict, self_id: str) -> list[dict]:
+    papers = _dedup_papers(papers)
     pubs: list[dict] = []
     for p in papers:
         title = (p.get("title") or "").strip()
@@ -151,8 +190,12 @@ def build_publications(papers: list[dict], coauthors: dict, venue_overrides: dic
 
         # venue: override by arxiv id, else SS venue, else publicationVenue.name
         venue = ""
+        venue_year: str | None = None
         if arxiv_id and arxiv_id in venue_overrides:
             venue = venue_overrides[arxiv_id]
+            m = re.search(r"\b(20\d{2})\b", venue)
+            if m:
+                venue_year = m.group(1)
         else:
             venue = (p.get("venue") or "").strip()
             if not venue or venue.lower() == "arxiv.org":
@@ -190,7 +233,7 @@ def build_publications(papers: list[dict], coauthors: dict, venue_overrides: dic
                 "title": title,
                 "authors": author_objs,
                 "venue": venue,
-                "year": str(p.get("year") or "").strip(),
+                "year": venue_year or str(p.get("year") or "").strip(),
                 "url": link,
                 "arxiv": arxiv_id or None,
                 "citations": int(p.get("citationCount") or 0),

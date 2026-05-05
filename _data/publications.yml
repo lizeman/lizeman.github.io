@@ -50,6 +50,85 @@
   url: https://arxiv.org/abs/2602.24281
   arxiv: '2602.24281'
   citations: 0
+- title: 'PiKE: Adaptive Data Mixing for Large-Scale Multi-Task Learning Under Low Gradient Conflicts'
+  authors:
+  - name: Zeman Li
+    url: https://sites.google.com/corp/usc.edu/zemanli/
+    is_self: true
+  - name: Yuan Deng
+    url: https://www.semanticscholar.org/author/2325194132
+    is_self: false
+  - name: Peilin Zhong
+    url: https://www.semanticscholar.org/author/2249561001
+    is_self: false
+  - name: Meisam Razaviyayn
+    url: https://www.semanticscholar.org/author/1800298
+    is_self: false
+  - name: V. Mirrokni
+    url: https://www.semanticscholar.org/author/1728881
+    is_self: false
+  venue: NeurIPS 2026 (Spotlight)
+  year: '2026'
+  url: https://arxiv.org/abs/2502.06244
+  arxiv: '2502.06244'
+  citations: 2
+- title: 'TNT: Improving Chunkwise Training for Test-Time Memorization'
+  authors:
+  - name: Zeman Li
+    url: https://sites.google.com/corp/usc.edu/zemanli/
+    is_self: true
+  - name: Ali Behrouz
+    url: https://www.semanticscholar.org/author/46211294
+    is_self: false
+  - name: Yuan Deng
+    url: https://www.semanticscholar.org/author/2325194132
+    is_self: false
+  - name: Peilin Zhong
+    url: https://www.semanticscholar.org/author/2249561001
+    is_self: false
+  - name: Praneeth Kacham
+    url: https://www.semanticscholar.org/author/1471876925
+    is_self: false
+  - name: Mahdi Karami
+    url: https://www.semanticscholar.org/author/2332101471
+    is_self: false
+  - name: Meisam Razaviyayn
+    url: https://www.semanticscholar.org/author/1800298
+    is_self: false
+  - name: V. Mirrokni
+    url: https://www.semanticscholar.org/author/1728881
+    is_self: false
+  venue: ICLR 2026 (Spotlight)
+  year: '2026'
+  url: https://arxiv.org/abs/2511.07343
+  arxiv: '2511.07343'
+  citations: 4
+- title: 'Addax: Utilizing Zeroth-Order Gradients to Improve Memory Efficiency and Performance of SGD
+    for Fine-Tuning Language Models'
+  authors:
+  - name: Zeman Li
+    url: https://sites.google.com/corp/usc.edu/zemanli/
+    is_self: true
+  - name: Xinwei Zhang
+    url: https://www.semanticscholar.org/author/2324989955
+    is_self: false
+  - name: Peilin Zhong
+    url: https://www.semanticscholar.org/author/2249561001
+    is_self: false
+  - name: Yuan Deng
+    url: https://www.semanticscholar.org/author/2325194132
+    is_self: false
+  - name: Meisam Razaviyayn
+    url: https://www.semanticscholar.org/author/1800298
+    is_self: false
+  - name: V. Mirrokni
+    url: https://www.semanticscholar.org/author/1728881
+    is_self: false
+  venue: ICLR 2025
+  year: '2025'
+  url: https://arxiv.org/abs/2410.06441
+  arxiv: '2410.06441'
+  citations: 11
 - title: 'ATLAS: Learning to Optimally Memorize the Context at Test Time'
   authors:
   - name: Ali Behrouz
@@ -81,28 +160,6 @@
   url: https://arxiv.org/abs/2505.23735
   arxiv: '2505.23735'
   citations: 42
-- title: 'PiKE: Adaptive Data Mixing for Large-Scale Multi-Task Learning Under Low Gradient Conflicts'
-  authors:
-  - name: Zeman Li
-    url: https://sites.google.com/corp/usc.edu/zemanli/
-    is_self: true
-  - name: Yuan Deng
-    url: https://www.semanticscholar.org/author/2325194132
-    is_self: false
-  - name: Peilin Zhong
-    url: https://www.semanticscholar.org/author/2249561001
-    is_self: false
-  - name: Meisam Razaviyayn
-    url: https://www.semanticscholar.org/author/1800298
-    is_self: false
-  - name: V. Mirrokni
-    url: https://www.semanticscholar.org/author/1728881
-    is_self: false
-  venue: NeurIPS 2026 (Spotlight)
-  year: '2025'
-  url: https://arxiv.org/abs/2502.06244
-  arxiv: '2502.06244'
-  citations: 2
 - title: Synthetic Text Generation for Training Large Language Models via Gradient Matching
   authors:
   - name: Dang Nguyen
@@ -128,101 +185,6 @@
   url: https://arxiv.org/abs/2502.17607
   arxiv: '2502.17607'
   citations: 7
-- title: 'TNT: Improving Chunkwise Training for Test-Time Memorization'
-  authors:
-  - name: Zeman Li
-    url: https://sites.google.com/corp/usc.edu/zemanli/
-    is_self: true
-  - name: Ali Behrouz
-    url: https://www.semanticscholar.org/author/46211294
-    is_self: false
-  - name: Yuan Deng
-    url: https://www.semanticscholar.org/author/2325194132
-    is_self: false
-  - name: Peilin Zhong
-    url: https://www.semanticscholar.org/author/2249561001
-    is_self: false
-  - name: Praneeth Kacham
-    url: https://www.semanticscholar.org/author/1471876925
-    is_self: false
-  - name: Mahdi Karami
-    url: https://www.semanticscholar.org/author/2332101471
-    is_self: false
-  - name: Meisam Razaviyayn
-    url: https://www.semanticscholar.org/author/1800298
-    is_self: false
-  - name: V. Mirrokni
-    url: https://www.semanticscholar.org/author/1728881
-    is_self: false
-  venue: ICLR 2026 (Spotlight)
-  year: '2025'
-  url: https://arxiv.org/abs/2511.07343
-  arxiv: '2511.07343'
-  citations: 4
-- title: 'Addax: Utilizing Zeroth-Order Gradients to Improve Memory Efficiency and Performance of SGD
-    for Fine-Tuning Language Models'
-  authors:
-  - name: Zeman Li
-    url: https://sites.google.com/corp/usc.edu/zemanli/
-    is_self: true
-  - name: Xinwei Zhang
-    url: https://www.semanticscholar.org/author/2324989955
-    is_self: false
-  - name: Peilin Zhong
-    url: https://www.semanticscholar.org/author/2249561001
-    is_self: false
-  - name: Yuan Deng
-    url: https://www.semanticscholar.org/author/2325194132
-    is_self: false
-  - name: Meisam Razaviyayn
-    url: https://www.semanticscholar.org/author/1800298
-    is_self: false
-  - name: V. Mirrokni
-    url: https://www.semanticscholar.org/author/1728881
-    is_self: false
-  venue: ICLR 2025
-  year: '2024'
-  url: https://arxiv.org/abs/2410.06441
-  arxiv: '2410.06441'
-  citations: 11
-- title: Optimal Differentially Private Model Training with Public Data
-  authors:
-  - name: Andrew Lowy
-    url: https://www.semanticscholar.org/author/2079049762
-    is_self: false
-  - name: Zeman Li
-    url: https://sites.google.com/corp/usc.edu/zemanli/
-    is_self: true
-  - name: Tianjian Huang
-    url: https://www.semanticscholar.org/author/9410572
-    is_self: false
-  - name: Meisam Razaviyayn
-    url: https://www.semanticscholar.org/author/1800298
-    is_self: false
-  venue: International Conference on Machine Learning
-  year: '2024'
-  url: https://www.semanticscholar.org/paper/6bba66db279e67ef1469f98161903aed770ab8ea
-  arxiv: null
-  citations: 0
-- title: Optimal Differentially Private Learning with Public Data
-  authors:
-  - name: Andrew Lowy
-    url: https://www.semanticscholar.org/author/2079049762
-    is_self: false
-  - name: Zeman Li
-    url: https://sites.google.com/corp/usc.edu/zemanli/
-    is_self: true
-  - name: Tianjian Huang
-    url: https://www.semanticscholar.org/author/9410572
-    is_self: false
-  - name: Meisam Razaviyayn
-    url: https://www.semanticscholar.org/author/1800298
-    is_self: false
-  venue: arXiv.org
-  year: '2023'
-  url: https://www.semanticscholar.org/paper/6772fb4959da3ec627ecc556122ba06b1a1dc43b
-  arxiv: null
-  citations: 10
 - title: Optimal Differentially Private Model Training with Public Data
   authors:
   - name: Andrew Lowy
@@ -238,7 +200,7 @@
     url: https://www.semanticscholar.org/author/1800298
     is_self: false
   venue: ICML 2024
-  year: '2023'
+  year: '2024'
   url: https://arxiv.org/abs/2306.15056
   arxiv: '2306.15056'
   citations: 8
