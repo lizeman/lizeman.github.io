@@ -360,3 +360,50 @@ All 11 criteria empirically true:
 - main.css contains `prefers-reduced-motion` rule
 - Venue overrides surfacing: `ICLR 2026`, `NeurIPS 2026`, `ICML 2025`, `ICLR 2025`, `ICML 2024` all rendered
 - Workflows: `scholar-sync` and `build-check` last runs both **success** (gh run id 25406459508 + 25406511848)
+
+---
+
+# v2.3 — Review pass (2026-05-05, ralph iter 9)
+
+Triggered by `/ralph-loop` "review plan.md and the context to see what is left
+and can improve on." Focused on data-quality issues that survived v2:
+
+- [x] **Dedup publications.yml.** Semantic Scholar returned 3 records for
+  the same DP paper (one canonical with arxiv id + ICML 2024 venue, two
+  duplicate stubs). Added cluster-by-author-id-set logic in
+  `scripts/fetch_scholar.py::_dedup_papers`; keeps the entry with arxiv id,
+  else max citations, else later year. 10 → 8 publications, no real loss.
+- [x] **Venue year drives sort order.** Until now `year` was the preprint
+  year, so TNT (ICLR 2026 Spotlight) appeared as 2025 and dropped beneath
+  unaccepted preprints. When a venue override contains a 4-digit year,
+  `build_publications` now uses that year on the entry. New top-of-list:
+  Mem3R (2026), Memory Caching (2026), PiKE (NeurIPS 2026), TNT (ICLR 2026).
+- [x] CI green: build-check run 25407406252 success. Pages redeploy
+  triggered automatically.
+
+## Remaining backlog (user-only / non-automated)
+
+Items that the loop cannot finish autonomously and need a human/account
+action — surfaced here so they don't get lost:
+
+1. **Plausible signup** — `_includes/head.html` already loads the
+   tracker; visits will only register once `lizeman.github.io` is added
+   at plausible.io. Free for personal sites.
+2. **Real profile photo** — current `assets/img/profile.svg` is a
+   placeholder. Drop a real `profile.jpg` in `assets/img/` and update
+   the `<img src>` in `_layouts/default.html` (or just overwrite the
+   SVG path).
+3. **GoatCounter signup** — visitor widget falls back to `—` for the
+   site-wide count until a `lizeman.goatcounter.com` account exists.
+4. **Custom domain** (optional) — drop a `CNAME` file with e.g.
+   `zeman.li` and configure DNS; everything else stays as-is.
+5. **Local Ruby 3.x** — system Ruby 2.6 cannot install `ffi >= 3`,
+   so local `bundle exec jekyll serve` is blocked. GitHub Pages remote
+   build is unaffected. `brew install ruby` when convenient.
+6. **`/roulette/`** — an untracked, half-finished page exists in the
+   working tree (no `assets/js/roulette.js`). Either flesh it out as the
+   next Playground entry or delete it; not committed so the site is
+   safe either way.
+7. **News refresh** — last entry is Nov 2025 (TNT acceptance). New
+   preprints (ATLAS, Memory Caching, Mem3R) could each get a line; left
+   to Zeman to decide which to highlight and with what dates.
