@@ -1,0 +1,13 @@
+<h2>Vita</h2>
+<h3>Education</h3>
+<ul>
+{% for ed in site.data.cv.education %}
+  <li>{{ ed.degree }}, {{ ed.school }} ({{ ed.year }})</li>
+{% endfor %}
+</ul>
+<h3>Awards</h3>
+<ul>
+{% for a in site.data.cv.awards %}
+  <li>{{ a.year }} — {{ a.text }}</li>
+{% endfor %}
+</ul>

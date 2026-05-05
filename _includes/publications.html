@@ -1,0 +1,11 @@
+<h2>Publications</h2>
+<ul>
+{% for pub in site.data.publications %}
+  <li>
+    <strong>{{ pub.title }}</strong><br/>
+    {{ pub.authors }}<br/>
+    <em>{{ pub.venue }}</em>, {{ pub.year }}
+    {% if pub.url %} · <a href="{{ pub.url }}">link</a>{% endif %}
+  </li>
+{% endfor %}
+</ul>

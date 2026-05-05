@@ -1,0 +1,29 @@
+title: Zeman Li
+author: Zeman Li
+email: zemanli@usc.edu
+description: >-
+  Personal academic website of Zeman Li (李泽慢), Ph.D. candidate in
+  Industrial and Systems Engineering at the University of Southern California.
+url: https://lizeman.github.io
+baseurl: ""
+
+scholar_id: 3cHbgQQAAAAJ
+github_username: lizeman
+
+markdown: kramdown
+permalink: /:title/
+theme: minima
+
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag
+
+exclude:
+  - plan.md
+  - README.md
+  - scripts/
+  - vendor/
+  - Gemfile
+  - Gemfile.lock
+  - .github/
+  - .claude/
