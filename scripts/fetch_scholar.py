@@ -19,29 +19,37 @@ OUTPUT_PATH = Path(__file__).resolve().parent.parent / "_data" / "publications.y
 
 
 def fetch(scholar_id: str) -> list[dict]:
+    """Fetch publication summaries only (no per-pub fill).
+
+    Per-pub fill triggers an additional HTTP request per paper, which
+    blows past Scholar's rate limit on accounts with many papers and
+    makes the workflow run for many minutes. The author-level fill
+    already returns title / authors / year / venue / link, which is
+    everything we render.
+    """
     author = scholarly.search_author_id(scholar_id)
     author = scholarly.fill(author, sections=["publications"])
 
     pubs: list[dict] = []
     for p in author.get("publications", []):
-        try:
-            filled = scholarly.fill(p)
-        except Exception as e:
-            print(f"  ! could not fill pub: {e}", file=sys.stderr)
-            continue
-        bib = filled.get("bib", {})
-        title = bib.get("title", "").strip()
+        bib = p.get("bib", {})
+        title = (bib.get("title") or "").strip()
         if not title:
             continue
         pubs.append(
             {
                 "title": title,
-                "authors": bib.get("author", "").strip(),
-                "venue": bib.get("venue") or bib.get("journal") or bib.get("conference") or "",
+                "authors": (bib.get("author") or "").strip(),
+                "venue": (
+                    bib.get("venue")
+                    or bib.get("citation")
+                    or bib.get("journal")
+                    or bib.get("conference")
+                    or ""
+                ).strip(),
                 "year": str(bib.get("pub_year") or "").strip(),
-                "url": filled.get("pub_url") or filled.get("eprint_url") or "",
-                "abstract": (bib.get("abstract") or "").strip(),
-                "citations": filled.get("num_citations", 0),
+                "url": (p.get("pub_url") or p.get("eprint_url") or "").strip(),
+                "citations": p.get("num_citations", 0),
             }
         )
 
