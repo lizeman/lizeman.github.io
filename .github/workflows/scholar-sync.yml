@@ -23,9 +23,9 @@ jobs:
       - name: Install dependencies
         run: pip install -r scripts/requirements.txt
 
-      - name: Fetch publications from Google Scholar
+      - name: Fetch publications (Semantic Scholar API)
         env:
-          SCHOLAR_ID: 3cHbgQQAAAAJ
+          SEMANTIC_SCHOLAR_AUTHOR_ID: "2000315380"
         run: python scripts/fetch_scholar.py
 
       - name: Commit changes if any

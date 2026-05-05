@@ -7,7 +7,8 @@ description: >-
 url: https://lizeman.github.io
 baseurl: ""
 
-scholar_id: 3cHbgQQAAAAJ
+scholar_id: 3cHbgQQAAAAJ                      # Google Scholar (display-only)
+semantic_scholar_author_id: "2000315380"      # used by scripts/fetch_scholar.py
 github_username: lizeman
 
 # Visitor analytics. Sign up at plausible.io and add this domain to

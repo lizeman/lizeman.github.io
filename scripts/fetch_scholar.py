@@ -1,55 +1,81 @@
 #!/usr/bin/env python3
-"""Fetch publications from Google Scholar and write _data/publications.yml.
+"""Fetch publications and write _data/publications.yml.
+
+Primary source: Semantic Scholar Graph API (free, no auth, fast,
+unlike Google Scholar which throttles aggressive scraping).
 
 Run as: python scripts/fetch_scholar.py
-Override the author ID via SCHOLAR_ID env var or --scholar-id flag.
+Override the author ID via SEMANTIC_SCHOLAR_AUTHOR_ID env var.
 """
 from __future__ import annotations
 
 import argparse
 import os
 import sys
+import time
 from pathlib import Path
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 
+import json as _json
 import yaml
-from scholarly import scholarly
 
-DEFAULT_SCHOLAR_ID = "3cHbgQQAAAAJ"
+DEFAULT_AUTHOR_ID = "2000315380"  # Zeman Li @ USC on Semantic Scholar
 OUTPUT_PATH = Path(__file__).resolve().parent.parent / "_data" / "publications.yml"
 
+PAPER_FIELDS = (
+    "title,authors,year,venue,externalIds,url,openAccessPdf,citationCount,publicationVenue"
+)
 
-def fetch(scholar_id: str) -> list[dict]:
-    """Fetch publication summaries only (no per-pub fill).
 
-    Per-pub fill triggers an additional HTTP request per paper, which
-    blows past Scholar's rate limit on accounts with many papers and
-    makes the workflow run for many minutes. The author-level fill
-    already returns title / authors / year / venue / link, which is
-    everything we render.
-    """
-    author = scholarly.search_author_id(scholar_id)
-    author = scholarly.fill(author, sections=["publications"])
+def _get_json(url: str, retries: int = 3, backoff: float = 5.0) -> dict:
+    last_err: Exception | None = None
+    for attempt in range(retries):
+        try:
+            req = Request(url, headers={"User-Agent": "zemanli-website/1.0"})
+            with urlopen(req, timeout=30) as resp:
+                return _json.loads(resp.read().decode("utf-8"))
+        except (HTTPError, URLError) as e:
+            last_err = e
+            print(f"  ! attempt {attempt + 1}/{retries} failed: {e}", file=sys.stderr)
+            time.sleep(backoff * (attempt + 1))
+    raise RuntimeError(f"all retries failed: {last_err}")
+
+
+def fetch(author_id: str) -> list[dict]:
+    url = (
+        f"https://api.semanticscholar.org/graph/v1/author/{author_id}/papers"
+        f"?fields={PAPER_FIELDS}&limit=100"
+    )
+    payload = _get_json(url)
+    raw = payload.get("data", [])
 
     pubs: list[dict] = []
-    for p in author.get("publications", []):
-        bib = p.get("bib", {})
-        title = (bib.get("title") or "").strip()
+    for p in raw:
+        title = (p.get("title") or "").strip()
         if not title:
             continue
+        authors = ", ".join(a.get("name", "") for a in p.get("authors", []) if a.get("name"))
+        venue = (p.get("venue") or "").strip()
+        if not venue:
+            pv = p.get("publicationVenue") or {}
+            venue = (pv.get("name") or "").strip() if isinstance(pv, dict) else ""
+        ext = p.get("externalIds") or {}
+        link = (
+            p.get("url")
+            or (p.get("openAccessPdf") or {}).get("url")
+            or (f"https://arxiv.org/abs/{ext['ArXiv']}" if ext.get("ArXiv") else "")
+            or (f"https://doi.org/{ext['DOI']}" if ext.get("DOI") else "")
+            or ""
+        )
         pubs.append(
             {
                 "title": title,
-                "authors": (bib.get("author") or "").strip(),
-                "venue": (
-                    bib.get("venue")
-                    or bib.get("citation")
-                    or bib.get("journal")
-                    or bib.get("conference")
-                    or ""
-                ).strip(),
-                "year": str(bib.get("pub_year") or "").strip(),
-                "url": (p.get("pub_url") or p.get("eprint_url") or "").strip(),
-                "citations": p.get("num_citations", 0),
+                "authors": authors,
+                "venue": venue,
+                "year": str(p.get("year") or "").strip(),
+                "url": link,
+                "citations": int(p.get("citationCount") or 0),
             }
         )
 
@@ -67,16 +93,16 @@ def write(pubs: list[dict]) -> None:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument(
-        "--scholar-id",
-        default=os.environ.get("SCHOLAR_ID", DEFAULT_SCHOLAR_ID),
+        "--author-id",
+        default=os.environ.get("SEMANTIC_SCHOLAR_AUTHOR_ID", DEFAULT_AUTHOR_ID),
     )
     args = ap.parse_args()
 
-    print(f"Fetching publications for Scholar ID: {args.scholar_id}")
+    print(f"Fetching publications for Semantic Scholar author: {args.author_id}")
     try:
-        pubs = fetch(args.scholar_id)
+        pubs = fetch(args.author_id)
     except Exception as e:
-        print(f"FAILED to fetch from Scholar: {e}", file=sys.stderr)
+        print(f"FAILED to fetch: {e}", file=sys.stderr)
         print("Leaving existing _data/publications.yml unchanged.", file=sys.stderr)
         return 0  # soft-fail so cron does not break the site
 
