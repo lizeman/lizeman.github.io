@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  {%- include head.html -%}
+</head>
+<body>
+  <main class="page">
+    <header class="site-header">
+      <img class="profile" src="{{ '/assets/img/profile.svg' | relative_url }}" alt="Zeman Li" />
+      <div class="site-title">
+        <h1>Zeman Li <span class="zh">李泽慢</span></h1>
+        <p class="tagline">
+          Student researcher, Google Research &middot;
+          Ph.D. candidate, Industrial &amp; Systems Engineering, USC
+        </p>
+      </div>
+      <nav class="anchor-nav">
+        <a href="#bio">Bio</a>
+        <a href="#news">News</a>
+        <a href="#publications">Publications</a>
+        <a href="#vita">Vita</a>
+      </nav>
+    </header>
+
+    <article class="content">
+      {{ content }}
+    </article>
+
+    <footer class="site-footer">
+      <p>&copy; {{ site.time | date: "%Y" }} Zeman Li.
+      Built with <a href="https://jekyllrb.com">Jekyll</a>, hosted on
+      <a href="https://pages.github.com">GitHub Pages</a>.</p>
+    </footer>
+  </main>
+</body>
+</html>

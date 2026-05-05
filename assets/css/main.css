@@ -1,0 +1,21 @@
+/* Minimal placeholder styles. Full Saveski-style theming lands in Step 6. */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  max-width: 720px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  line-height: 1.55;
+  color: #222;
+  background: #fff;
+}
+.site-header { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
+.profile { width: 96px; height: 96px; border-radius: 50%; object-fit: cover; }
+.site-title h1 { margin: 0; font-size: 1.6rem; }
+.zh { font-weight: normal; color: #666; margin-left: 0.3rem; }
+.tagline { margin: 0.25rem 0 0; color: #555; }
+.anchor-nav { width: 100%; margin-top: 0.75rem; border-top: 1px solid #eee; padding-top: 0.6rem; }
+.anchor-nav a { margin-right: 1rem; text-decoration: none; color: #0366d6; }
+.anchor-nav a:hover { text-decoration: underline; }
+section { margin-top: 2.25rem; }
+section h2 { border-bottom: 1px solid #eee; padding-bottom: 0.3rem; }
+.site-footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid #eee; color: #777; font-size: 0.9rem; }

@@ -12,7 +12,6 @@ github_username: lizeman
 
 markdown: kramdown
 permalink: /:title/
-theme: minima
 
 plugins:
   - jekyll-feed
