@@ -38,6 +38,9 @@ jobs:
           test -f _site/portal/index.html
           test -f _site/typing/index.html
           test -f _site/beaver/index.html
+          test -f _site/buffalo/index.html
+          grep -qi "buffalo buffalo" _site/buffalo/index.html
+          grep -q "auto-grow" _site/buffalo/index.html
           grep -q "Busy Beaver" _site/beaver/index.html
           grep -q "state diagram" _site/beaver/index.html
           grep -q "mini-map" _site/beaver/index.html

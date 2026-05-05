@@ -330,7 +330,16 @@ The hidden games shipped in v2 were minimal. v2.1 makes them substantial.
 - B7. SVG state-diagram side card with one node per state plus halt; current node highlighted; firing transition arc + label pulse in the accent color.
 - B8. Final summary card on halt: machine name, total steps, ones written, leftmost/rightmost cell visited.
 - B9. Keyboard shortcuts: Space play/pause, ←/→ step back/forward, R reset, 1-5 speed.
-- B10. (Skipped) BB(5) — long-running snapshot mode: deferred. The 4098-ones / 47M-step BB(5) winner does run in "max" mode but takes minutes; not yet packaged as a snapshot UX.
+- B10. BB(5) Marxen-Buntrock champion added to the machine selector. Selecting it auto-switches to "max" speed; trajectory is downsampled to 4000 points to keep the mini-map honest at 47M steps.
+
+## v2.2 — Buffalo (added 2026-05-05)
+A new Playground page at `/buffalo/` that builds the famous "Buffalo buffalo Buffalo buffalo …" sentence interactively.
+- Three-color tokens: place / animal / verb, each with hover tooltip
+- Slider-free counter (◀ / ▶, 1-40) plus auto-grow and infinite-loop modes
+- Live parse tree showing NP / V / S brackets with completeness flag
+- Paraphrase line under the sentence explaining what level n means
+- Speed control (500-3000 ms per step), keyboard shortcuts (← →, Space)
+- prefers-reduced-motion: tokens appear instantly
 
 ## Cross-cutting
 - C1. build-check workflow now greps for `personal best`, `mode`/`length`, `state diagram`, and `mini-map` strings in the built game pages.

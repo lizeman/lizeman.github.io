@@ -1,0 +1,231 @@
+---
+layout: game
+title: Buffalo
+permalink: /buffalo/
+game: buffalo
+game_script: /assets/js/buffalo.js
+---
+
+<style>
+  .buf-card {
+    max-width: 820px; margin: 1.5rem auto 0;
+    padding: 1.6rem 1.8rem 2rem;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    box-shadow: 0 8px 28px -18px rgba(0,0,0,0.35);
+  }
+  .buf-card h1 {
+    font-family: var(--display); font-weight: 700;
+    font-size: 1.6rem; margin: 0 0 0.4rem;
+  }
+  .buf-card .sub {
+    margin: 0 0 1rem; color: var(--muted); font-size: 0.95rem;
+  }
+
+  .buf-explain {
+    margin: 0 0 1.2rem;
+    padding: 0.9rem 1rem;
+    border: 1px dashed var(--rule);
+    border-radius: 6px;
+    background: var(--bg);
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+  .buf-explain p { margin: 0.4rem 0; }
+  .buf-explain strong { color: var(--text); }
+
+  .buf-legend {
+    display: flex; flex-wrap: wrap; gap: 0.6rem 1rem;
+    margin: 0.6rem 0 1rem;
+    font-family: var(--sans); font-size: 0.78rem;
+  }
+  .buf-legend .swatch {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    color: var(--muted);
+  }
+  .buf-legend .dot {
+    width: 0.8rem; height: 0.8rem; border-radius: 999px;
+    display: inline-block;
+  }
+  .buf-legend .dot.place { background: #1c4f8a; }
+  .buf-legend .dot.noun { background: #1b6e3a; }
+  .buf-legend .dot.verb { background: #b85c38; }
+
+  .buf-controls {
+    display: flex; flex-wrap: wrap; gap: 0.6rem;
+    align-items: center; margin: 0.4rem 0 1rem;
+    font-family: var(--sans); font-size: 0.85rem;
+  }
+  .buf-controls button {
+    font-family: var(--sans); font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+    border: 1px solid var(--rule);
+    background: var(--bg);
+    color: var(--text);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
+  }
+  .buf-controls button:hover { border-color: var(--accent); color: var(--accent); }
+  .buf-controls .n-display {
+    font-family: var(--display); font-weight: 700; font-size: 1.1rem;
+    font-variant-numeric: tabular-nums; color: var(--text);
+    min-width: 3rem; text-align: center;
+  }
+  .buf-controls input[type=range] { flex: 1; min-width: 200px; }
+  .buf-controls .speed-label {
+    color: var(--soft); font-size: 0.78rem;
+  }
+
+  .buf-sentence {
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    background: var(--bg);
+    padding: 1.2rem;
+    min-height: 6rem;
+    line-height: 2.5;
+    font-family: "Charter", Georgia, serif;
+    font-size: 1.15rem;
+    transition: border-color 0.4s var(--ease);
+  }
+  .buf-sentence.loop { border-color: var(--accent); }
+  .buf-token {
+    display: inline-block;
+    padding: 0.05em 0.4em;
+    margin: 0 0.12em;
+    border-radius: 4px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.45s var(--ease);
+    opacity: 0;
+    transform: translateY(0.3em);
+    animation: bufIn 0.5s var(--ease) forwards;
+    font-variant: small-caps;
+    cursor: help;
+    position: relative;
+  }
+  .buf-token.place { color: #1c4f8a; border-bottom-color: #1c4f8a; }
+  .buf-token.noun  { color: #1b6e3a; border-bottom-color: #1b6e3a; }
+  .buf-token.verb  { color: #b85c38; border-bottom-color: #b85c38; }
+  .buf-token .tip {
+    position: absolute;
+    bottom: calc(100% + 0.3rem);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--text);
+    color: var(--paper);
+    font-family: var(--sans);
+    font-size: 0.72rem;
+    line-height: 1.3;
+    padding: 0.3rem 0.5rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s var(--ease);
+    z-index: 10;
+  }
+  .buf-token:hover .tip,
+  .buf-token:focus .tip { opacity: 1; }
+  @keyframes bufIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .buf-token { animation: none; opacity: 1; transform: none; }
+  }
+
+  .buf-paraphrase {
+    margin-top: 1rem;
+    padding: 0.8rem 1rem;
+    border: 1px dashed var(--rule);
+    border-radius: 6px;
+    background: var(--paper);
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+  .buf-paraphrase strong { color: var(--text); }
+
+  .buf-tree {
+    width: 100%;
+    margin-top: 1rem;
+    height: 240px;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: var(--bg);
+    display: block;
+    overflow: hidden;
+  }
+  .buf-tree .node text {
+    font-family: var(--sans); font-size: 11px; fill: var(--muted);
+  }
+  .buf-tree .leaf text { font-family: var(--display); font-size: 12px; }
+  .buf-tree .leaf.place text { fill: #1c4f8a; }
+  .buf-tree .leaf.noun  text { fill: #1b6e3a; }
+  .buf-tree .leaf.verb  text { fill: #b85c38; }
+  .buf-tree .branch { stroke: var(--rule); stroke-width: 1.2; fill: none; }
+
+  .buf-meta {
+    margin-top: 1rem;
+    font-family: var(--sans); font-size: 0.78rem;
+    color: var(--soft);
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.4rem;
+  }
+</style>
+
+<div class="buf-card" data-reveal>
+  <h1>Buffalo</h1>
+  <p class="sub">
+    Building the longest sentence in English using only one word.
+  </p>
+
+  <div class="buf-explain">
+    <p>
+      <strong>“Buffalo buffalo Buffalo buffalo buffalo buffalo Buffalo buffalo.”</strong>
+      That eight-word sentence is grammatically correct English. It exploits
+      three meanings of <em>buffalo</em>:
+    </p>
+    <p>
+      &middot; <strong>Buffalo</strong> — the city in upstate New York (proper noun)<br/>
+      &middot; <strong>buffalo</strong> — bison-like animals, plural noun<br/>
+      &middot; <strong>buffalo</strong> — to bully or intimidate, verb
+    </p>
+    <p>
+      Because the structure is recursive — a noun phrase &ldquo;Buffalo
+      buffalo&rdquo; can be modified by a reduced relative clause that itself
+      contains another &ldquo;Buffalo buffalo&rdquo; — sentences of every length
+      <code>n</code> can be made grammatical. The form is sometimes credited
+      to William J. Rapaport (1972) and was popularised by Steven Pinker.
+      It is often cited as the longest English sentence using a single word.
+    </p>
+  </div>
+
+  <div class="buf-legend">
+    <span class="swatch"><span class="dot place"></span> <em>Buffalo</em>: the city (proper noun)</span>
+    <span class="swatch"><span class="dot noun"></span> <em>buffalo</em>: animal (plural noun)</span>
+    <span class="swatch"><span class="dot verb"></span> <em>buffalo</em>: to bully (verb)</span>
+  </div>
+
+  <div class="buf-controls">
+    <button id="buf-prev">◀ shorter</button>
+    <span class="n-display" id="buf-n">1</span>
+    <button id="buf-next">longer ▶</button>
+    <button id="buf-play">▶ auto-grow</button>
+    <button id="buf-loop">loop ∞</button>
+    <button id="buf-reset">reset</button>
+    <span class="speed-label">speed</span>
+    <input type="range" id="buf-speed" min="500" max="3000" step="100" value="1500" />
+  </div>
+
+  <div class="buf-sentence" id="buf-sentence" aria-live="polite"></div>
+
+  <div class="buf-paraphrase" id="buf-paraphrase">…</div>
+
+  <svg class="buf-tree" id="buf-tree" viewBox="0 0 800 240" preserveAspectRatio="xMidYMid meet"></svg>
+
+  <div class="buf-meta">
+    <span id="buf-tokens">8 tokens</span>
+    <span>tap a buffalo to see its role · click play to auto-grow · loop to keep extending forever</span>
+  </div>
+</div>

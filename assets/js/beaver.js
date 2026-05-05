@@ -28,6 +28,18 @@
         C: [{w:1,m:'R',n:'H'}, {w:1,m:'L',n:'D'}],
         D: [{w:1,m:'R',n:'D'}, {w:0,m:'R',n:'A'}]
       }
+    },
+    // BB(5) Marxen-Buntrock 1989 champion (proved optimal, 2024 Busy
+    // Beaver Challenge). Writes 4098 ones in 47,176,870 steps.
+    bb5: {
+      name: 'BB(5)', start: 'A',
+      transitions: {
+        A: [{w:1,m:'R',n:'B'}, {w:1,m:'L',n:'C'}],
+        B: [{w:1,m:'R',n:'C'}, {w:1,m:'R',n:'B'}],
+        C: [{w:1,m:'R',n:'D'}, {w:0,m:'L',n:'E'}],
+        D: [{w:1,m:'L',n:'A'}, {w:1,m:'L',n:'D'}],
+        E: [{w:1,m:'R',n:'H'}, {w:0,m:'L',n:'A'}]
+      }
     }
   };
 
@@ -348,7 +360,12 @@
     st.head += (t.m === 'R' ? 1 : -1);
     st.s = t.n;
     st.steps += 1;
-    st.trajectory.push(st.head);
+    // cap trajectory: downsample when it gets large (BB(5) emits ~47M)
+    if (st.trajectory.length < 4000) {
+      st.trajectory.push(st.head);
+    } else if (st.steps % Math.ceil(st.steps / 4000) === 0) {
+      st.trajectory.push(st.head);
+    }
     if (st.s === 'H') { st.halted = true; finalize(); }
     return true;
   }
@@ -451,7 +468,14 @@
   stepBtn.addEventListener('click', function () { pause(); step(); paintAll(); });
   backBtn.addEventListener('click', function () { pause(); stepBack(); });
   resetBtn.addEventListener('click', function () { reset(st.machineKey); });
-  machineSel.addEventListener('change', function () { reset(machineSel.value); });
+  machineSel.addEventListener('change', function () {
+    if (machineSel.value === 'bb5') {
+      // BB(5) is impractical at any speed below max
+      var maxBtn = speedTabs.querySelector('[data-speed=max]');
+      if (maxBtn) maxBtn.click();
+    }
+    reset(machineSel.value);
+  });
 
   speedTabs.addEventListener('click', function (e) {
     var b = e.target.closest('button[data-speed]'); if (!b) return;
