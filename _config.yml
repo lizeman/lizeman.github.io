@@ -10,6 +10,14 @@ baseurl: ""
 scholar_id: 3cHbgQQAAAAJ
 github_username: lizeman
 
+# Visitor analytics. Sign up at plausible.io and add this domain to
+# start receiving data; the tag is harmless if the domain is not yet
+# registered there.
+analytics:
+  provider: plausible
+  domain: lizeman.github.io
+  script_src: https://plausible.io/js/script.js
+
 markdown: kramdown
 permalink: /:title/
 

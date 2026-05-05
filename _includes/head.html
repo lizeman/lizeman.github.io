@@ -6,3 +6,9 @@
 <link rel="canonical" href="{{ page.url | absolute_url }}">
 {%- feed_meta -%}
 {%- seo -%}
+
+{%- if site.analytics.provider == "plausible" and site.analytics.domain -%}
+<script defer data-domain="{{ site.analytics.domain }}" src="{{ site.analytics.script_src | default: 'https://plausible.io/js/script.js' }}"></script>
+{%- elsif site.analytics.provider == "umami" and site.analytics.website_id -%}
+<script defer data-website-id="{{ site.analytics.website_id }}" src="{{ site.analytics.script_src }}"></script>
+{%- endif -%}
