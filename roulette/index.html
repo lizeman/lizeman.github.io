@@ -1,0 +1,501 @@
+---
+layout: game
+title: Roulette
+permalink: /roulette/
+game: roulette
+game_script: /assets/js/roulette.js
+---
+
+<style>
+  .rou-card {
+    max-width: 880px; margin: 1.5rem auto 0;
+    padding: 1.6rem 1.8rem 2rem;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    box-shadow: 0 8px 28px -18px rgba(0,0,0,0.35);
+  }
+  .rou-card h1 {
+    font-family: var(--display); font-weight: 700;
+    font-size: 1.6rem; margin: 0 0 0.4rem;
+  }
+  .rou-card .sub {
+    margin: 0 0 1.2rem; color: var(--muted); font-size: 0.95rem;
+  }
+  .rou-disclaimer {
+    margin: 0 0 1rem; padding: 0.6rem 0.85rem;
+    border-left: 3px solid var(--accent);
+    background: rgba(184,92,56,0.05);
+    font-family: var(--sans); font-size: 0.82rem;
+    color: var(--muted); line-height: 1.5;
+  }
+
+  .rou-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.05fr;
+    gap: 1.2rem;
+    align-items: start;
+  }
+  @media (max-width: 720px) {
+    .rou-grid { grid-template-columns: 1fr; }
+  }
+
+  /* wheel */
+  .wheel-stage {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    max-width: 360px;
+    margin: 0 auto;
+  }
+  #rou-wheel {
+    width: 100%; height: 100%;
+    display: block;
+  }
+  .wheel-pointer {
+    position: absolute;
+    top: -3px; left: 50%;
+    transform: translateX(-50%);
+    width: 0; height: 0;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-top: 16px solid var(--accent);
+    z-index: 5;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+  }
+  .wheel-result {
+    position: absolute;
+    inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 2rem;
+    color: white;
+    pointer-events: none;
+    text-shadow: 0 0 12px rgba(0,0,0,0.6);
+    opacity: 0;
+    transition: opacity 0.3s var(--ease);
+  }
+  .wheel-result.show { opacity: 1; }
+
+  /* sidebar */
+  .rou-side h3 {
+    font-family: var(--sans); font-size: 0.78rem;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--soft); margin: 0 0 0.4rem;
+  }
+  .rou-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+    margin: 0 0 1rem;
+  }
+  .rou-stats .stat {
+    padding: 0.55rem 0.4rem;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: var(--bg);
+    text-align: center;
+  }
+  .rou-stats .v {
+    font-family: var(--display); font-weight: 700;
+    font-size: 1.15rem; font-variant-numeric: tabular-nums;
+    color: var(--text);
+  }
+  .rou-stats .l {
+    font-family: var(--sans); font-size: 0.7rem;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--soft);
+  }
+
+  /* chip stack */
+  .chip-stack {
+    display: flex; align-items: flex-end; gap: 1px;
+    height: 56px;
+    padding: 0.4rem 0.6rem;
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    overflow-x: auto;
+  }
+  .chip-stack .chip {
+    width: 22px; min-width: 22px;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.18) inset, 0 1px 2px rgba(0,0,0,0.18);
+    transition: transform 0.5s var(--ease);
+  }
+  .chip-stack .chip[data-v="1"]   { background: #f5f5f5; border-color:#cfcabe; }
+  .chip-stack .chip[data-v="5"]   { background: #b85c38; }
+  .chip-stack .chip[data-v="25"]  { background: #1b6e3a; }
+  .chip-stack .chip[data-v="100"] { background: #1c1c1c; }
+  .chip-stack .chip[data-v="500"] { background: #6e1b50; }
+  .chip-stack-empty {
+    color: var(--soft); font-family: var(--sans); font-size: 0.78rem;
+    align-self: center;
+  }
+
+  /* bet table */
+  .bet-grid {
+    display: grid;
+    grid-template-columns: 0.8fr 1fr 1fr 1fr;
+    gap: 0.4rem;
+    margin: 0.3rem 0 1rem;
+  }
+  .bet-grid button {
+    font-family: var(--sans); font-size: 0.82rem;
+    padding: 0.5rem 0.5rem;
+    border: 1px solid var(--rule);
+    background: var(--bg);
+    color: var(--text);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s var(--ease);
+  }
+  .bet-grid button:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .bet-grid button.placed {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+  .bet-grid button.red { background: #b85c38; color:white; border-color:#b85c38;}
+  .bet-grid button.black { background: #1c1c1c; color:white; border-color:#1c1c1c;}
+  .bet-grid button.red.placed { box-shadow: 0 0 0 3px rgba(184,92,56,0.35);}
+  .bet-grid button.black.placed { box-shadow: 0 0 0 3px rgba(0,0,0,0.35);}
+
+  /* controls */
+  .rou-controls {
+    display: flex; flex-wrap: wrap; gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .rou-controls button {
+    font-family: var(--sans); font-size: 0.85rem;
+    padding: 0.45rem 0.9rem;
+    border: 1px solid var(--rule);
+    background: var(--bg);
+    color: var(--text);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .rou-controls button:hover { border-color: var(--accent); color: var(--accent); }
+  .rou-controls button.primary {
+    background: var(--accent); color:white; border-color: var(--accent);
+  }
+  .rou-controls button[disabled] { opacity: 0.4; cursor: not-allowed; }
+  .rou-controls input[type=number] {
+    width: 6.5rem;
+    padding: 0.45rem 0.5rem;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    font-family: var(--sans); font-size: 0.85rem;
+    background: var(--bg);
+    color: var(--text);
+  }
+
+  /* strategy + sim */
+  .rou-strategy {
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    background: var(--bg);
+  }
+  .strat-pills { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.7rem; }
+  .strat-pills button {
+    font-family: var(--sans); font-size: 0.78rem;
+    padding: 0.32rem 0.7rem;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    color: var(--muted);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s var(--ease);
+  }
+  .strat-pills button.on {
+    background: var(--accent); color: white; border-color: var(--accent);
+  }
+  .strat-pills button:hover { color: var(--accent); border-color: var(--accent); }
+  .strat-pills button.on:hover { color: white; }
+  .strat-explain {
+    font-size: 0.82rem; color: var(--muted);
+    line-height: 1.55;
+    margin: 0.3rem 0 0.8rem;
+  }
+  .strat-row {
+    display: flex; flex-wrap: wrap; gap: 0.5rem 0.7rem;
+    align-items: center;
+    margin-bottom: 0.6rem;
+    font-family: var(--sans); font-size: 0.82rem; color: var(--muted);
+  }
+  .strat-row label { display:flex; align-items:center; gap: 0.3rem; }
+
+  /* simulation */
+  .sim-row {
+    display: flex; flex-wrap: wrap; gap: 0.5rem;
+    align-items: center; margin: 0.6rem 0;
+    font-family: var(--sans); font-size: 0.82rem; color: var(--muted);
+  }
+  .sim-row input[type=number] {
+    width: 5.5rem;
+    padding: 0.35rem 0.5rem;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    background: var(--paper);
+    color: var(--text);
+    font-family: var(--sans);
+  }
+  .sim-out {
+    margin-top: 0.6rem;
+    border: 1px dashed var(--rule);
+    border-radius: 6px;
+    background: var(--paper);
+    padding: 0.7rem 0.85rem;
+  }
+  .sim-summary { font-family: var(--sans); font-size: 0.82rem; color: var(--muted); }
+  .sim-summary strong { color: var(--text); }
+  #sim-spark { width: 100%; height: 60px; margin-top: 0.4rem; }
+  #sim-spark path.line { fill: none; stroke: var(--accent); stroke-width: 1.4; }
+  #sim-spark path.zero { fill: none; stroke: rgba(0,0,0,0.1); stroke-width: 1; stroke-dasharray: 3 3; }
+  #sim-spark path.area { fill: rgba(184,92,56,0.1); }
+  #sim-hist {
+    width: 100%; height: 50px;
+    margin-top: 0.4rem;
+    display: flex; align-items: flex-end;
+    gap: 1px;
+  }
+  #sim-hist .b {
+    flex: 1;
+    background: var(--accent);
+    min-height: 1px;
+    transition: height 0.4s var(--ease);
+    opacity: 0.7;
+  }
+  #sim-hist .b.zero { background: var(--rule); opacity: 0.5; }
+  .sim-hist-axis {
+    display: flex; justify-content: space-between;
+    font-family: var(--sans); font-size: 0.7rem;
+    color: var(--soft); margin-top: 0.2rem;
+  }
+
+  /* leaderboard */
+  .rou-leader {
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    background: var(--bg);
+  }
+  .rou-leader table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--sans); font-size: 0.85rem;
+  }
+  .rou-leader th, .rou-leader td {
+    padding: 0.35rem 0.5rem;
+    text-align: left;
+    border-bottom: 1px dashed var(--rule);
+  }
+  .rou-leader th {
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--soft); font-weight: 500;
+  }
+  .rou-leader td.profit { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .rou-leader td.profit.pos { color: #1b6e3a; }
+  .rou-leader td.profit.neg { color: var(--accent); }
+
+  /* peak profit headline */
+  .rou-peak {
+    display: flex; align-items: baseline; gap: 0.7rem;
+    flex-wrap: wrap;
+    padding: 0.7rem 1rem;
+    margin: 0 0 1rem;
+    border: 1px solid var(--rule);
+    border-left: 3px solid #1b6e3a;
+    border-radius: 6px;
+    background: var(--bg);
+    font-family: var(--sans);
+  }
+  .rou-peak .lk {
+    font-size: 0.7rem; text-transform: uppercase;
+    letter-spacing: 0.12em; color: var(--soft);
+  }
+  .rou-peak .v {
+    font-family: var(--display); font-weight: 800;
+    font-size: 1.6rem; color: #1b6e3a;
+    font-variant-numeric: tabular-nums;
+  }
+  .rou-peak .meta {
+    margin-left: auto; font-size: 0.78rem; color: var(--soft);
+  }
+  .rou-peak.bumped { animation: peakPulse 1.2s var(--ease); }
+  @keyframes peakPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(27,110,58,0); }
+    30% { box-shadow: 0 0 0 6px rgba(27,110,58,0.18); }
+  }
+
+  /* recent results dots */
+  .recent-row {
+    display: flex; flex-wrap: wrap; gap: 4px;
+    margin: 0 0 1rem;
+    min-height: 22px;
+  }
+  .recent-row .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    font-family: var(--sans); font-size: 0.72rem;
+    font-weight: 600;
+    color: white;
+  }
+  .recent-row .num.r { background: #b85c38; }
+  .recent-row .num.b { background: #1c1c1c; }
+  .recent-row .num.g { background: #1b6e3a; }
+
+  .rou-keys {
+    margin-top: 0.6rem;
+    font-family: var(--sans); font-size: 0.78rem;
+    color: var(--soft);
+  }
+  .rou-keys kbd {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 0.78rem;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-bottom-width: 2px;
+    border-radius: 3px;
+    padding: 0.05em 0.4em;
+    color: var(--muted);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .chip-stack .chip { transition: none; }
+    .wheel-result { transition: none; }
+  }
+</style>
+
+<div class="rou-card" data-reveal>
+  <h1>Roulette</h1>
+  <p class="sub">
+    European single-zero wheel. Place a bet, spin, and watch the ball land —
+    or hand the wheel to a strategy and run thousands of spins to see how it
+    fares against a 2.7% house edge.
+  </p>
+  <div class="rou-disclaimer">
+    Play money only. Roulette has a negative expected value: every betting
+    strategy below is mathematically guaranteed to lose in the long run. The
+    simulation is here to make that fact visible, not to recommend any
+    strategy in the real world.
+  </div>
+
+  <div class="rou-peak" id="rou-peak-row">
+    <span class="lk">peak profit ever</span>
+    <span class="v" id="rou-peak-value">$0</span>
+    <span class="meta" id="rou-peak-meta">no runs yet</span>
+  </div>
+
+  <div class="rou-grid">
+    <div>
+      <div class="wheel-stage">
+        <div class="wheel-pointer" aria-hidden="true"></div>
+        <canvas id="rou-wheel" width="720" height="720" aria-label="Roulette wheel"></canvas>
+        <div class="wheel-result" id="rou-result-overlay"></div>
+      </div>
+      <h3 style="margin-top:1rem">Recent results</h3>
+      <div class="recent-row" id="rou-recent" aria-label="recent spins"></div>
+    </div>
+
+    <div class="rou-side">
+      <div class="rou-stats">
+        <div class="stat"><div class="v" id="rou-bankroll">$1,000</div><div class="l">bankroll</div></div>
+        <div class="stat"><div class="v" id="rou-profit">$0</div><div class="l">profit</div></div>
+        <div class="stat"><div class="v" id="rou-spins">0</div><div class="l">spins</div></div>
+      </div>
+
+      <h3>Your bet stack</h3>
+      <div class="chip-stack" id="rou-stack"></div>
+
+      <h3>Place a bet</h3>
+      <div class="bet-grid">
+        <button data-bet="red" class="red">red</button>
+        <button data-bet="black" class="black">black</button>
+        <button data-bet="even">even</button>
+        <button data-bet="odd">odd</button>
+        <button data-bet="low">1–18</button>
+        <button data-bet="high">19–36</button>
+        <button data-bet="d1">1st 12</button>
+        <button data-bet="d2">2nd 12</button>
+        <button data-bet="d3">3rd 12</button>
+        <button data-bet="c1">col 1</button>
+        <button data-bet="c2">col 2</button>
+        <button data-bet="c3">col 3</button>
+      </div>
+
+      <div class="rou-controls">
+        <label style="display:flex;align-items:center;gap:0.4rem;font-family:var(--sans);font-size:0.82rem;color:var(--muted);">
+          stake $<input type="number" id="rou-stake" min="1" max="1000" step="1" value="10" />
+        </label>
+        <button id="rou-spin" class="primary">▶ spin</button>
+        <button id="rou-autobet" title="Place the active strategy's suggested wager on the chosen target">auto-bet</button>
+        <button id="rou-clear">clear bet</button>
+        <button id="rou-cashout">cash out</button>
+      </div>
+      <div class="rou-keys">
+        <kbd>Space</kbd> spin · <kbd>A</kbd> auto-bet · <kbd>C</kbd> clear · <kbd>S</kbd> simulate
+      </div>
+    </div>
+  </div>
+
+  <div class="rou-strategy">
+    <h3 style="margin-bottom: 0.5rem">Betting strategy</h3>
+    <div class="strat-pills" id="rou-strategy">
+      <button data-s="flat" class="on">Flat</button>
+      <button data-s="martingale">Martingale</button>
+      <button data-s="fibonacci">Fibonacci</button>
+      <button data-s="dalembert">D&rsquo;Alembert</button>
+      <button data-s="labouchere">Labouchère</button>
+    </div>
+    <p class="strat-explain" id="rou-strategy-explain">…</p>
+    <div class="strat-row">
+      <label>base unit $<input type="number" id="rou-base" min="1" max="500" step="1" value="5" /></label>
+      <label>bet on
+        <select id="rou-strat-bet">
+          <option value="red">red</option>
+          <option value="black">black</option>
+          <option value="even">even</option>
+          <option value="odd">odd</option>
+          <option value="low">1–18</option>
+          <option value="high">19–36</option>
+        </select>
+      </label>
+      <span>next bet: <strong id="rou-strat-next">$5</strong></span>
+    </div>
+
+    <div class="sim-row">
+      <span>simulate</span>
+      <input type="number" id="rou-sim-spins" min="50" max="50000" step="50" value="500" />
+      <span>spins, starting bankroll $</span>
+      <input type="number" id="rou-sim-bank" min="50" max="100000" step="50" value="1000" />
+      <button id="rou-sim-run" class="primary">run</button>
+    </div>
+    <div class="sim-out">
+      <div class="sim-summary" id="rou-sim-summary">no simulation yet — click run.</div>
+      <svg id="sim-spark" viewBox="0 0 600 60" preserveAspectRatio="none" aria-label="bankroll over time"></svg>
+      <div id="sim-hist" aria-label="profit distribution"></div>
+      <div class="sim-hist-axis"><span>-bankroll</span><span>0</span><span>+bankroll</span></div>
+    </div>
+  </div>
+
+  <div class="rou-leader">
+    <h3 style="margin-bottom: 0.5rem">Leaderboard — your top profits</h3>
+    <table>
+      <thead><tr><th>#</th><th>strategy</th><th>spins</th><th>profit</th><th>when</th></tr></thead>
+      <tbody id="rou-leader-body">
+        <tr><td colspan="5" style="color:var(--soft); text-align:center; padding:0.6rem;">play a hand or run a simulation to populate.</td></tr>
+      </tbody>
+    </table>
+    <button id="rou-leader-clear" style="margin-top:0.6rem; font-family:var(--sans); font-size:0.78rem; padding:0.32rem 0.7rem; border:1px solid var(--rule); background:var(--paper); color:var(--muted); border-radius:999px; cursor:pointer;">clear leaderboard</button>
+  </div>
+</div>

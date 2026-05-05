@@ -39,6 +39,15 @@ jobs:
           test -f _site/typing/index.html
           test -f _site/beaver/index.html
           test -f _site/buffalo/index.html
+          test -f _site/roulette/index.html
+          test -f _site/assets/js/roulette.js
+          grep -q "Roulette" _site/roulette/index.html
+          grep -q "Martingale" _site/roulette/index.html
+          grep -q "Labouch" _site/roulette/index.html
+          grep -q "rou-wheel" _site/roulette/index.html
+          grep -qi "peak profit" _site/roulette/index.html
+          grep -q "auto-bet" _site/roulette/index.html
+          grep -q "prefers-reduced-motion" _site/assets/js/roulette.js
           grep -qi "buffalo buffalo" _site/buffalo/index.html
           grep -q "auto-grow" _site/buffalo/index.html
           grep -q "Busy Beaver" _site/beaver/index.html

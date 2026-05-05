@@ -64,11 +64,14 @@ game_script: /assets/js/portal.js
   .portal-feedback.ok { color: #1b6e3a; }
   .doors {
     display: none;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
     margin-top: 1.4rem;
   }
   .doors.open { display: grid; }
+  @media (max-width: 480px) {
+    .doors { grid-template-columns: 1fr; }
+  }
   .door {
     display: block;
     padding: 1rem;
@@ -120,6 +123,14 @@ game_script: /assets/js/portal.js
     <a class="door" href="{{ '/beaver/' | relative_url }}">
       <span class="glyph">⚙</span>
       <span class="name">Busy Beaver</span>
+    </a>
+    <a class="door" href="{{ '/buffalo/' | relative_url }}">
+      <span class="glyph">𓃴</span>
+      <span class="name">Buffalo</span>
+    </a>
+    <a class="door" href="{{ '/roulette/' | relative_url }}">
+      <span class="glyph">🎯</span>
+      <span class="name">Roulette</span>
     </a>
   </div>
 </div>

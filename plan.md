@@ -400,10 +400,9 @@ action — surfaced here so they don't get lost:
 5. **Local Ruby 3.x** — system Ruby 2.6 cannot install `ffi >= 3`,
    so local `bundle exec jekyll serve` is blocked. GitHub Pages remote
    build is unaffected. `brew install ruby` when convenient.
-6. **`/roulette/`** — an untracked, half-finished page exists in the
-   working tree (no `assets/js/roulette.js`). Either flesh it out as the
-   next Playground entry or delete it; not committed so the site is
-   safe either way.
+6. **`/roulette/`** — ✅ shipped in v2.4 (see below). Full canvas wheel,
+   chip-stack betting, five strategies, Monte Carlo simulator, persistent
+   peak-profit headline + leaderboard.
 7. **News refresh** — last entry is Nov 2025 (TNT acceptance). New
    preprints (ATLAS, Memory Caching, Mem3R) could each get a line; left
    to Zeman to decide which to highlight and with what dates.
