@@ -1,12 +1,24 @@
 education:
   - degree: "Ph.D. in Industrial and Systems Engineering (in progress)"
     school: "University of Southern California"
-    year: "—"
-  - degree: "B.S. in Applied Mathematics"
-    school: "Emory University"
     year: ""
+    advisor: "Prof. Meisam Razaviyayn"
   - degree: "B.S. in Computer Engineering"
     school: "Georgia Institute of Technology"
     year: ""
+    advisor: "Prof. Xie Yao"
+  - degree: "B.S. in Applied Mathematics"
+    school: "Emory University"
+    year: ""
 
-awards: []
+awards:
+  - year: ""
+    text: "USC Viterbi School of Engineering Fellowship"
+  - year: "2023"
+    text: "Georgia Tech Capstone Design Expo — Best Overall Project"
+  - year: "2021"
+    text: "Mathematical Contest in Modeling — Meritorious Winner (Top 697 of 10,053 teams)"
+  - year: "2020"
+    text: "Mathematical Contest in Modeling — Finalist Award (Top 180 of 13,753 teams)"
+  - year: ""
+    text: "Outstanding Winner — SIMIODE Challenge Using Differential Equations Modeling"

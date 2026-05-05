@@ -127,3 +127,5 @@ zemanli_website/
 ## Progress Log
 
 - 2026-05-05 · Step 1 · Scaffolded Jekyll skeleton (`_config.yml`, `Gemfile` pinned to `github-pages` gem, `index.md`, `_includes/{bio,news,publications,vita}.html`, empty `_data/*.yml`, `README.md`, `.gitignore`). Local bundle install blocked by Ruby 2.6 vs ffi 3.0 → relying on GH Pages remote build.
+- 2026-05-05 · Step 1 · Created `lizeman/lizeman.github.io` on GitHub, pushed initial commit, Pages enabled (legacy build, source `main:/`).
+- 2026-05-05 · Step 2 · Migrated bio (incl. Razaviyayn advisor link, research interests, contact + Scholar/CV links), education list, and 5 awards from Google Sites into `bio.html` and `_data/cv.yml`. Seeded `_data/news.yml` with 5 recent paper acceptances.
