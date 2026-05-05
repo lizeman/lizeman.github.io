@@ -1,0 +1,125 @@
+---
+layout: game
+title: Portal
+permalink: /portal/
+game: portal
+game_script: /assets/js/portal.js
+---
+
+<style>
+  .portal-card {
+    max-width: 540px;
+    margin: 2.5rem auto 0;
+    padding: 1.6rem 1.8rem 2rem;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    box-shadow: 0 8px 28px -18px rgba(0,0,0,0.35);
+  }
+  .portal-card h1 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 1.6rem;
+    margin: 0 0 0.4rem;
+    letter-spacing: 0.01em;
+  }
+  .portal-card .sub {
+    margin: 0 0 1.4rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+  .riddle { font-size: 1.05rem; line-height: 1.55; margin: 1rem 0 0.6rem; }
+  .progress {
+    display: flex; gap: 0.4rem; margin: 0.4rem 0 0.8rem;
+  }
+  .progress span {
+    width: 0.6rem; height: 0.6rem; border-radius: 50%;
+    background: var(--rule); transition: background 0.4s var(--ease);
+  }
+  .progress span.done { background: var(--accent); }
+  #portal-input {
+    font-family: var(--sans);
+    font-size: 1rem;
+    padding: 0.55rem 0.7rem;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    width: 100%;
+    background: var(--bg);
+    color: var(--text);
+    transition: border-color 0.2s var(--ease);
+  }
+  #portal-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+  .portal-feedback {
+    min-height: 1.2em;
+    margin: 0.6rem 0 0;
+    font-family: var(--sans);
+    font-size: 0.88rem;
+    color: var(--muted);
+  }
+  .portal-feedback.err { color: var(--accent); }
+  .portal-feedback.ok { color: #1b6e3a; }
+  .doors {
+    display: none;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-top: 1.4rem;
+  }
+  .doors.open { display: grid; }
+  .door {
+    display: block;
+    padding: 1rem;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    text-align: center;
+    background: var(--bg);
+    color: var(--text);
+    text-decoration: none;
+    background-image: none;
+    transition: transform 0.4s var(--ease), border-color 0.4s var(--ease);
+  }
+  .door:hover {
+    transform: translateY(-3px);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+  .door .glyph { display: block; font-size: 1.6rem; margin-bottom: 0.3rem; }
+  .door .name {
+    font-family: var(--display); font-weight: 600;
+    font-size: 1rem;
+  }
+  .portal-hint { font-size: 0.82rem; color: var(--soft); margin-top: 1rem; }
+</style>
+
+<div class="portal-card" data-reveal>
+  <h1>Portal</h1>
+  <p class="sub">Three short riddles. Solve them to unlock the hidden room.</p>
+
+  <div class="progress" aria-hidden="true">
+    <span data-step="0"></span>
+    <span data-step="1"></span>
+    <span data-step="2"></span>
+  </div>
+
+  <div id="portal-stage">
+    <p class="riddle" id="portal-riddle">Loading…</p>
+    <input id="portal-input" type="text" autocomplete="off" autocorrect="off"
+           spellcheck="false" placeholder="your answer…" />
+    <p class="portal-feedback" id="portal-feedback">&nbsp;</p>
+    <p class="portal-hint" id="portal-hint">Press <kbd>Enter</kbd> to submit.</p>
+  </div>
+
+  <div class="doors" id="portal-doors">
+    <a class="door" href="{{ '/typing/' | relative_url }}">
+      <span class="glyph">⌨︎</span>
+      <span class="name">Typing Trial</span>
+    </a>
+    <a class="door" href="{{ '/beaver/' | relative_url }}">
+      <span class="glyph">⚙</span>
+      <span class="name">Busy Beaver</span>
+    </a>
+  </div>
+</div>

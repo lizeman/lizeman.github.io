@@ -3,18 +3,30 @@
 <head>
   {%- include head.html -%}
 </head>
-<body>
+<body class="home">
+  <div class="grain" aria-hidden="true"></div>
+
   <main class="page">
-    <header class="site-header">
+    <header class="site-header" data-reveal>
       <img class="profile" src="{{ '/assets/img/zemanli_picture.jpg' | relative_url }}" alt="Zeman Li" />
       <div class="site-title">
-        <h1>Zeman Li <span class="zh">李泽慢</span></h1>
+        <h1 class="display-name">
+          {%- assign name = "Zeman Li" -%}
+          {%- assign chars = name | split: "" -%}
+          {%- for c in chars -%}
+            {%- if c == " " -%}<span class="ch sp">&nbsp;</span>
+            {%- else -%}<span class="ch" style="--i:{{ forloop.index0 }}">{{ c }}</span>
+            {%- endif -%}
+          {%- endfor -%}
+          <span class="zh" style="--i:{{ chars | size }}">李泽慢</span>
+        </h1>
         <p class="tagline">
-          Student researcher, Google Research &middot;
-          Ph.D. candidate, Industrial &amp; Systems Engineering, USC
+          <span>Student Researcher, Google Research</span>
+          <span class="sep" aria-hidden="true">·</span>
+          <span>Ph.D. Candidate, Industrial &amp; Systems Engineering, USC</span>
         </p>
       </div>
-      <nav class="anchor-nav">
+      <nav class="anchor-nav" id="anchor-nav">
         <a href="#bio">Bio</a>
         <a href="#news">News</a>
         <a href="#publications">Publications</a>
@@ -26,11 +38,24 @@
       {{ content }}
     </article>
 
+    {% include visitor.html %}
+
     <footer class="site-footer">
-      <p>&copy; {{ site.time | date: "%Y" }} Zeman Li.
-      Built with <a href="https://jekyllrb.com">Jekyll</a>, hosted on
-      <a href="https://pages.github.com">GitHub Pages</a>.</p>
+      <p class="disclaimer">
+        ⚙️ This site was designed, built, and is autonomously maintained by
+        <a href="https://www.anthropic.com/claude" rel="noopener" target="_blank">Claude</a>
+        (Anthropic&rsquo;s AI assistant) on behalf of Zeman. Daily publication
+        sync runs via GitHub Actions. Expect occasional rough edges &mdash;
+        please <a href="mailto:zemanli@usc.edu">email me</a> if something looks off.
+      </p>
+      <p class="meta">
+        &copy; {{ site.time | date: "%Y" }} Zeman Li &middot;
+        <a href="{{ '/portal/' | relative_url }}" class="cipher" title="...">✦</a>
+        &middot; built with <a href="https://jekyllrb.com" rel="noopener">Jekyll</a>
+      </p>
     </footer>
   </main>
+
+  <script src="{{ '/assets/js/site.js' | relative_url }}" defer></script>
 </body>
 </html>

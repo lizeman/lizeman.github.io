@@ -2,6 +2,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ page.title }} &middot; {{ site.title }}</title>
 <meta name="description" content="{{ site.description }}">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
 <link rel="canonical" href="{{ page.url | absolute_url }}">
 {%- feed_meta -%}
@@ -11,4 +16,8 @@
 <script defer data-domain="{{ site.analytics.domain }}" src="{{ site.analytics.script_src | default: 'https://plausible.io/js/script.js' }}"></script>
 {%- elsif site.analytics.provider == "umami" and site.analytics.website_id -%}
 <script defer data-website-id="{{ site.analytics.website_id }}" src="{{ site.analytics.script_src }}"></script>
+{%- endif -%}
+
+{%- if site.goatcounter_code -%}
+<script data-goatcounter="https://{{ site.goatcounter_code }}.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 {%- endif -%}

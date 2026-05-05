@@ -1,6 +1,9 @@
 <h2>News</h2>
-<ul>
+<ul class="news-list">
 {% for item in site.data.news %}
-  <li><strong>{{ item.date }}</strong> — {{ item.text }}</li>
+  <li data-reveal>
+    <span class="cv-when">{{ item.date }}</span>
+    <span class="cv-what">{{ item.text }}</span>
+  </li>
 {% endfor %}
 </ul>

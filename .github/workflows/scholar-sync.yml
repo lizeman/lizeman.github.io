@@ -3,10 +3,14 @@ name: scholar-sync
 on:
   schedule:
     - cron: "0 7 * * *"   # daily at 07:00 UTC
-  workflow_dispatch:       # allow manual trigger
+  workflow_dispatch: {}    # allow manual trigger
 
 permissions:
   contents: write
+
+concurrency:
+  group: scholar-sync
+  cancel-in-progress: false
 
 jobs:
   sync:
@@ -23,19 +27,26 @@ jobs:
       - name: Install dependencies
         run: pip install -r scripts/requirements.txt
 
-      - name: Fetch publications (Semantic Scholar API)
+      - name: Fetch publications + coauthors (Semantic Scholar)
         env:
           SEMANTIC_SCHOLAR_AUTHOR_ID: "2000315380"
+          SCHOLAR_ID: "3cHbgQQAAAAJ"
         run: python scripts/fetch_scholar.py
 
-      - name: Commit changes if any
+      - name: Show changes (for the workflow log)
         run: |
-          if git diff --quiet _data/publications.yml; then
-            echo "No changes to publications.yml"
+          echo "::group::diff"
+          git diff --stat _data/publications.yml _data/coauthors.yml || true
+          echo "::endgroup::"
+
+      - name: Commit and push if there are changes
+        run: |
+          if git diff --quiet _data/publications.yml _data/coauthors.yml; then
+            echo "No changes to publications.yml or coauthors.yml."
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add _data/publications.yml
+          git add _data/publications.yml _data/coauthors.yml
           git commit -m "chore: scholar sync"
           git push

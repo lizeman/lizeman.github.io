@@ -1,0 +1,65 @@
+name: build-check
+
+# Sanity-checks every push to main:
+#  - Jekyll site builds without errors (using the github-pages gem)
+#  - publication YAML is parseable and shape-correct (full-name authors)
+#  - the homepage actually contains the expected anchors after build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: true
+
+      - name: Build site
+        run: bundle exec jekyll build --strict_front_matter --trace
+
+      - name: Verify built homepage has anchors and game pages exist
+        run: |
+          set -e
+          test -f _site/index.html
+          for anchor in 'id="bio"' 'id="news"' 'id="publications"' 'id="vita"'; do
+            grep -q "$anchor" _site/index.html || { echo "missing $anchor"; exit 1; }
+          done
+          test -f _site/portal/index.html
+          test -f _site/typing/index.html
+          test -f _site/beaver/index.html
+          grep -q "Busy Beaver" _site/beaver/index.html
+          grep -q "WPM" _site/typing/index.html
+          grep -q "Visiting from" _site/index.html
+          grep -q "ipapi.co" _site/index.html
+          grep -q "prefers-reduced-motion" _site/assets/css/main.css
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Validate publications shape
+        run: |
+          python - <<'PY'
+          import yaml, sys, pathlib
+          d = yaml.safe_load(pathlib.Path("_data/publications.yml").read_text())
+          assert isinstance(d, list) and d, "publications.yml empty"
+          for p in d:
+              assert "title" in p and p["title"], "missing title"
+              assert isinstance(p.get("authors"), list), f"authors not list: {p['title']}"
+              assert any(" " in (a.get("name") or "") for a in p["authors"]), \
+                  f"no full-name author in {p['title']}"
+              assert any(a.get("is_self") for a in p["authors"]), \
+                  f"no is_self author in {p['title']}"
+          print(f"OK — {len(d)} publications validated.")
+          PY

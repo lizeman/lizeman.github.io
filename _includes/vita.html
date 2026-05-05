@@ -1,13 +1,34 @@
 <h2>Vita</h2>
+
 <h3>Education</h3>
-<ul>
+<ul class="cv-list">
 {% for ed in site.data.cv.education %}
-  <li>{{ ed.degree }}, {{ ed.school }} ({{ ed.year }})</li>
+  <li data-reveal>
+    <span class="cv-when">{{ ed.years }}</span>
+    <span class="cv-what">
+      {{ ed.degree }}, <em>{{ ed.school }}</em>
+      {%- if ed.advisor %}<br/><span class="cv-sub">Advisor:
+        {%- if ed.advisor_url %} <a href="{{ ed.advisor_url }}" rel="noopener" target="_blank">{{ ed.advisor }}</a>
+        {%- else %} {{ ed.advisor }}
+        {%- endif -%}
+      </span>{% endif %}
+    </span>
+  </li>
 {% endfor %}
 </ul>
+
 <h3>Awards</h3>
-<ul>
+<ul class="cv-list">
 {% for a in site.data.cv.awards %}
-  <li>{{ a.year }} — {{ a.text }}</li>
+  <li data-reveal>
+    <span class="cv-when">{{ a.year }}</span>
+    <span class="cv-what">
+      {%- if a.link -%}
+        <a href="{{ a.link }}" rel="noopener" target="_blank">{{ a.text }}</a>
+      {%- else -%}
+        {{ a.text }}
+      {%- endif -%}
+    </span>
+  </li>
 {% endfor %}
 </ul>

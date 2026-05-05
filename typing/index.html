@@ -1,0 +1,128 @@
+---
+layout: game
+title: Typing Trial
+permalink: /typing/
+game: typing
+game_script: /assets/js/typing.js
+---
+
+<style>
+  .typing-card {
+    max-width: 720px; margin: 1.5rem auto 0;
+    padding: 1.6rem 1.8rem 2rem;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    box-shadow: 0 8px 28px -18px rgba(0,0,0,0.35);
+  }
+  .typing-card h1 {
+    font-family: var(--display); font-weight: 700;
+    font-size: 1.6rem; margin: 0 0 0.4rem;
+  }
+  .typing-card .sub {
+    margin: 0 0 1.4rem; color: var(--muted); font-size: 0.95rem;
+  }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.8rem;
+    margin: 0 0 1rem;
+  }
+  .stat {
+    text-align: center;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 0.6rem 0.4rem;
+    background: var(--bg);
+  }
+  .stat .v {
+    font-family: var(--display); font-weight: 700; font-size: 1.4rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+  }
+  .stat .l {
+    font-family: var(--sans); font-size: 0.72rem;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--soft);
+  }
+  #typing-passage {
+    font-family: "Charter", Georgia, serif;
+    font-size: 1.18rem;
+    line-height: 1.7;
+    padding: 1.1rem 1.2rem;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: var(--bg);
+    user-select: none;
+    cursor: text;
+  }
+  #typing-passage .ch { color: var(--soft); transition: color 0.12s var(--ease); }
+  #typing-passage .ch.ok { color: var(--text); }
+  #typing-passage .ch.err {
+    color: var(--accent);
+    background: var(--accent-soft);
+    border-radius: 2px;
+  }
+  #typing-passage .ch.cur {
+    background: var(--text);
+    color: var(--bg);
+    border-radius: 2px;
+  }
+  #typing-input {
+    position: absolute; left: -10000px; top: -10000px;
+  }
+  .typing-controls {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+  }
+  .typing-controls button {
+    font-family: var(--sans); font-size: 0.85rem;
+    padding: 0.45rem 0.9rem;
+    border: 1px solid var(--rule);
+    background: var(--bg);
+    color: var(--text);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
+  }
+  .typing-controls button:hover { border-color: var(--accent); color: var(--accent); }
+  .typing-result {
+    margin-top: 1rem;
+    padding: 1rem;
+    border: 1px dashed var(--accent);
+    border-radius: 6px;
+    background: rgba(184, 92, 56, 0.05);
+    display: none;
+  }
+  .typing-result.show { display: block; }
+  .typing-result h3 {
+    margin: 0 0 0.4rem; font-family: var(--display); font-weight: 700;
+  }
+</style>
+
+<div class="typing-card" data-reveal>
+  <h1>Typing Trial</h1>
+  <p class="sub">Type the passage below. Click anywhere on it to start.</p>
+
+  <div class="stats">
+    <div class="stat"><div class="v" id="t-wpm">0</div><div class="l">WPM</div></div>
+    <div class="stat"><div class="v" id="t-acc">100%</div><div class="l">accuracy</div></div>
+    <div class="stat"><div class="v" id="t-time">0.0s</div><div class="l">elapsed</div></div>
+  </div>
+
+  <div id="typing-passage" tabindex="0" aria-label="Typing passage"></div>
+  <input id="typing-input" type="text" autocomplete="off" autocorrect="off" spellcheck="false" />
+
+  <div class="typing-controls">
+    <button id="t-new">New passage</button>
+    <button id="t-reset">Reset</button>
+    <span style="font-size:0.82rem;color:var(--soft)">Esc to abandon</span>
+  </div>
+
+  <div class="typing-result" id="t-result">
+    <h3>Done.</h3>
+    <p id="t-final"></p>
+  </div>
+</div>

@@ -19,6 +19,10 @@ analytics:
   domain: lizeman.github.io
   script_src: https://plausible.io/js/script.js
 
+# GoatCounter slug (sign up at goatcounter.com → your URL becomes
+# https://<slug>.goatcounter.com). Leave empty to disable.
+goatcounter_code: lizeman
+
 markdown: kramdown
 permalink: /:title/
 

@@ -266,7 +266,18 @@ Two standalone pages, **not linked from the homepage nav** (the user must know t
    - Visualization: tape as a row of cells with the read-write head highlighted; below the tape, the current state and transition table with the firing row pulsing each step.
    - Vanilla `<canvas>` + JS, no deps. Falls back to a static image if `prefers-reduced-motion: reduce`.
 
-Discoverability: a tiny "✦" link in the footer goes to `/typing/`; the Konami code or `Shift+B` keystroke on the homepage navigates to `/beaver/`. Both pages have a `← back` link to `/`.
+### H. Entry portal (gate the games behind a riddle)
+A `/portal/` page guarding the games. Visitors land on the portal via a tiny "✦" cipher dot in the footer (no other discovery hint). The portal asks a sequence of three short riddles:
+
+1. **Math/CS riddle** — "I have N states, 2 symbols, and write the most 1s before halting. What am I?" (answer: `busy beaver` / `bb`).
+2. **Personal riddle** — "What is my advisor's last name?" (answer: `razaviyayn` — case-insensitive, ignore diacritics).
+3. **Meta riddle** — "How many letters in 李泽慢?" (answer: `3`).
+
+On a correct sequence, the portal sets `localStorage.unlocked = true` and reveals two doors: 🪜 *Typing Trial* and ⚙️ *Busy Beaver*. On wrong answers, gentle hint after 3 tries. Once unlocked, the cipher dot in the footer turns into "✦ unlocked" and links straight to a small games index.
+
+Hidden discovery shortcuts also work: Konami code anywhere on the homepage triggers `/portal/`, and `?key=lizeman` query string unlocks immediately (for the user himself).
+
+Discoverability of the games once unlocked: the portal links to `/typing/` and `/beaver/`; both pages have a `← back` link to `/portal/`.
 
 ## v2 Critical Files (cont.)
 - `typing/index.html` (Jekyll page) + `assets/js/typing.js` + small CSS scoped via `body.game-typing`.
@@ -276,12 +287,14 @@ Discoverability: a tiny "✦" link in the footer goes to `/typing/`; the Konami 
 ## v2 Verification (extended)
 9. `https://lizeman.github.io/typing/` returns HTTP 200 and the response body contains both `WPM` and a `<script` referencing typing logic.
 10. `https://lizeman.github.io/beaver/` returns HTTP 200 and contains both `Busy Beaver` and a `<canvas` element.
+11. `https://lizeman.github.io/portal/` returns HTTP 200 and contains a riddle prompt + an input field. Footer of homepage contains a "✦" link pointing to `/portal/`.
 
 ## v2 Progress Log
-- [ ] A. Publication enrichment (SS-primary, full names + links, venue overrides)
+- [x] A. Publication enrichment (SS-primary, full names + links, venue overrides)
 - [ ] B. Awards / education fix
 - [ ] C. Visual upgrade (type, accent, dividers, drop-cap, photo)
 - [ ] D. Animation (load stagger, section reveal, hover, reduced-motion)
 - [ ] E. Visitor widget (ipapi.co + localStorage + GoatCounter)
-- [ ] F. Daily automation (coauthors.yml)
+- [x] F. Daily automation (coauthors.yml — done in Step A's fetcher)
 - [ ] G. Hidden games (typing test + Busy Beaver)
+- [ ] H. Entry portal (riddle gate)

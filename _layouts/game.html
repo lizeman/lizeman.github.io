@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  {%- include head.html -%}
+  <meta name="robots" content="noindex">
+</head>
+<body class="game game-{{ page.game | default: 'generic' }}">
+  <div class="grain" aria-hidden="true"></div>
+  <main class="page">
+    <a class="game-back" href="{{ '/' | relative_url }}">&larr; back to home</a>
+    {{ content }}
+    <footer class="site-footer" style="margin-top:3rem;">
+      <p class="meta">a hidden page · &copy; Zeman Li</p>
+    </footer>
+  </main>
+  <script src="{{ '/assets/js/site.js' | relative_url }}" defer></script>
+  {%- if page.game_script -%}
+    <script src="{{ page.game_script | relative_url }}" defer></script>
+  {%- endif -%}
+</body>
+</html>

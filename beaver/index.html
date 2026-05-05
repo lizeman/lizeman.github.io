@@ -1,0 +1,125 @@
+---
+layout: game
+title: Busy Beaver
+permalink: /beaver/
+game: beaver
+game_script: /assets/js/beaver.js
+---
+
+<style>
+  .beaver-card {
+    max-width: 760px; margin: 1.5rem auto 0;
+    padding: 1.6rem 1.8rem 2rem;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    box-shadow: 0 8px 28px -18px rgba(0,0,0,0.35);
+  }
+  .beaver-card h1 {
+    font-family: var(--display); font-weight: 700;
+    font-size: 1.6rem; margin: 0 0 0.4rem;
+  }
+  .beaver-card .sub {
+    margin: 0 0 1.4rem; color: var(--muted); font-size: 0.95rem;
+  }
+  .bb-controls {
+    display: flex; flex-wrap: wrap; gap: 0.6rem;
+    align-items: center; margin: 0.6rem 0 1rem;
+    font-family: var(--sans); font-size: 0.85rem;
+  }
+  .bb-controls select, .bb-controls button {
+    font-family: var(--sans); font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+    border: 1px solid var(--rule);
+    background: var(--bg);
+    color: var(--text);
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .bb-controls button:hover, .bb-controls select:hover {
+    border-color: var(--accent); color: var(--accent);
+  }
+  .bb-controls input[type=range] { width: 130px; vertical-align: middle; }
+  #bb-canvas {
+    width: 100%; height: 110px;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: var(--bg);
+    display: block;
+  }
+  .bb-info {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.8rem;
+    margin: 0.8rem 0 1rem;
+  }
+  .bb-info .stat { text-align: center; padding: 0.5rem; border:1px solid var(--rule); border-radius:6px; background: var(--bg);}
+  .bb-info .stat .v { font-family: var(--display); font-weight:700; font-size:1.2rem; font-variant-numeric: tabular-nums; }
+  .bb-info .stat .l { font-family: var(--sans); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color: var(--soft); }
+  .bb-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-size: 0.88rem;
+    margin-top: 0.5rem;
+  }
+  .bb-table th, .bb-table td {
+    padding: 0.4rem 0.6rem;
+    text-align: center;
+    border-bottom: 1px solid var(--rule);
+  }
+  .bb-table th {
+    font-family: var(--sans); font-size: 0.72rem;
+    text-transform: uppercase; letter-spacing: 0.1em; color: var(--soft);
+    font-weight: 500;
+  }
+  .bb-table tr.firing { background: var(--accent-soft); }
+  .bb-table tr.firing td { color: var(--accent); font-weight: 600; }
+  .bb-note { font-size: 0.82rem; color: var(--soft); margin-top: 1rem; line-height: 1.5; }
+</style>
+
+<div class="beaver-card" data-reveal>
+  <h1>Busy Beaver</h1>
+  <p class="sub">
+    The <em>busy beaver function</em> Σ(n) is the maximum number of 1s an
+    n-state, 2-symbol Turing machine can write before halting. It grows
+    faster than any computable function — but for small n we know the
+    champions exactly. Watch them run.
+  </p>
+
+  <div class="bb-controls">
+    <label>Machine
+      <select id="bb-machine">
+        <option value="bb2">BB(2) — 4 ones, 6 steps</option>
+        <option value="bb3" selected>BB(3) — 6 ones, 14 steps</option>
+        <option value="bb4">BB(4) — 13 ones, 107 steps</option>
+      </select>
+    </label>
+    <button id="bb-play">▶ play</button>
+    <button id="bb-step">step</button>
+    <button id="bb-reset">reset</button>
+    <label>speed
+      <input id="bb-speed" type="range" min="0" max="3" step="0.1" value="1.5" />
+    </label>
+  </div>
+
+  <canvas id="bb-canvas" width="1520" height="220" aria-label="Tape visualization"></canvas>
+
+  <div class="bb-info">
+    <div class="stat"><div class="v" id="bb-state">A</div><div class="l">state</div></div>
+    <div class="stat"><div class="v" id="bb-steps">0</div><div class="l">step</div></div>
+    <div class="stat"><div class="v" id="bb-ones">0</div><div class="l">ones written</div></div>
+  </div>
+
+  <table class="bb-table" id="bb-table">
+    <thead>
+      <tr><th>state</th><th>read 0 → write,move,next</th><th>read 1 → write,move,next</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <p class="bb-note">
+    Champions per Aaronson&rsquo;s notes (2020) and the Wikipedia BB pages.
+    <em>H</em> denotes the halt state.
+  </p>
+</div>
