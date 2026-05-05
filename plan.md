@@ -158,3 +158,103 @@ The completion criterion as written says "publications.yml has at least 5 entrie
 - (Optional) revisit Google Scholar scraping with a proxy / SerpAPI if you want strict GS-source fidelity.
 - (Optional) install Ruby 3.x via Homebrew so local `bundle exec jekyll serve` works.
 - (Optional) custom domain (e.g. `zeman.li`) via CNAME file.
+
+---
+
+# v2 — Polish, Animation & Visitor Tracker (started 2026-05-05)
+
+## Why
+The v1 site is live but feels too plain. Goals for v2:
+- **Fancy minimalist** with strong artistic taste — refined typography, restrained accent color, motion that feels intentional, not gimmicky.
+- **Publications with full author names**, each linked automatically to that author's homepage / Scholar / Semantic Scholar profile. No hand-curation of authors.
+- **Awards & education**: fill in years, polish copy, fix the empty fields in `_data/cv.yml`.
+- **Visible visitor location widget** on the page (city/country + visit count), privacy-respecting.
+- **More motion** throughout (load stagger, scroll reveals, hover micro-interactions) — gracefully disabled under `prefers-reduced-motion`.
+- **All driven by automation** + the existing daily GitHub Actions cron.
+
+## v2 Tech & Design Decisions
+
+### A. Publication enrichment (purely automatic)
+- **Switch primary fetch source to Semantic Scholar** (`semantic_scholar_author_id: 2000315380`). Google Scholar HTML returns abbreviated initials only ("Z Li"); SS returns full names + per-author URLs / IDs. Keep the GS fallback path commented in `fetch_scholar.py` as a backup.
+- Per paper, request `fields=authors.name,authors.url,authors.externalIds,authors.authorId,...`. Each `_data/publications.yml` entry becomes:
+  ```yaml
+  - title: "..."
+    authors:
+      - name: "Aliasgar Behrouz"
+        url: "https://www.semanticscholar.org/author/2310524"
+      - name: "Zeman Li"
+        url: "https://www.semanticscholar.org/author/2000315380"
+    venue: "ICLR 2026 (Spotlight)"
+    year: "2026"
+    url: "https://arxiv.org/abs/2511.07343"
+  ```
+- Liquid template iterates `paper.authors`, rendering `<a href="{{ a.url }}" rel="noopener">{{ a.name }}</a>` joined by `, ` with no link / `<strong>` for Zeman.
+- **Venue prettification**: maintain `_data/venue_overrides.yml` keyed by arxiv id → e.g. `"2511.07343": "ICLR 2026 (Spotlight)"`. Loader applies override when arxiv id matches; otherwise keep SS `venue` field.
+
+### B. Awards / Education content fix
+- Fill years: USC Ph.D. 2023–present (Viterbi Fellowship 2023), GT B.S. CompE 2021–2023, Emory B.S. Math 2017–2021. SIMIODE 2020 (best inferred year).
+- Consistent en-dash style (`2017–2021`).
+- Add `link` field per award where applicable.
+- Improve bio copy: tighter opening sentence, add one line about current research focus.
+
+### C. Visual upgrade
+- Type pairing: keep Charter for body, add **Fraunces** (variable serif) at 700–900 weight for the display name + section labels (loaded async from Google Fonts with `font-display:swap`).
+- Accent color: introduce `--accent: #b85c38` (warm sienna). Used for hover underline, "active" anchor nav, drop-cap, and visitor counter dot.
+- Subtle background: low-opacity SVG grain texture inlined as a data URI (`opacity: 0.03`).
+- Section dividers: thin centered SVG asterism (`✦`) instead of plain border-bottom.
+- Drop cap on first paragraph of bio (CSS `::first-letter`, Fraunces, accent color).
+- Profile photo: 112 px, 1 px ring with subtle glow on hover.
+
+### D. Animation (vanilla — zero JS frameworks)
+- **Pure CSS + IntersectionObserver**. No Motion One, no GSAP — keep dependencies at zero.
+- On load: hero name letters fade-up stagger (50 ms each via `animation-delay: calc(var(--i) * 50ms)`); tagline fades after 400 ms; profile photo scales 0.95→1.
+- Anchor nav: smooth-scroll, current section highlighted by IO observer (adds `.active` class).
+- Sections: fade + 8 px translateY on first scroll into view (`[data-reveal]` attribute, IO toggles `.in-view`).
+- Publications: stagger fade-in (40 ms apart) when section enters viewport.
+- Hover: publication entry shifts 4 px right with subtle shadow; coauthor links underline animates in via `background-size` trick.
+- Honor `@media (prefers-reduced-motion: reduce)` — disable transforms, keep opacity transitions only.
+
+### E. Visitor location widget (visible on the page)
+- Footer block:
+  > Visiting from **<city>, <country>** · your visit #N · site visits today: M
+- **City/country**: client-side fetch `https://ipapi.co/json/` (1000 req/day free, no key). Result cached in `localStorage.ipapi_v1` for 24 h. Failure → "—".
+- **Per-user visit count**: simple `localStorage.visit_count` increment on each load.
+- **Site-wide aggregate**: **GoatCounter** (free, privacy-friendly, public stats endpoint). Add `<script data-goatcounter="https://lizeman.goatcounter.com/count" async src="//gc.zgo.at/count.js">`. Fetch total via `https://lizeman.goatcounter.com/counter//TOTAL.json` — if the user hasn't yet signed up, that endpoint 404s and we degrade gracefully to "—".
+- Privacy disclosure: small footnote — "City inferred client-side from your IP via ipapi.co; nothing is logged on this site. Aggregate counts via GoatCounter — no cookies, no IPs."
+
+### F. Daily automation extension
+- Existing `.github/workflows/scholar-sync.yml` keeps running daily.
+- Extend `fetch_scholar.py` to also write `_data/coauthors.yml` (deduplicated `authorId → {name, url}` map) for any future cross-references.
+- Workflow continues to `git diff --quiet || commit && push`.
+
+## v2 Critical Files
+- `scripts/fetch_scholar.py` — switch to SS-primary, embed authors as list of `{name, url}`, apply venue overrides, write coauthors.
+- `_data/venue_overrides.yml` — new, hand-curated arxiv id → venue.
+- `_includes/publications.html` — render with linked author names.
+- `_includes/visitor.html` — new, IP/location footer widget.
+- `_data/cv.yml` — fill years, polish copy, add links.
+- `_data/news.yml` — copy polish, more specific dates.
+- `_includes/bio.html` — drop-cap on first paragraph, tighter copy.
+- `_layouts/default.html` — hero animation markup, section reveal hooks, footer slot for visitor widget.
+- `_includes/head.html` — add Fraunces font link, GoatCounter script.
+- `assets/css/main.css` — typography pairing, accent color, animations, reduced-motion.
+- `assets/js/site.js` — new, IntersectionObserver reveal + visitor widget logic.
+- `_config.yml` — add `goatcounter_code: lizeman`.
+
+## v2 Verification (completion criteria for ralph)
+1. `_data/publications.yml` first paper's `authors:` is a YAML list of objects, each with `name` (full, contains a space, e.g. "Zeman Li" not "Z Li") and `url`. At least one author other than Zeman Li per paper.
+2. Rendered https://lizeman.github.io HTML contains `<a href` inside the publications list pointing to a `semanticscholar.org/author` URL.
+3. Rendered HTML contains a footer element with text matching `Visiting from` (case-insensitive).
+4. Rendered HTML contains both a `<script` referencing `ipapi.co` and a `prefers-reduced-motion` rule in the loaded stylesheet.
+5. `_data/cv.yml`: every entry under `awards` has a non-empty `year`, every entry under `education` has a non-empty `years` (or `year`).
+6. `_data/venue_overrides.yml` exists with at least 5 arxiv-id → venue entries, and the venues actually appear (not "arXiv preprint") in the rendered publications HTML for those papers.
+7. Latest commit pushed to `main`; HTTP 200 at https://lizeman.github.io and the page visibly contains `id="bio"`, `id="news"`, `id="publications"`, `id="vita"` anchors.
+8. plan.md "v2 Progress Log" shows ✅ for every item.
+
+## v2 Progress Log
+- [ ] A. Publication enrichment (SS-primary, full names + links, venue overrides)
+- [ ] B. Awards / education fix
+- [ ] C. Visual upgrade (type, accent, dividers, drop-cap, photo)
+- [ ] D. Animation (load stagger, section reveal, hover, reduced-motion)
+- [ ] E. Visitor widget (ipapi.co + localStorage + GoatCounter)
+- [ ] F. Daily automation (coauthors.yml)
