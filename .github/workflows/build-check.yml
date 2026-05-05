@@ -39,7 +39,11 @@ jobs:
           test -f _site/typing/index.html
           test -f _site/beaver/index.html
           grep -q "Busy Beaver" _site/beaver/index.html
+          grep -q "state diagram" _site/beaver/index.html
+          grep -q "mini-map" _site/beaver/index.html
           grep -q "WPM" _site/typing/index.html
+          grep -q "personal best" _site/typing/index.html
+          grep -qi ">mode<\|length<" _site/typing/index.html
           grep -q "Visiting from" _site/index.html
           grep -q "ipapi.co" _site/index.html
           grep -q "prefers-reduced-motion" _site/assets/css/main.css

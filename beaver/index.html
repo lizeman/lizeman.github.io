@@ -8,7 +8,7 @@ game_script: /assets/js/beaver.js
 
 <style>
   .beaver-card {
-    max-width: 760px; margin: 1.5rem auto 0;
+    max-width: 820px; margin: 1.5rem auto 0;
     padding: 1.6rem 1.8rem 2rem;
     background: var(--paper);
     border: 1px solid var(--rule);
@@ -20,8 +20,34 @@ game_script: /assets/js/beaver.js
     font-size: 1.6rem; margin: 0 0 0.4rem;
   }
   .beaver-card .sub {
-    margin: 0 0 1.4rem; color: var(--muted); font-size: 0.95rem;
+    margin: 0 0 1rem; color: var(--muted); font-size: 0.95rem;
   }
+
+  /* expandable explanation */
+  .bb-explain {
+    margin: 0 0 1rem;
+    border: 1px dashed var(--rule);
+    border-radius: 6px;
+    background: var(--bg);
+  }
+  .bb-explain summary {
+    cursor: pointer;
+    padding: 0.55rem 0.85rem;
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    color: var(--accent);
+    list-style: none;
+  }
+  .bb-explain summary::-webkit-details-marker { display: none; }
+  .bb-explain[open] summary { color: var(--text); }
+  .bb-explain .body {
+    padding: 0 0.95rem 0.85rem;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+  .bb-explain .body p { margin: 0.4rem 0; }
+
   .bb-controls {
     display: flex; flex-wrap: wrap; gap: 0.6rem;
     align-items: center; margin: 0.6rem 0 1rem;
@@ -35,33 +61,124 @@ game_script: /assets/js/beaver.js
     color: var(--text);
     border-radius: 4px;
     cursor: pointer;
+    transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
   }
   .bb-controls button:hover, .bb-controls select:hover {
     border-color: var(--accent); color: var(--accent);
   }
-  .bb-controls input[type=range] { width: 130px; vertical-align: middle; }
-  #bb-canvas {
-    width: 100%; height: 110px;
+  .bb-controls button[disabled] {
+    opacity: 0.4; cursor: not-allowed;
+  }
+  .speed-pills { display: inline-flex; gap: 0.25rem; }
+  .speed-pills button {
+    padding: 0.32rem 0.6rem;
+    border-radius: 999px;
+    color: var(--muted);
+  }
+  .speed-pills button.on {
+    background: var(--accent); color: white; border-color: var(--accent);
+  }
+
+  .bb-stage {
+    position: relative;
     border: 1px solid var(--rule);
     border-radius: 6px;
     background: var(--bg);
+    overflow: hidden;
+    padding: 1rem 0 0.6rem;
+  }
+  #bb-tape {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 42px;
+    position: relative;
+    user-select: none;
+  }
+  #bb-tape .cell {
+    width: 30px; height: 30px;
+    margin: 0 1px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    color: var(--text);
+    border-radius: 3px;
+    transition: background-color 0.4s var(--ease), color 0.3s var(--ease);
+  }
+  #bb-tape .cell.one { background: var(--text); color: var(--paper); }
+  #bb-tape .cell.zero { background: var(--paper); color: var(--soft); }
+  #bb-head {
+    position: absolute;
+    top: 4px;
+    width: 32px; height: 38px;
+    border: 2px solid var(--accent);
+    border-radius: 4px;
+    pointer-events: none;
+    transition: transform 0.18s var(--ease);
+    box-shadow: 0 0 0 4px rgba(184,92,56,0.12);
+  }
+  #bb-head::after {
+    content: "▼";
+    position: absolute;
+    top: -16px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--accent);
+    font-size: 0.85rem;
+  }
+  .head-meta {
+    text-align: center;
+    font-family: var(--sans); font-size: 0.78rem;
+    color: var(--soft);
+    margin-top: 0.4rem;
+  }
+
+  /* mini-map: a thin horizontal strip showing head trajectory over time */
+  #bb-minimap {
+    width: 100%;
+    height: 38px;
+    margin-top: 0.7rem;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    background: var(--bg);
     display: block;
   }
+  .mini-label {
+    font-family: var(--sans); font-size: 0.72rem;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    color: var(--soft);
+    margin-top: 0.6rem; margin-bottom: 0.25rem;
+    display: block;
+  }
+
   .bb-info {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 0.8rem;
-    margin: 0.8rem 0 1rem;
+    margin: 0.9rem 0 1rem;
   }
   .bb-info .stat { text-align: center; padding: 0.5rem; border:1px solid var(--rule); border-radius:6px; background: var(--bg);}
   .bb-info .stat .v { font-family: var(--display); font-weight:700; font-size:1.2rem; font-variant-numeric: tabular-nums; }
   .bb-info .stat .l { font-family: var(--sans); font-size:0.7rem; text-transform:uppercase; letter-spacing:0.1em; color: var(--soft); }
+
+  .bb-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 1rem;
+    align-items: start;
+  }
+  @media (max-width: 720px) {
+    .bb-grid { grid-template-columns: 1fr; }
+  }
+
   .bb-table {
     width: 100%;
     border-collapse: collapse;
     font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-    font-size: 0.88rem;
-    margin-top: 0.5rem;
+    font-size: 0.86rem;
   }
   .bb-table th, .bb-table td {
     padding: 0.4rem 0.6rem;
@@ -75,17 +192,94 @@ game_script: /assets/js/beaver.js
   }
   .bb-table tr.firing { background: var(--accent-soft); }
   .bb-table tr.firing td { color: var(--accent); font-weight: 600; }
+
+  /* state diagram */
+  #bb-diagram {
+    width: 100%;
+    height: 240px;
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    background: var(--bg);
+    display: block;
+  }
+  #bb-diagram .node circle { fill: var(--paper); stroke: var(--rule); stroke-width: 1.5; }
+  #bb-diagram .node text { font-family: var(--display); font-size: 14px; fill: var(--text); }
+  #bb-diagram .node.current circle { stroke: var(--accent); stroke-width: 2; fill: var(--accent-soft); }
+  #bb-diagram .node.halt circle { fill: var(--rule); }
+  #bb-diagram .edge { stroke: var(--rule); fill: none; stroke-width: 1.2; }
+  #bb-diagram .edge.firing { stroke: var(--accent); stroke-width: 2; }
+  #bb-diagram .edge-label { font-family: ui-monospace, monospace; font-size: 9.5px; fill: var(--muted); }
+  #bb-diagram .edge-label.firing { fill: var(--accent); font-weight: 600; }
+  #bb-diagram .arrowhead { fill: var(--rule); }
+  #bb-diagram .arrowhead.firing { fill: var(--accent); }
+
+  .bb-summary {
+    margin-top: 1rem;
+    padding: 0.8rem 1rem;
+    border: 1px dashed var(--accent);
+    border-radius: 6px;
+    background: rgba(184,92,56,0.04);
+    font-family: var(--sans); font-size: 0.88rem;
+    color: var(--text);
+    display: none;
+  }
+  .bb-summary.show { display: block; }
+
+  .bb-keys {
+    margin-top: 0.8rem;
+    font-family: var(--sans); font-size: 0.78rem;
+    color: var(--soft);
+    display: flex; flex-wrap: wrap; gap: 0.5rem 1rem;
+  }
+  .bb-keys kbd {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 0.78rem;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-bottom-width: 2px;
+    border-radius: 3px;
+    padding: 0.05em 0.4em;
+    color: var(--muted);
+  }
   .bb-note { font-size: 0.82rem; color: var(--soft); margin-top: 1rem; line-height: 1.5; }
+
+  @media (prefers-reduced-motion: reduce) {
+    #bb-head { transition: none; }
+    #bb-tape .cell { transition: none; }
+  }
 </style>
 
 <div class="beaver-card" data-reveal>
   <h1>Busy Beaver</h1>
   <p class="sub">
     The <em>busy beaver function</em> Σ(n) is the maximum number of 1s an
-    n-state, 2-symbol Turing machine can write before halting. It grows
-    faster than any computable function — but for small n we know the
-    champions exactly. Watch them run.
+    n-state, 2-symbol Turing machine can write before halting. Watch the
+    known champions run.
   </p>
+
+  <details class="bb-explain">
+    <summary>What is a busy beaver, and why is Σ uncomputable?</summary>
+    <div class="body">
+      <p>
+        A busy beaver of order <code>n</code> is the n-state, 2-symbol Turing
+        machine that runs the longest before halting on a blank tape. The
+        function Σ(n) records the maximum number of <code>1</code>s such a
+        machine can leave behind.
+      </p>
+      <p>
+        Σ grows faster than any computable function — if you could compute it,
+        you could solve the halting problem. So while we know
+        <code>Σ(2) = 4</code>, <code>Σ(3) = 6</code>, <code>Σ(4) = 13</code>,
+        and (since 2024) <code>Σ(5) = 4098</code>, every step beyond is a
+        frontier where <em>finitely many</em> machines hide an infinity of
+        questions.
+      </p>
+      <p>
+        Reference: Scott Aaronson, &ldquo;The Busy Beaver Frontier&rdquo;
+        (2020).
+      </p>
+    </div>
+  </details>
 
   <div class="bb-controls">
     <label>Machine
@@ -96,14 +290,26 @@ game_script: /assets/js/beaver.js
       </select>
     </label>
     <button id="bb-play">▶ play</button>
-    <button id="bb-step">step</button>
+    <button id="bb-back" title="step back">◀</button>
+    <button id="bb-step" title="step forward">step ▶</button>
     <button id="bb-reset">reset</button>
-    <label>speed
-      <input id="bb-speed" type="range" min="0" max="3" step="0.1" value="1.5" />
-    </label>
+    <span class="speed-pills" id="bb-speed">
+      <button data-speed="slow">slow</button>
+      <button data-speed="medium" class="on">med</button>
+      <button data-speed="fast">fast</button>
+      <button data-speed="blitz">blitz</button>
+      <button data-speed="max">max</button>
+    </span>
   </div>
 
-  <canvas id="bb-canvas" width="1520" height="220" aria-label="Tape visualization"></canvas>
+  <div class="bb-stage">
+    <div id="bb-tape"></div>
+    <div id="bb-head"></div>
+    <p class="head-meta" id="bb-head-meta">head @ 0</p>
+  </div>
+
+  <span class="mini-label">trajectory mini-map</span>
+  <canvas id="bb-minimap" width="1600" height="76"></canvas>
 
   <div class="bb-info">
     <div class="stat"><div class="v" id="bb-state">A</div><div class="l">state</div></div>
@@ -111,15 +317,32 @@ game_script: /assets/js/beaver.js
     <div class="stat"><div class="v" id="bb-ones">0</div><div class="l">ones written</div></div>
   </div>
 
-  <table class="bb-table" id="bb-table">
-    <thead>
-      <tr><th>state</th><th>read 0 → write,move,next</th><th>read 1 → write,move,next</th></tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+  <div class="bb-grid">
+    <table class="bb-table" id="bb-table">
+      <thead>
+        <tr><th>state</th><th>read 0 → write,move,next</th><th>read 1 → write,move,next</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <div>
+      <span class="mini-label">state diagram</span>
+      <svg id="bb-diagram" viewBox="0 0 360 240" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+  </div>
+
+  <div class="bb-summary" id="bb-summary"></div>
+
+  <div class="bb-keys">
+    <span><kbd>Space</kbd> play/pause</span>
+    <span><kbd>→</kbd> step forward</span>
+    <span><kbd>←</kbd> step back</span>
+    <span><kbd>R</kbd> reset</span>
+    <span><kbd>1-5</kbd> speed</span>
+  </div>
 
   <p class="bb-note">
-    Champions per Aaronson&rsquo;s notes (2020) and the Wikipedia BB pages.
-    <em>H</em> denotes the halt state.
+    Σ(2)=4, Σ(3)=6, Σ(4)=13 are the canonical champions. <em>H</em> denotes
+    the halt state. Coloring on the tape fades older writes toward neutral.
   </p>
 </div>

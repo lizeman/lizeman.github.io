@@ -301,6 +301,48 @@ Discoverability of the games once unlocked: the portal links to `/typing/` and `
 - [x] CI: build-check workflow validates anchors, game pages, full-name authors on every push; scholar-sync runs daily and on workflow_dispatch
 - [x] Disclaimer: footer credits Claude as the autonomous designer + maintainer
 
+---
+
+# v2.1 — Game upgrades (started 2026-05-05)
+
+## Why
+The hidden games shipped in v2 were minimal. v2.1 makes them substantial.
+
+## Typing Trial improvements
+- T1. Three length modes: short / medium / long (length budget per mode).
+- T2. Three categories: papers / classics / code, switchable independently.
+- T3. Blinking vertical caret (replaces inverse-block highlight on current char).
+- T4. Personal best WPM per (mode, category), persisted in localStorage; "new personal best" badge on the result panel.
+- T5. Sparkline of last-5-runs WPM next to the personal-best line (tiny SVG path).
+- T6. Top-5 most-missed keys on the result panel with counts.
+- T7. Pause/resume with Space (not while idle); timer halts cleanly.
+- T8. Mobile: hidden `<input>` with `inputmode="text"` and `autocapitalize="none"` keeps the soft keyboard up; passage scales for narrow viewports.
+- T9. Enter on the result panel starts a fresh run with the same mode + category.
+- T10. Result panel shows WPM, accuracy, elapsed, chars typed, mistakes, top-5 missed keys, and the new-PB badge.
+
+## Busy Beaver improvements
+- B1. Tape rendered as DOM cells with the head element transitioning smoothly between cells via CSS transform (snap under prefers-reduced-motion).
+- B2. Cell heat-fade: each `1` cell is colored by recency of its last write, fading darker → lighter as the simulation progresses.
+- B3. Trajectory mini-map (canvas) drawn under the tape, recording head position over time.
+- B4. Step-back ("◀") button replays the last up-to-200 steps using a snapshot ring buffer.
+- B5. Speed presets (slow / med / fast / blitz / max). "max" batches steps inside requestAnimationFrame for high throughput.
+- B6. Inline collapsible "What is a busy beaver, and why is Σ uncomputable?" details panel above the controls; references Aaronson 2020.
+- B7. SVG state-diagram side card with one node per state plus halt; current node highlighted; firing transition arc + label pulse in the accent color.
+- B8. Final summary card on halt: machine name, total steps, ones written, leftmost/rightmost cell visited.
+- B9. Keyboard shortcuts: Space play/pause, ←/→ step back/forward, R reset, 1-5 speed.
+- B10. (Skipped) BB(5) — long-running snapshot mode: deferred. The 4098-ones / 47M-step BB(5) winner does run in "max" mode but takes minutes; not yet packaged as a snapshot UX.
+
+## Cross-cutting
+- C1. build-check workflow now greps for `personal best`, `mode`/`length`, `state diagram`, and `mini-map` strings in the built game pages.
+- C2. Playground card descriptions on the homepage updated to mention the new features.
+- C3. plan.md (this section).
+
+## v2.1 Verification (live)
+- typing/ contains: `personal best`, `length` tabs, sparkline svg, mode tabs.
+- beaver/ contains: `state diagram`, `mini-map`, expandable explanation, speed pills.
+- build-check workflow run: success.
+- pages-build-deployment: success.
+
 ## v2 Final verification (2026-05-05)
 All 11 criteria empirically true:
 - HTTP 200 on /, /typing/, /beaver/, /portal/

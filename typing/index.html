@@ -8,7 +8,7 @@ game_script: /assets/js/typing.js
 
 <style>
   .typing-card {
-    max-width: 720px; margin: 1.5rem auto 0;
+    max-width: 760px; margin: 1.5rem auto 0;
     padding: 1.6rem 1.8rem 2rem;
     background: var(--paper);
     border: 1px solid var(--rule);
@@ -22,6 +22,58 @@ game_script: /assets/js/typing.js
   .typing-card .sub {
     margin: 0 0 1.4rem; color: var(--muted); font-size: 0.95rem;
   }
+
+  /* tabs row: mode (length) and category */
+  .typing-tabs {
+    display: flex; flex-wrap: wrap; gap: 1.2rem;
+    margin: 0 0 1rem;
+    font-family: var(--sans); font-size: 0.85rem;
+  }
+  .tabset { display: flex; gap: 0.4rem; align-items: center; }
+  .tabset .label {
+    font-size: 0.72rem; text-transform: uppercase;
+    letter-spacing: 0.1em; color: var(--soft); margin-right: 0.3rem;
+  }
+  .tabset button {
+    font-family: var(--sans); font-size: 0.8rem;
+    padding: 0.32rem 0.7rem;
+    border: 1px solid var(--rule);
+    background: var(--bg);
+    color: var(--muted);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: all 0.2s var(--ease);
+  }
+  .tabset button:hover { color: var(--accent); border-color: var(--accent); }
+  .tabset button.on {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+
+  .pb-row {
+    display: flex; align-items: center; gap: 0.8rem;
+    padding: 0.55rem 0.75rem;
+    margin: 0 0 0.9rem;
+    border: 1px dashed var(--rule);
+    border-radius: 6px;
+    background: var(--bg);
+    font-family: var(--sans); font-size: 0.82rem;
+    color: var(--muted);
+  }
+  .pb-row .pb-val {
+    font-family: var(--display); font-weight: 700;
+    font-size: 1.05rem; color: var(--text);
+    font-variant-numeric: tabular-nums;
+  }
+  .pb-row .pb-spark {
+    margin-left: auto;
+    height: 22px;
+    width: 110px;
+  }
+  .pb-row .pb-spark path { fill: none; stroke: var(--accent); stroke-width: 1.4; }
+  .pb-row .pb-spark .dot { fill: var(--accent); }
+
   .stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -45,36 +97,64 @@ game_script: /assets/js/typing.js
     text-transform: uppercase; letter-spacing: 0.1em;
     color: var(--soft);
   }
-  #typing-passage {
-    font-family: "Charter", Georgia, serif;
-    font-size: 1.18rem;
-    line-height: 1.7;
-    padding: 1.1rem 1.2rem;
+
+  /* passage with caret */
+  .passage-wrap {
+    position: relative;
     border: 1px solid var(--rule);
     border-radius: 6px;
     background: var(--bg);
+    padding: 1.1rem 1.2rem;
+    transition: border-color 0.3s var(--ease);
+  }
+  .passage-wrap.paused { border-color: var(--accent); }
+  #typing-passage {
+    font-family: "Charter", Georgia, serif;
+    font-size: 1.18rem;
+    line-height: 1.75;
     user-select: none;
     cursor: text;
+    position: relative;
   }
-  #typing-passage .ch { color: var(--soft); transition: color 0.12s var(--ease); }
+  #typing-passage .ch {
+    color: var(--soft);
+    transition: color 0.1s var(--ease);
+    position: relative;
+    white-space: pre;
+  }
   #typing-passage .ch.ok { color: var(--text); }
   #typing-passage .ch.err {
     color: var(--accent);
     background: var(--accent-soft);
     border-radius: 2px;
   }
-  #typing-passage .ch.cur {
-    background: var(--text);
-    color: var(--bg);
-    border-radius: 2px;
+  #typing-caret {
+    position: absolute;
+    width: 2px;
+    height: 1.45rem;
+    background: var(--accent);
+    transition: left 0.08s linear, top 0.08s linear, opacity 0.2s var(--ease);
+    animation: caretBlink 1.05s steps(2, start) infinite;
+    pointer-events: none;
+    z-index: 2;
+  }
+  @keyframes caretBlink { 50% { opacity: 0; } }
+  .passage-wrap.paused #typing-caret {
+    animation: none;
+    opacity: 0.35;
   }
   #typing-input {
-    position: absolute; left: -10000px; top: -10000px;
+    position: absolute; opacity: 0;
+    width: 1px; height: 1px;
+    padding: 0; border: 0;
+    transform: translate(-9999px, -9999px);
   }
+
   .typing-controls {
     margin-top: 1rem;
     display: flex;
-    gap: 0.6rem;
+    flex-wrap: wrap;
+    gap: 0.6rem 0.8rem;
     align-items: center;
   }
   .typing-controls button {
@@ -88,9 +168,24 @@ game_script: /assets/js/typing.js
     transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
   }
   .typing-controls button:hover { border-color: var(--accent); color: var(--accent); }
+  .typing-controls .hint {
+    font-size: 0.78rem; color: var(--soft);
+    margin-left: auto;
+  }
+  .typing-controls .hint kbd {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 0.78rem;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-bottom-width: 2px;
+    border-radius: 3px;
+    padding: 0.05em 0.4em;
+    color: var(--muted);
+  }
+
   .typing-result {
     margin-top: 1rem;
-    padding: 1rem;
+    padding: 1rem 1.2rem;
     border: 1px dashed var(--accent);
     border-radius: 6px;
     background: rgba(184, 92, 56, 0.05);
@@ -98,13 +193,85 @@ game_script: /assets/js/typing.js
   }
   .typing-result.show { display: block; }
   .typing-result h3 {
-    margin: 0 0 0.4rem; font-family: var(--display); font-weight: 700;
+    margin: 0 0 0.4rem;
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 1.15rem;
+  }
+  .typing-result .new-pb {
+    display: inline-block;
+    margin-left: 0.5em;
+    padding: 0.1em 0.6em;
+    background: var(--accent);
+    color: white;
+    border-radius: 999px;
+    font-family: var(--sans);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  .typing-result .summary {
+    font-family: var(--sans);
+    font-size: 0.92rem;
+    color: var(--muted);
+    margin: 0.2rem 0 0.6rem;
+  }
+  .typing-result .summary strong { color: var(--text); }
+  .typing-result .missed {
+    display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center;
+    margin-top: 0.4rem;
+    font-family: var(--sans); font-size: 0.8rem;
+    color: var(--soft);
+  }
+  .typing-result .missed kbd {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    padding: 0.1em 0.5em;
+    border-radius: 3px;
+    color: var(--text);
+  }
+  .typing-result .missed .count {
+    font-size: 0.72rem;
+    color: var(--soft);
+    margin-left: 0.15em;
+  }
+
+  @media (max-width: 600px) {
+    .typing-card { padding: 1.1rem 1rem 1.4rem; }
+    #typing-passage { font-size: 1.02rem; line-height: 1.7; }
+    .typing-tabs { flex-direction: column; gap: 0.5rem; }
   }
 </style>
 
 <div class="typing-card" data-reveal>
   <h1>Typing Trial</h1>
-  <p class="sub">Type the passage below. Click anywhere on it to start.</p>
+  <p class="sub">
+    Tap to focus, then type. Choose a length and a category — your personal best
+    saves automatically.
+  </p>
+
+  <div class="typing-tabs">
+    <div class="tabset" id="t-mode">
+      <span class="label">length</span>
+      <button data-mode="short">short</button>
+      <button data-mode="medium" class="on">medium</button>
+      <button data-mode="long">long</button>
+    </div>
+    <div class="tabset" id="t-cat">
+      <span class="label">category</span>
+      <button data-cat="papers" class="on">papers</button>
+      <button data-cat="classics">classics</button>
+      <button data-cat="code">code</button>
+    </div>
+  </div>
+
+  <div class="pb-row">
+    <span>personal best:</span>
+    <span class="pb-val" id="t-pb">— WPM</span>
+    <span style="font-size:0.78rem;color:var(--soft);">in this mode</span>
+    <svg class="pb-spark" id="t-spark" viewBox="0 0 110 22" aria-label="last 5 runs"></svg>
+  </div>
 
   <div class="stats">
     <div class="stat"><div class="v" id="t-wpm">0</div><div class="l">WPM</div></div>
@@ -112,17 +279,26 @@ game_script: /assets/js/typing.js
     <div class="stat"><div class="v" id="t-time">0.0s</div><div class="l">elapsed</div></div>
   </div>
 
-  <div id="typing-passage" tabindex="0" aria-label="Typing passage"></div>
-  <input id="typing-input" type="text" autocomplete="off" autocorrect="off" spellcheck="false" />
+  <div class="passage-wrap" id="t-passage-wrap">
+    <div id="typing-passage" tabindex="0" aria-label="Typing passage"></div>
+    <div id="typing-caret" aria-hidden="true"></div>
+  </div>
+  <input id="typing-input" type="text"
+         autocomplete="off" autocorrect="off" autocapitalize="none"
+         spellcheck="false" inputmode="text" />
 
   <div class="typing-controls">
     <button id="t-new">New passage</button>
     <button id="t-reset">Reset</button>
-    <span style="font-size:0.82rem;color:var(--soft)">Esc to abandon</span>
+    <button id="t-pause">Pause</button>
+    <span class="hint">
+      <kbd>Esc</kbd> reset · <kbd>Enter</kbd> retry · <kbd>Space</kbd> pause
+    </span>
   </div>
 
   <div class="typing-result" id="t-result">
-    <h3>Done.</h3>
-    <p id="t-final"></p>
+    <h3>Done. <span class="new-pb" id="t-new-pb" style="display:none">new personal best!</span></h3>
+    <p class="summary" id="t-summary"></p>
+    <div class="missed" id="t-missed"></div>
   </div>
 </div>
