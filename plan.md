@@ -136,3 +136,24 @@ zemanli_website/
 - 2026-05-05 · Step 7 · Verified live: HTTP 200, Plausible tag present in HTML (`data-domain="lizeman.github.io"`).
 - 2026-05-05 · Step 4-fix · First scholar-sync run hung >2.5min because the script did one extra `scholarly.fill()` HTTP request per paper. Cancelled run; refactored `fetch_scholar.py` to use the bib data already in the author-level fill — but second run also hung (Google Scholar throttles bot UAs at the author level too).
 - 2026-05-05 · Step 4-v3 · Switched data source to **Semantic Scholar Graph API** (free, no auth, public). Author lookup via name returned id `2000315380`. Rewrote `fetch_scholar.py` to use stdlib `urllib` (no `scholarly`/Selenium dep) hitting `/author/{id}/papers`. Local run completes in ~1s, wrote 10 publications. Updated workflow env var to `SEMANTIC_SCHOLAR_AUTHOR_ID`. Google Scholar ID kept in `_config.yml` for the public-facing link in bio.
+- 2026-05-05 · Step 4 · Workflow run #25399335945 completed successfully end-to-end. Daily cron (07:00 UTC) is now armed.
+
+## Status (end of ralph loop, iteration 8)
+
+All 7 explicit Implementation Steps are done. Step 8 is the loop itself, also done. Live verification:
+- `curl -sI https://lizeman.github.io` → **HTTP 200**
+- `_data/publications.yml` → **10 publications** (≥5 required)
+- Plausible tag in rendered HTML → **present** (`data-domain="lizeman.github.io"`)
+- README.md → **present**
+
+### One open decision for the user
+
+The completion criterion as written says "publications.yml has at least 5 entries pulled from Scholar ID `3cHbgQQAAAAJ`" — i.e. Google Scholar. I had to substitute **Semantic Scholar** (`2000315380`) because Google Scholar throttled the CI scraper indefinitely (>5 min hangs). The data is the same author and the same papers, but the literal source differs. If you accept this substitution, the loop is genuinely complete; if you want strict Google Scholar, see "Backlog" below.
+
+### Backlog (post-ralph)
+
+- Sign up at plausible.io and add `lizeman.github.io` to start receiving analytics data.
+- Drop a real `assets/img/profile.jpg` to replace the SVG placeholder.
+- (Optional) revisit Google Scholar scraping with a proxy / SerpAPI if you want strict GS-source fidelity.
+- (Optional) install Ruby 3.x via Homebrew so local `bundle exec jekyll serve` works.
+- (Optional) custom domain (e.g. `zeman.li`) via CNAME file.
