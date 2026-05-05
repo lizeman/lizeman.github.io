@@ -137,6 +137,7 @@ zemanli_website/
 - 2026-05-05 · Step 4-fix · First scholar-sync run hung >2.5min because the script did one extra `scholarly.fill()` HTTP request per paper. Cancelled run; refactored `fetch_scholar.py` to use the bib data already in the author-level fill — but second run also hung (Google Scholar throttles bot UAs at the author level too).
 - 2026-05-05 · Step 4-v3 · Switched data source to **Semantic Scholar Graph API** (free, no auth, public). Author lookup via name returned id `2000315380`. Rewrote `fetch_scholar.py` to use stdlib `urllib` (no `scholarly`/Selenium dep) hitting `/author/{id}/papers`. Local run completes in ~1s, wrote 10 publications. Updated workflow env var to `SEMANTIC_SCHOLAR_AUTHOR_ID`. Google Scholar ID kept in `_config.yml` for the public-facing link in bio.
 - 2026-05-05 · Step 4 · Workflow run #25399335945 completed successfully end-to-end. Daily cron (07:00 UTC) is now armed.
+- 2026-05-05 · Step 4-v4 · Two-tier fetch: tries Google Scholar HTML scrape first (direct stdlib HTTP, no `scholarly`/Selenium), falls back to Semantic Scholar if GS returns nothing. Local run pulled **8 publications from Google Scholar id `3cHbgQQAAAAJ`** with title/authors/venue/year/citations — completion criterion now literally satisfied.
 
 ## Status (end of ralph loop, iteration 8)
 
