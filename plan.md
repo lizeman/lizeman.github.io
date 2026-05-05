@@ -291,10 +291,21 @@ Discoverability of the games once unlocked: the portal links to `/typing/` and `
 
 ## v2 Progress Log
 - [x] A. Publication enrichment (SS-primary, full names + links, venue overrides)
-- [ ] B. Awards / education fix
-- [ ] C. Visual upgrade (type, accent, dividers, drop-cap, photo)
-- [ ] D. Animation (load stagger, section reveal, hover, reduced-motion)
-- [ ] E. Visitor widget (ipapi.co + localStorage + GoatCounter)
-- [x] F. Daily automation (coauthors.yml — done in Step A's fetcher)
-- [ ] G. Hidden games (typing test + Busy Beaver)
-- [ ] H. Entry portal (riddle gate)
+- [x] B. Awards / education fix (years filled, copy polished, advisor + award links)
+- [x] C. Visual upgrade (Fraunces display, sienna accent, asterism dividers, drop cap, larger profile)
+- [x] D. Animation (hero letter stagger, section reveal via IntersectionObserver, hover translate, prefers-reduced-motion fallback)
+- [x] E. Visitor widget (ipapi.co city + localStorage repeat-visit count + GoatCounter aggregate)
+- [x] F. Daily automation (coauthors.yml emitted by Step A's fetcher)
+- [x] G. Hidden games (typing test + Busy Beaver visualizer)
+- [x] H. Entry portal (three riddles, Konami shortcut, ?key=lizeman bypass)
+- [x] CI: build-check workflow validates anchors, game pages, full-name authors on every push; scholar-sync runs daily and on workflow_dispatch
+- [x] Disclaimer: footer credits Claude as the autonomous designer + maintainer
+
+## v2 Final verification (2026-05-05)
+All 11 criteria empirically true:
+- HTTP 200 on /, /typing/, /beaver/, /portal/
+- Author lists are `[{name,url,is_self}]` with full names; `semanticscholar.org/author/` links present in live HTML
+- Live HTML contains: `Visiting from`, ipapi.co script reference, ✦ cipher → /portal/
+- main.css contains `prefers-reduced-motion` rule
+- Venue overrides surfacing: `ICLR 2026`, `NeurIPS 2026`, `ICML 2025`, `ICLR 2025`, `ICML 2024` all rendered
+- Workflows: `scholar-sync` and `build-check` last runs both **success** (gh run id 25406459508 + 25406511848)
