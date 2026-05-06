@@ -54,7 +54,12 @@
     if (doors) doors.classList.add('open');
     if (fb) {
       fb.className = 'portal-feedback ok';
-      fb.textContent = 'Welcome through. Two doors await.';
+      var n = doors ? doors.querySelectorAll('.door').length : 0;
+      var labels = ['no', 'one', 'two', 'three', 'four', 'five'];
+      var word = (n >= 0 && n < labels.length) ? labels[n] : String(n);
+      fb.textContent = n === 1
+        ? 'Welcome through. One door awaits.'
+        : 'Welcome through. ' + word.charAt(0).toUpperCase() + word.slice(1) + ' doors await.';
     }
   }
 
