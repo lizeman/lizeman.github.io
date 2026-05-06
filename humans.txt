@@ -1,0 +1,27 @@
+---
+permalink: /humans.txt
+sitemap: false
+---
+/* TEAM */
+
+  Owner: Zeman Li (李泽慢)
+  Site:  https://lizeman.github.io
+  Email: zemanli [at] usc.edu
+  Affiliation: Ph.D. Candidate, Industrial & Systems Engineering, USC
+              Student Researcher, Google Research
+
+/* SITE */
+
+  Authored by: Claude (Anthropic) on behalf of Zeman.
+  Stack: Jekyll, GitHub Pages, vanilla JS, Plausible, GoatCounter.
+  Last build: {{ site.time | date: "%Y-%m-%d" }}
+  Source: https://github.com/{{ site.github_username }}/lizeman.github.io
+
+/* PUBLICATIONS */
+
+  Auto-synced daily from Semantic Scholar (id={{ site.semantic_scholar_author_id }}).
+  Atom feed: /publications.xml
+
+/* PRIVACY */
+
+  No cookies. No raw IPs logged. ipapi.co geo lookup honors Do Not Track.
