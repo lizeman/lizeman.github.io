@@ -28,6 +28,7 @@
 - **v2.21** — `/humans.txt` (transparency about owner + stack + privacy)
 - **v2.22** — a11y polish: `lang="zh-Hans"` + JS-off visitor hide + `:target` flash + `og:image:type`
 - **v2.23** — Atom sort-key + visible Atom subscribe pill + sitemap ping
+- **v2.24** — Pillow 10 compat fix + image-script smoke test + robots policy
 
 ## Context
 
@@ -1295,3 +1296,41 @@ privacy posture.
 - [x] visible "⊕ Atom" subscribe pill
 - [x] post-sync search-engine sitemap ping (Google + Bing)
 - [x] explicit https for GoatCounter script
+
+---
+
+# v2.24 — Pillow 10 compat + script smoke test + robots policy (2026-05-06, ralph iter 30)
+
+## Why
+Found a latent bug: `scripts/build_image_variants.py` used
+`Image.LANCZOS` but `scripts/requirements.txt` pins `Pillow>=10.0`
+which removed that legacy alias in favor of
+`Image.Resampling.LANCZOS`. The script worked locally (Pillow 9.5
+still has the alias) but would have failed on a fresh CI
+install or any newer dev machine.
+
+The variants are committed binaries, so build-check never actually
+ran the regen script — it only verified the output files exist.
+Added a smoke-test step that runs the script and asserts the three
+output files are present at non-trivial sizes. Catches future
+Pillow / source-image / API drift.
+
+Separately, added `<meta name="robots" content="index, follow,
+max-image-preview:large">` so Google shows the larger image
+preview in SERP — helps academic papers stand out.
+
+## What landed
+- `scripts/build_image_variants.py` — `Image.LANCZOS` →
+  `Image.Resampling.LANCZOS`. Variants are byte-identical;
+  only the script changed.
+- `.github/workflows/build-check.yml` — new step
+  "Smoke-test build_image_variants.py (Pillow API compat)"
+  runs the script on each push.
+- `_includes/head.html` — explicit `<meta name="robots">` with
+  `max-image-preview:large`. Game pages override via game.html's
+  noindex (last meta wins).
+
+## v2.24 Progress Log
+- [x] Pillow 10 LANCZOS API fix
+- [x] CI smoke-test for build_image_variants.py
+- [x] explicit robots meta with max-image-preview:large
