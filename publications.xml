@@ -1,0 +1,33 @@
+---
+permalink: /publications.xml
+sitemap: false
+layout: null
+---
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>{{ site.title }} — Publications</title>
+  <subtitle>Auto-synced from Semantic Scholar.</subtitle>
+  <link rel="self" href="{{ '/publications.xml' | absolute_url }}" type="application/atom+xml"/>
+  <link rel="alternate" href="{{ '/#publications' | absolute_url }}" type="text/html"/>
+  <updated>{{ site.time | date_to_xmlschema }}</updated>
+  <id>{{ '/publications.xml' | absolute_url }}</id>
+  <author>
+    <name>{{ site.author }}</name>
+    {%- if site.email %}<email>{{ site.email }}</email>{% endif %}
+    <uri>{{ site.url }}</uri>
+  </author>
+  <generator>Jekyll {{ jekyll.version }}</generator>
+  {% for pub in site.data.publications %}
+  <entry>
+    <title>{{ pub.title | xml_escape }}</title>
+    <id>{% if pub.url %}{{ pub.url | xml_escape }}{% else %}{{ '/#publications' | absolute_url }}#{{ pub.title | slugify }}{% endif %}</id>
+    {% if pub.url %}<link rel="alternate" href="{{ pub.url | xml_escape }}" type="text/html"/>{% endif %}
+    <updated>{% if pub.year %}{{ pub.year }}-01-01T00:00:00Z{% else %}{{ site.time | date_to_xmlschema }}{% endif %}</updated>
+    <published>{% if pub.year %}{{ pub.year }}-01-01T00:00:00Z{% else %}{{ site.time | date_to_xmlschema }}{% endif %}</published>
+    {% for a in pub.authors %}
+    <author><name>{{ a.name | xml_escape }}</name>{% if a.url %}<uri>{{ a.url | xml_escape }}</uri>{% endif %}</author>
+    {% endfor %}
+    <summary>{{ pub.venue | xml_escape }}{% if pub.year %} · {{ pub.year }}{% endif %}</summary>
+  </entry>
+  {% endfor %}
+</feed>

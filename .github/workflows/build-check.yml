@@ -93,6 +93,8 @@ jobs:
           test -f _site/assets/img/zemanli_picture_600.jpg || { echo "missing 600px JPG variant"; exit 1; }
           test -f _site/assets/img/apple-touch-icon.png || { echo "missing apple-touch-icon PNG"; exit 1; }
           grep -q "apple-touch-icon.png" _site/index.html || { echo "homepage not pointing at the dedicated apple-touch-icon"; exit 1; }
+          test -f _site/publications.xml || { echo "missing publications.xml feed"; exit 1; }
+          grep -q "publications.xml" _site/index.html || { echo "homepage missing alternate publications feed link"; exit 1; }
           grep -q '<picture>' _site/index.html || { echo "homepage missing <picture> element"; exit 1; }
           grep -q 'type="image/webp"' _site/index.html || { echo "homepage missing webp source"; exit 1; }
 
@@ -185,10 +187,12 @@ jobs:
           )
           PY
 
-      - name: Validate JSON-LD blocks parse + no duplicate IDs
+      - name: Validate JSON-LD blocks parse + no duplicate IDs + Atom feed
         run: |
           python - <<'PY'
           import json, re, pathlib, collections
+          import xml.etree.ElementTree as ET
+
           html = pathlib.Path("_site/index.html").read_text()
           blocks = re.findall(
               r'<script[^>]*type="application/ld\+json"[^>]*>(.*?)</script>',
@@ -207,4 +211,16 @@ jobs:
           dupes = [k for k, v in collections.Counter(ids).items() if v > 1]
           assert not dupes, f"duplicate id attrs in homepage: {dupes}"
           print(f"OK — {len(blocks)} JSON-LD blocks parsed; {len(ids)} ids unique.")
+
+          # Atom feed parses + has at least 1 entry
+          feed = pathlib.Path("_site/publications.xml").read_text()
+          root = ET.fromstring(feed)
+          ns = {"a": "http://www.w3.org/2005/Atom"}
+          entries = root.findall("a:entry", ns)
+          assert len(entries) >= 1, "publications.xml has no <entry> elements"
+          for e in entries:
+              assert e.find("a:title", ns) is not None, "entry missing title"
+              assert e.find("a:author/a:name", ns) is not None, "entry missing author/name"
+              assert e.find("a:id", ns) is not None, "entry missing id"
+          print(f"OK — publications.xml has {len(entries)} valid entries.")
           PY
