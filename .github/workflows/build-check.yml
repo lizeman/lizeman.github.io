@@ -108,10 +108,10 @@ jobs:
           print(f"OK — {len(d)} publications validated.")
           PY
 
-      - name: Validate JSON-LD blocks parse
+      - name: Validate JSON-LD blocks parse + no duplicate IDs
         run: |
           python - <<'PY'
-          import json, re, pathlib, sys
+          import json, re, pathlib, collections
           html = pathlib.Path("_site/index.html").read_text()
           blocks = re.findall(
               r'<script[^>]*type="application/ld\+json"[^>]*>(.*?)</script>',
@@ -125,5 +125,9 @@ jobs:
                   print(f"--- block {i} ---\n{raw[:400]}\n---")
                   raise
               assert "@type" in obj, f"block {i}: no @type"
-          print(f"OK — {len(blocks)} JSON-LD blocks parsed.")
+          # duplicate-id check
+          ids = re.findall(r'\bid="([^"]+)"', html)
+          dupes = [k for k, v in collections.Counter(ids).items() if v > 1]
+          assert not dupes, f"duplicate id attrs in homepage: {dupes}"
+          print(f"OK — {len(blocks)} JSON-LD blocks parsed; {len(ids)} ids unique.")
           PY
