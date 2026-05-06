@@ -18,8 +18,10 @@ ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "assets" / "img" / "zemanli_picture.jpg"
 OUT_WEBP = ROOT / "assets" / "img" / "zemanli_picture_600.webp"
 OUT_JPG = ROOT / "assets" / "img" / "zemanli_picture_600.jpg"
+OUT_APPLE = ROOT / "assets" / "img" / "apple-touch-icon.png"
 
 TARGET_SIZE = (600, 600)
+APPLE_SIZE = (180, 180)
 
 
 def main() -> int:
@@ -27,17 +29,22 @@ def main() -> int:
         print(f"missing source: {SRC}")
         return 1
 
-    im = Image.open(SRC).convert("RGB")
-    print(f"source: {im.size}, {im.mode}")
+    src_im = Image.open(SRC).convert("RGB")
+    print(f"source: {src_im.size}, {src_im.mode}")
 
-    # Pillow's thumbnail mutates in place, preserves aspect ratio
+    # 600×600 variants for the homepage <picture>
+    im = src_im.copy()
     im.thumbnail(TARGET_SIZE, Image.LANCZOS)
-
     im.save(OUT_WEBP, "WEBP", quality=85, method=6)
     print(f"wrote {OUT_WEBP.relative_to(ROOT)}: {OUT_WEBP.stat().st_size:,} bytes")
-
     im.save(OUT_JPG, "JPEG", quality=85, optimize=True, progressive=True)
     print(f"wrote {OUT_JPG.relative_to(ROOT)}: {OUT_JPG.stat().st_size:,} bytes")
+
+    # 180×180 PNG for apple-touch-icon (iOS home screen)
+    apple = src_im.copy()
+    apple.thumbnail(APPLE_SIZE, Image.LANCZOS)
+    apple.save(OUT_APPLE, "PNG", optimize=True)
+    print(f"wrote {OUT_APPLE.relative_to(ROOT)}: {OUT_APPLE.stat().st_size:,} bytes")
     return 0
 
 
