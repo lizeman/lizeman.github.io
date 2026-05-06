@@ -30,6 +30,7 @@
 - **v2.23** — Atom sort-key + visible Atom subscribe pill + sitemap ping
 - **v2.24** — Pillow 10 compat fix + image-script smoke test + robots policy
 - **v2.25** — JSON-LD `</script>`-injection defense
+- **v2.26** — Person JSON-LD `mainEntityOfPage` + `description`; tighter dup-id regex
 
 ## Context
 
@@ -1378,3 +1379,29 @@ mitigation needed there.
 ## v2.25 Progress Log
 - [x] `</script>` defense on every dynamic JSON-LD field
 - [x] verified live JSON-LD still parses
+
+---
+
+# v2.26 — Person JSON-LD enrichment + dup-id regex (2026-05-06, ralph iter 33)
+
+## What landed
+- `_includes/head.html` — Person JSON-LD now declares
+  `mainEntityOfPage` (the homepage as the canonical page about
+  Zeman) and `description` (one-sentence research summary). Helps
+  Google Knowledge Graph compose a coherent entity card without
+  inferring from surrounding text.
+- `.github/workflows/build-check.yml` — duplicate-id-check regex
+  changed from `\bid="..."` to `(?<![a-zA-Z-])id="..."` so future
+  `data-id="..."` or similar pseudo-attribute can't false-positive.
+- Briefly tried `jekyll-last-modified-at` to populate `<lastmod>`
+  in sitemap.xml — added then reverted because the live deploy
+  showed no `<lastmod>` tags emerged. Either the plugin doesn't
+  compose with jekyll-sitemap on github-pages safe mode, or the
+  shallow checkout in Pages' build environment doesn't give it
+  enough git history. Removed; the basic sitemap (loc-only) is
+  fine for SEO since Google uses other change signals.
+
+## v2.26 Progress Log
+- [x] Person.mainEntityOfPage + Person.description
+- [x] dup-id regex tightened (negative lookbehind)
+- [x] explored + reverted jekyll-last-modified-at
