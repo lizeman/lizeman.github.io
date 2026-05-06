@@ -2,7 +2,7 @@
 <ul class="news-list">
 {% for item in site.data.news %}
   <li data-reveal>
-    <span class="cv-when">{{ item.date }}</span>
+    <time class="cv-when">{{ item.date }}</time>
     <span class="cv-what">{{ item.text }}</span>
   </li>
 {% endfor %}
