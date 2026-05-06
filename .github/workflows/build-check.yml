@@ -186,14 +186,28 @@ jobs:
                   f"no is_self author in {p['title']}"
           print(f"OK — {len(d)} publications validated.")
 
-          # news.yml — hand-edited; date + text required
+          # news.yml — hand-edited; date + text required + reverse-chrono order
           n = yaml.safe_load(pathlib.Path("_data/news.yml").read_text())
           assert isinstance(n, list) and n, "news.yml empty"
+          MONTHS = {m: i + 1 for i, m in enumerate(
+              "Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec".split()
+          )}
+          def _key(item):
+              parts = (item.get("date") or "").split()
+              if len(parts) != 2:
+                  return (0, 0)
+              return (int(parts[1]) if parts[1].isdigit() else 0,
+                      MONTHS.get(parts[0], 0))
+          last_key = (10000, 13)  # sentinel newer than any real date
           for item in n:
               assert isinstance(item, dict), f"news entry not dict: {item}"
               assert item.get("date"), f"news entry missing date: {item}"
               assert item.get("text"), f"news entry missing text: {item}"
-          print(f"OK — {len(n)} news items validated.")
+              k = _key(item)
+              assert k <= last_key, \
+                  f"news.yml not in reverse-chrono order: {item.get('date')} > {last_key}"
+              last_key = k
+          print(f"OK — {len(n)} news items validated, reverse-chrono.")
 
           # cv.yml — education + awards
           cv = yaml.safe_load(pathlib.Path("_data/cv.yml").read_text())
