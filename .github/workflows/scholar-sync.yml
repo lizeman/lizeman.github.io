@@ -27,10 +27,19 @@ jobs:
       - name: Install dependencies
         run: pip install -r scripts/requirements.txt
 
+      - name: Read author IDs from _config.yml
+        id: ids
+        run: |
+          ss=$(python -c "import yaml; print(yaml.safe_load(open('_config.yml'))['semantic_scholar_author_id'])")
+          gs=$(python -c "import yaml; print(yaml.safe_load(open('_config.yml'))['scholar_id'])")
+          echo "ss_id=$ss" >> "$GITHUB_OUTPUT"
+          echo "gs_id=$gs" >> "$GITHUB_OUTPUT"
+          echo "Semantic Scholar id=$ss, Google Scholar id=$gs"
+
       - name: Fetch publications + coauthors (Semantic Scholar)
         env:
-          SEMANTIC_SCHOLAR_AUTHOR_ID: "2000315380"
-          SCHOLAR_ID: "3cHbgQQAAAAJ"
+          SEMANTIC_SCHOLAR_AUTHOR_ID: ${{ steps.ids.outputs.ss_id }}
+          SCHOLAR_ID: ${{ steps.ids.outputs.gs_id }}
         run: python scripts/fetch_scholar.py
 
       - name: Show changes (for the workflow log)
