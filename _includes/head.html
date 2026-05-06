@@ -42,9 +42,10 @@
 {%- endcomment -%}
 {%- assign og_image = page.image | default: site.image | default: '/assets/img/zemanli_picture.jpg' -%}
 <meta property="og:image" content="{{ og_image | absolute_url }}">
-<meta property="og:image:alt" content="Portrait of Zeman Li">
+<meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1181">
 <meta property="og:image:height" content="1181">
+<meta property="og:image:alt" content="Portrait of Zeman Li">
 <meta name="twitter:image" content="{{ og_image | absolute_url }}">
 
 {%- feed_meta -%}
