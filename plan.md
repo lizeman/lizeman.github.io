@@ -34,6 +34,7 @@
 - **v2.27** — Cache-bust CSS / JS URLs with `?v=site.time`
 - **v2.28** — 4s AbortController timeout on third-party fetches
 - **v2.29** — `/manifest.json` for Add-to-Home-Screen on mobile
+- **v2.30** — Drop duplicate `<link rel="canonical">`
 
 ## Context
 
@@ -1491,3 +1492,21 @@ guesses the rest. Explicit manifest pins the experience.
 ## v2.29 Progress Log
 - [x] manifest.json with icons, theme color, name, scope
 - [x] CI: parse manifest.json + assert link tag
+
+---
+
+# v2.30 — Drop duplicate canonical link (2026-05-06, ralph iter 37)
+
+## What landed
+Live homepage was emitting two identical `<link rel="canonical">`
+tags — one from `head.html`, one from jekyll-seo-tag's `{% seo %}`.
+Search engines accept multiple but the duplicate was wasted bytes.
+Removed the manual one; jekyll-seo-tag handles it from `page.url`.
+
+Final meta-tag duplicate audit shows only intentional duplicates
+(2× theme-color for light/dark schemes; 2× preconnect + 4× dns-prefetch
+for the various third-party endpoints).
+
+## v2.30 Progress Log
+- [x] dedup canonical link
+- [x] verified live: 1 canonical, intentional 2x theme-color, etc.
