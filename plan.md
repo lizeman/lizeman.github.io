@@ -805,3 +805,28 @@ clean.
 - [x] dns-prefetch for visitor-widget endpoints
 - [x] gitignore __pycache__
 - [x] e2e link check (10 URLs, all 200)
+
+---
+
+# v2.11 — Person knowledge graph + JS-off fallback (2026-05-06, ralph iter 17)
+
+## What landed
+- `_includes/head.html`:
+  - Person JSON-LD now declares `alumniOf` (Georgia Tech, Emory) and
+    `knowsAbout` (six research topics pulled from the bio's research
+    interests paragraph). Helps Google Knowledge Graph and academic
+    search engines associate Zeman with the right schools and topics.
+  - `<noscript><style>[data-reveal]{opacity:1!important;...}</style></noscript>`
+    so visitors with JS disabled see all content. Previously
+    `[data-reveal]` started at opacity:0 and only got `.in-view` via
+    `site.js` IntersectionObserver — no JS meant a blank page. Print
+    media query already overrode this, but no-JS path didn't.
+
+## v2.11 Verification
+- Live JSON-LD Person now has 9 properties (was 7).
+- Curl with no JS still parses and shows full content (verified by
+  reading source: `[data-reveal]` set to opacity:1 via noscript).
+
+## v2.11 Progress Log
+- [x] Person.alumniOf + Person.knowsAbout
+- [x] noscript fallback for reveal animations
