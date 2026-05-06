@@ -15,7 +15,7 @@
   --bg: #fbf8f3;
   --paper: #ffffff;
   --accent: #b85c38;        /* warm sienna */
-  --accent-soft: rgba(184, 92, 56, 0.15);
+  --accent-soft: color-mix(in srgb, var(--accent) 15%, transparent);
   --link: #1c4f8a;
   --serif: "Charter", "Source Serif Pro", "Iowan Old Style", "Apple Garamond",
     Georgia, "Times New Roman", serif;
