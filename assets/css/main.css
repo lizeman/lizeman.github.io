@@ -342,6 +342,18 @@ code {
 }
 .pub-fresh span { color: var(--accent); margin-right: 0.2em; }
 .pub-fresh time { font-variant-numeric: tabular-nums; }
+.pub-feed {
+  margin-left: 0.7em;
+  font-family: var(--sans);
+  font-size: 0.74rem;
+  color: var(--muted);
+  background-image: none;
+  padding: 0.05em 0.45em;
+  border: 1px solid var(--rule);
+  border-radius: 3px;
+  letter-spacing: 0.04em;
+}
+.pub-feed:hover { color: var(--accent); border-color: var(--accent); background-size: 0% 0; }
 .pubs {
   list-style: none;
   padding: 0;
