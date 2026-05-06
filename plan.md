@@ -760,3 +760,48 @@ Found three concrete issues:
 - [x] portal greeting auto-counts doors
 - [x] GoatCounter URL: drop double slash + template the slug
 - [x] escape publication fields against XSS
+
+---
+
+# v2.10 — Perf hints + share-card sizing (2026-05-06, ralph iter 16)
+
+## Why
+Live-deploy verification surfaced two cheap wins:
+
+1. The visitor widget eventually fetches `ipapi.co`,
+   `plausible.io`, and `<slug>.goatcounter.com`. Each pays a cold
+   DNS+TLS handshake on first hit. `dns-prefetch` warms the DNS
+   resolution while the browser is still parsing CSS/HTML.
+2. Social share previews (Twitter/Slack/iMessage/etc.) currently
+   issue a HEAD or fetch the og:image just to read its dimensions.
+   Declaring `og:image:width` / `og:image:height` lets them pick the
+   correct card layout (square vs landscape) without the round trip.
+
+Also cleaned up an accidentally-committed `__pycache__/*.pyc` from a
+local ad-hoc test run, and extended `.gitignore` to keep future runs
+clean.
+
+## What landed
+- `_includes/head.html`:
+  - `og:image:width=1181`, `og:image:height=1181` — matches the
+    actual dimensions of `assets/img/zemanli_picture.jpg`.
+  - `<link rel="dns-prefetch" href="https://ipapi.co">` always.
+  - `<link rel="dns-prefetch" ...>` for plausible.io and
+    `<slug>.goatcounter.com` + `gc.zgo.at`, gated on the relevant
+    `_config.yml` keys.
+- `.gitignore` — `__pycache__/` and `*.pyc` so subsequent runs don't
+  leak compiled bytecode.
+
+## v2.10 Verification
+- Live homepage has all four `dns-prefetch` links + `og:image:width`
+  + `og:image:height`.
+- All 10 verified URLs return 200 (homepage, all 5 game pages, 404,
+  sitemap.xml, robots.txt, feed.xml).
+- 3 JSON-LD blocks parse on live site (WebSite via jekyll-seo-tag,
+  Person via head.html, ItemList via publications.html).
+
+## v2.10 Progress Log
+- [x] og:image dimensions
+- [x] dns-prefetch for visitor-widget endpoints
+- [x] gitignore __pycache__
+- [x] e2e link check (10 URLs, all 200)
