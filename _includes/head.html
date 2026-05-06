@@ -22,6 +22,9 @@
 
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
 <link rel="canonical" href="{{ page.url | absolute_url }}">
+{%- if page.url == '/' -%}
+<link rel="preload" as="image" href="{{ '/assets/img/zemanli_picture.jpg' | relative_url }}" fetchpriority="high">
+{%- endif -%}
 <noscript>
   <style>[data-reveal]{opacity:1!important;transform:none!important;}</style>
 </noscript>
