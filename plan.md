@@ -36,6 +36,7 @@
 - **v2.29** — `/manifest.json` for Add-to-Home-Screen on mobile
 - **v2.30** — Drop duplicate `<link rel="canonical">`
 - **v2.31** — Atom feed `<rights>`, `<icon>`, `<logo>`
+- **v2.32** — `rel="me"` identity-verification links
 
 ## Context
 
@@ -1531,3 +1532,28 @@ feed name; without them, readers fall back to text-only.
 
 ## v2.31 Progress Log
 - [x] Atom <rights> / <icon> / <logo>
+
+---
+
+# v2.32 — IndieWeb identity-verification links (2026-05-06, ralph iter 39)
+
+## What landed
+- `_includes/head.html` — four `<link rel="me">` tags asserting
+  ownership across:
+  - GitHub (`github.com/{username}`)
+  - Google Scholar
+  - Semantic Scholar
+  - mailto: address
+
+When a federated service (Mastodon, Pixelfed, IndieAuth, etc.)
+checks if a profile actually belongs to the same person who owns
+this site, it follows the `rel="me"` chain. If Zeman links his
+Mastodon profile back to lizeman.github.io and the homepage
+includes a `rel="me"` link to that Mastodon profile, the platform
+shows a green check.
+
+Currently no Mastodon profile, but the GitHub / Scholar / SS
+verifications are immediately useful and cheap.
+
+## v2.32 Progress Log
+- [x] rel="me" links to GitHub, Scholar, SS, mailto
