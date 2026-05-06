@@ -52,6 +52,7 @@ jobs:
               "://ipapi.co",
               ".goatcounter.com",
               "://plausible.io",
+              "scholar.google.com",  # 403s on non-browser UA (CAPTCHA defense)
           )
           out = sorted(u for u in urls if not any(s in u for s in skip))
           for u in out:
