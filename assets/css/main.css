@@ -73,6 +73,19 @@ a {
 }
 a:hover { background-size: 100% 1px; color: var(--accent); }
 
+/* visually-hidden — for SR-only context (aria-describedby etc.) */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* keyboard-only skip link — slides in when focused */
 .skip-link {
   position: absolute;

@@ -76,6 +76,11 @@ jobs:
           grep -q "@media print" _site/assets/css/main.css || { echo "missing print stylesheet"; exit 1; }
           ! grep -Eq "[0-9]+ citation" _site/index.html || { echo "publications still show citation count"; exit 1; }
           ! grep -q "/404.html" _site/sitemap.xml || { echo "404 leaked into sitemap"; exit 1; }
+          grep -q "ItemList" _site/index.html || { echo "missing publications ItemList JSON-LD"; exit 1; }
+          grep -q "ScholarlyArticle" _site/index.html || { echo "missing ScholarlyArticle JSON-LD"; exit 1; }
+          grep -q 'name="theme-color"' _site/index.html || { echo "missing theme-color meta"; exit 1; }
+          grep -q 'aria-label="Section navigation"' _site/index.html || { echo "missing nav aria-label"; exit 1; }
+          grep -q "visually-hidden" _site/assets/css/main.css || { echo "missing .visually-hidden helper"; exit 1; }
 
       - uses: actions/setup-python@v5
         with:
@@ -98,4 +103,24 @@ jobs:
               assert any(a.get("is_self") for a in p["authors"]), \
                   f"no is_self author in {p['title']}"
           print(f"OK — {len(d)} publications validated.")
+          PY
+
+      - name: Validate JSON-LD blocks parse
+        run: |
+          python - <<'PY'
+          import json, re, pathlib, sys
+          html = pathlib.Path("_site/index.html").read_text()
+          blocks = re.findall(
+              r'<script[^>]*type="application/ld\+json"[^>]*>(.*?)</script>',
+              html, flags=re.DOTALL,
+          )
+          assert len(blocks) >= 2, f"expected ≥2 JSON-LD blocks, got {len(blocks)}"
+          for i, raw in enumerate(blocks):
+              try:
+                  obj = json.loads(raw)
+              except json.JSONDecodeError as e:
+                  print(f"--- block {i} ---\n{raw[:400]}\n---")
+                  raise
+              assert "@type" in obj, f"block {i}: no @type"
+          print(f"OK — {len(blocks)} JSON-LD blocks parsed.")
           PY

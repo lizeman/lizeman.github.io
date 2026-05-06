@@ -38,7 +38,10 @@
   var navLinks = document.querySelectorAll('#anchor-nav a');
   function setActive(id) {
     navLinks.forEach(function (a) {
-      a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+      var on = a.getAttribute('href') === '#' + id;
+      a.classList.toggle('active', on);
+      if (on) a.setAttribute('aria-current', 'location');
+      else a.removeAttribute('aria-current');
     });
   }
   if ('IntersectionObserver' in window && sections.length) {

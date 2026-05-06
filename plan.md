@@ -594,3 +594,63 @@ noisy and unstable across syncs.
 - [x] print stylesheet
 - [x] drop citation count from publications
 - [x] CI assertions for all of the above
+
+---
+
+# v2.7 — Structured data + a11y polish (2026-05-06, ralph iter 13)
+
+## Why
+Academic search engines (Google Scholar, Semantic Scholar, Bing
+Academic) prefer ScholarlyArticle structured data over plain HTML
+lists. The site already had Person JSON-LD; adding an ItemList of
+ScholarlyArticles for the publications block surfaces each paper as
+its own indexable entity.
+
+Also tied off the loose a11y ends from v2.6: visible aria-labels on
+landmarks, aria-current sync on the active nav link, and a
+`.visually-hidden` helper for SR-only context.
+
+## What landed
+- `_includes/publications.html`:
+  - Heading gets `id="publications-heading"`; the `<ol>` references it
+    via `aria-labelledby` and points to a visually-hidden `<p>` count
+    via `aria-describedby` ("N entries, newest first").
+  - New `<script type="application/ld+json">` block emits an
+    `ItemList` whose `itemListElement` is a `ListItem` per pub, each
+    wrapping a `ScholarlyArticle` with `headline`, `url`,
+    `datePublished` (year), `publisher` (venue as Organization), and
+    `author` (Person[] with name + url). Uses Liquid's `| jsonify`
+    so titles / venues with special chars escape cleanly.
+- `_includes/head.html` — added `<meta name="theme-color">` for both
+  `prefers-color-scheme: light` and `dark` so mobile browser chrome
+  matches the page.
+- `_layouts/default.html` — anchor nav got `aria-label="Section
+  navigation"`.
+- `assets/js/site.js` — when the IntersectionObserver picks the active
+  section, the corresponding nav link gets `aria-current="location"`
+  (and the previous active loses it). Screen readers now announce
+  which section the visitor is in.
+- `assets/css/main.css` — `.visually-hidden` helper (standard
+  clip-path / sr-only pattern).
+- `.github/workflows/build-check.yml`:
+  - Asserts `ItemList` and `ScholarlyArticle` strings present in built
+    homepage.
+  - Asserts `theme-color` meta and nav `aria-label` present.
+  - New Python step parses every `<script type="application/ld+json">`
+    block via `json.loads` and verifies ≥2 blocks (Person + ItemList),
+    each with an `@type`. Catches Liquid template syntax regressions.
+
+## v2.7 Verification
+- `_site/index.html` contains valid Person JSON-LD AND ItemList JSON-LD.
+- `python - <<PY ... PY` JSON-LD-validation step passes locally on the
+  pulled HTML.
+- VoiceOver / NVDA: tabbing across the anchor nav announces "current
+  location" on the active link.
+
+## v2.7 Progress Log
+- [x] ScholarlyArticle ItemList JSON-LD on publications
+- [x] theme-color meta (light + dark)
+- [x] aria-label on anchor nav
+- [x] aria-current sync on active section
+- [x] `.visually-hidden` helper
+- [x] CI: parse all JSON-LD blocks; assert structured data + a11y attrs
