@@ -907,3 +907,46 @@ now identify date-bearing spans without textual heuristics.
 ## v2.13 Progress Log
 - [x] news, vita, publications: `<span class="cv-when">` → `<time>`
 - [x] datetime= attr on awards + publication years
+
+---
+
+# v2.14 — LCP preload + weekly link-check (2026-05-06, ralph iter 20)
+
+## Why
+Two perf/maintenance bits:
+
+1. The profile photo is the homepage LCP element. `fetchpriority='high'`
+   on the `<img>` tag was already set, but the browser doesn't see the
+   tag until DOM parsing reaches it. A `<link rel='preload' as='image'>`
+   in `<head>` kicks the fetch off as soon as the document arrives.
+   Gated to `page.url == '/'` so game pages don't fetch a 229KB image
+   they never display.
+2. External links rot silently — paper PDFs go behind paywalls,
+   advisor pages move, profile slugs change. A new weekly
+   `link-check` workflow probes every external href in the built site
+   and surfaces 4xx/5xx as Actions annotations. Failure is non-blocking
+   (broken links are notifications, not build failures, since
+   transient 503s shouldn't drown out real signal).
+
+## What landed
+- `_includes/head.html` — `<link rel="preload" as="image"
+  href="..." fetchpriority="high">` for the profile photo, only on
+  homepage.
+- `.github/workflows/link-check.yml`:
+  - Builds the site, extracts every `href="https?://..."`, probes
+    each via `curl -I` (HEAD) with GET fallback for servers that
+    reject HEAD.
+  - Skip list for known-noise hosts: dns-prefetch roots
+    (fonts.googleapis.com, fonts.gstatic.com, ipapi.co), unsigned
+    analytics endpoints (plausible.io, *.goatcounter.com), and
+    scholar.google.com (CAPTCHA-defends non-browser UAs).
+  - Cron: Mondays 08:00 UTC, plus `workflow_dispatch`.
+
+## v2.14 Verification
+- Manual `gh workflow run link-check.yml` → "all URLs OK".
+- Live site has the preload link in `<head>` for `/` only (verified
+  by curl-grep on `/` and `/roulette/`).
+
+## v2.14 Progress Log
+- [x] preload profile photo on homepage
+- [x] weekly link-check workflow with sensible skip-list
