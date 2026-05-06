@@ -317,6 +317,15 @@ code {
 .cv-sub { font-size: 0.93em; color: var(--muted); }
 
 /* ---------- Publications ---------- */
+.pub-fresh {
+  font-family: var(--sans);
+  font-size: 0.78rem;
+  color: var(--soft);
+  margin: 0.4rem 0 0.2rem;
+  letter-spacing: 0.02em;
+}
+.pub-fresh span { color: var(--accent); margin-right: 0.2em; }
+.pub-fresh time { font-variant-numeric: tabular-nums; }
 .pubs {
   list-style: none;
   padding: 0;
@@ -582,7 +591,7 @@ body.game .game-back {
   html, body { background: #fff; color: #000; font-size: 11pt; }
   .grain, .skip-link, .anchor-nav, .visitor-line,
   #playground, .playground-grid, .play-card,
-  .site-footer .disclaimer, .cipher,
+  .site-footer .disclaimer, .cipher, .pub-fresh,
   body.game .game-back { display: none !important; }
   main.page { max-width: 100%; margin: 0; padding: 0.5in 0.6in; }
   a { color: #000; background: none !important; text-decoration: none; }

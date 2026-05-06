@@ -1,4 +1,9 @@
 <h2 id="publications-heading">Publications</h2>
+<p class="pub-fresh">
+  <span aria-hidden="true">⟳</span>
+  Auto-synced from Semantic Scholar &mdash; last build
+  <time datetime="{{ site.time | date_to_xmlschema }}">{{ site.time | date: "%b %-d, %Y" }}</time>.
+</p>
 <p class="visually-hidden" id="publications-meta">{{ site.data.publications | size }} entries, newest first.</p>
 <ol class="pubs" reversed aria-labelledby="publications-heading" aria-describedby="publications-meta">
 {% for pub in site.data.publications %}
