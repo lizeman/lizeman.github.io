@@ -28,7 +28,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}?v={{ site.time | date: '%s' }}">
-<link rel="canonical" href="{{ page.url | absolute_url }}">
+{%- comment -%}
+  rel="canonical" is emitted by jekyll-seo-tag's {% seo %} below.
+  Don't duplicate it here — search engines accept multiple but the
+  duplicate is wasted bytes.
+{%- endcomment -%}
 {%- if page.url == '/' -%}
 {%- comment -%}
   preload the WebP variant — modern browsers (>96% globally) accept it.
