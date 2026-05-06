@@ -22,6 +22,7 @@
   apple-touch-icon
 - **v2.16** — Data validators (news.yml + cv.yml) + CI gap closures
 - **v2.17** — Do Not Track support + link-check summary table
+- **v2.18** — `scroll-margin-top` for anchor nav breathing room
 
 ## Context
 
@@ -1093,3 +1094,27 @@ Two privacy / ergonomics bits:
 - [x] DNT respect for ipapi.co geo lookup
 - [x] privacy disclosure mentions DNT
 - [x] link-check writes a markdown summary table
+
+---
+
+# v2.18 — Anchor scroll polish (2026-05-06, ralph iter 24)
+
+## Why
+Clicking the anchor nav (Bio / News / Publications / Vita / Playground)
+scrolled the section heading flush against the top of the viewport.
+A 1.5rem `scroll-margin-top` gives breathing room — matching the
+visual rhythm of the rest of the page and making the heading land
+where the eye expects it.
+
+## What landed
+- `assets/css/main.css` — `section[id] { scroll-margin-top: 1.5rem; }`.
+
+## CSS audit — incidental
+A naive duplicate-selector / dead-class scan reported only `.org`
+and `.w3` as "unused", both false positives from
+`http://www.w3.org/2000/svg` in the SVG noise data URI. The
+stylesheet is clean.
+
+## v2.18 Progress Log
+- [x] scroll-margin-top on section anchors
+- [x] CSS unused-selector audit (clean — no dead classes)
