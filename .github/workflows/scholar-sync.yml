@@ -39,6 +39,24 @@ jobs:
           git diff --stat _data/publications.yml _data/coauthors.yml || true
           echo "::endgroup::"
 
+      - name: Job summary
+        run: |
+          {
+            echo "## scholar-sync"
+            if git diff --quiet _data/publications.yml _data/coauthors.yml; then
+              echo "**No changes** to publications.yml / coauthors.yml — nothing to commit."
+            else
+              echo "**Changes detected** — committing:"
+              echo ""
+              echo '```diff'
+              git diff --stat _data/publications.yml _data/coauthors.yml
+              echo '```'
+            fi
+            echo ""
+            echo "Publications: $(grep -c '^- title:' _data/publications.yml)"
+            echo "Coauthors: $(grep -c '^.[0-9].*:$' _data/coauthors.yml | head -1) cached"
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - name: Commit and push if there are changes
         run: |
           if git diff --quiet _data/publications.yml _data/coauthors.yml; then
