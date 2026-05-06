@@ -37,6 +37,7 @@
 - **v2.30** — Drop duplicate `<link rel="canonical">`
 - **v2.31** — Atom feed `<rights>`, `<icon>`, `<logo>`
 - **v2.32** — `rel="me"` identity-verification links
+- **v2.33** — Consolidate robots meta to head.html (single tag per page)
 
 ## Context
 
@@ -1557,3 +1558,28 @@ verifications are immediately useful and cheap.
 
 ## v2.32 Progress Log
 - [x] rel="me" links to GitHub, Scholar, SS, mailto
+
+---
+
+# v2.33 — Single robots meta per page (2026-05-06, ralph iter 40)
+
+## What landed
+Game pages were emitting `<meta name="robots">` twice — once from
+`head.html` (default `index, follow, max-image-preview:large`) and
+once from `game.html` overriding to `noindex`. Last meta wins by
+HTML spec, but two tags is sloppy.
+
+`_includes/head.html` now picks the right policy based on
+`page.layout == 'game'`:
+- Default pages: `index, follow, max-image-preview:large`
+- Game pages: `noindex`
+
+`_layouts/game.html` no longer emits the override.
+
+Verified live:
+- `/` → 1 robots tag, the index policy.
+- `/roulette/` → 1 robots tag, the noindex policy.
+
+## v2.33 Progress Log
+- [x] page.layout-aware robots meta in head.html
+- [x] dropped duplicate from game.html
