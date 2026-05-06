@@ -34,6 +34,19 @@ html {
 
 /* breathing room when anchor nav scrolls a section into view */
 section[id] { scroll-margin-top: 1.5rem; }
+/* subtle accent flash when the section is the current :target
+   (i.e. the URL hash points at it). Reassures the user the link
+   actually went where they expected. */
+section[id]:target {
+  animation: hash-flash 1.6s var(--ease);
+}
+@keyframes hash-flash {
+  0% { background: var(--accent-soft); }
+  100% { background: transparent; }
+}
+@media (prefers-reduced-motion: reduce) {
+  section[id]:target { animation: none; }
+}
 
 body {
   font-family: var(--serif);
