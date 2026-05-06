@@ -44,13 +44,13 @@
       "position": {{ forloop.index }},
       "item": {
         "@type": "ScholarlyArticle",
-        "headline": {{ pub.title | jsonify }},
-        {%- if pub.url %}"url": {{ pub.url | jsonify }},{%- endif %}
-        {%- if pub.year %}"datePublished": {{ pub.year | jsonify }},{%- endif %}
-        {%- if pub.venue %}"publisher": { "@type": "Organization", "name": {{ pub.venue | jsonify }} },{%- endif %}
+        "headline": {{ pub.title | jsonify | replace: "</", "<\/" }},
+        {%- if pub.url %}"url": {{ pub.url | jsonify | replace: "</", "<\/" }},{%- endif %}
+        {%- if pub.year %}"datePublished": {{ pub.year | jsonify | replace: "</", "<\/" }},{%- endif %}
+        {%- if pub.venue %}"publisher": { "@type": "Organization", "name": {{ pub.venue | jsonify | replace: "</", "<\/" }} },{%- endif %}
         "author": [
           {%- for a in pub.authors -%}
-          { "@type": "Person", "name": {{ a.name | jsonify }}{% if a.url and a.url != "" %}, "url": {{ a.url | jsonify }}{% endif %} }{%- unless forloop.last -%},{%- endunless -%}
+          { "@type": "Person", "name": {{ a.name | jsonify | replace: "</", "<\/" }}{% if a.url and a.url != "" %}, "url": {{ a.url | jsonify | replace: "</", "<\/" }}{% endif %} }{%- unless forloop.last -%},{%- endunless -%}
           {%- endfor -%}
         ]
       }
