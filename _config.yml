@@ -33,7 +33,6 @@ plugins:
   - jekyll-feed
   - jekyll-seo-tag
   - jekyll-sitemap
-  - jekyll-last-modified-at
 
 exclude:
   - plan.md
