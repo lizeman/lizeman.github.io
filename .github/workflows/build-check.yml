@@ -207,6 +207,16 @@ jobs:
               f"OK — cv.yml: {len(cv.get('education', []))} education, "
               f"{len(cv.get('awards', []))} awards"
           )
+
+          # coauthors.yml — auto-generated cache; verify shape so a bad
+          # fetch_scholar run can't silently poison the next sync.
+          ca = yaml.safe_load(pathlib.Path("_data/coauthors.yml").read_text())
+          assert isinstance(ca, dict), "coauthors.yml not a dict"
+          for aid, info in ca.items():
+              assert isinstance(info, dict), f"coauthor {aid} not a dict"
+              assert "name" in info, f"coauthor {aid} missing name"
+              assert "url" in info, f"coauthor {aid} missing url"
+          print(f"OK — coauthors.yml: {len(ca)} cached coauthors")
           PY
 
       - name: Validate JSON-LD blocks parse + no duplicate IDs + Atom feed
