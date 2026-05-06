@@ -172,7 +172,7 @@ jobs:
       - name: Validate _data shapes
         run: |
           python - <<'PY'
-          import yaml, pathlib
+          import yaml, pathlib, re
 
           # publications.yml — auto-generated, full-name authors, self flag
           d = yaml.safe_load(pathlib.Path("_data/publications.yml").read_text())
@@ -212,10 +212,18 @@ jobs:
           # cv.yml — education + awards
           cv = yaml.safe_load(pathlib.Path("_data/cv.yml").read_text())
           assert isinstance(cv, dict), "cv.yml not a dict"
+          last_ed_start = 9999
           for ed in cv.get("education", []):
               assert ed.get("degree"), f"education entry missing degree: {ed}"
               assert ed.get("school"), f"education entry missing school: {ed}"
               assert ed.get("years"), f"education entry missing years: {ed}"
+              # Pull the leading year out of "2023 – present" style strings
+              ms = re.search(r"\b(20\d{2})\b", str(ed["years"]))
+              if ms:
+                  start = int(ms.group(1))
+                  assert start <= last_ed_start, \
+                      f"education out of reverse-chrono order: {ed['years']} > {last_ed_start}"
+                  last_ed_start = start
           last_award_year = 9999
           for a in cv.get("awards", []):
               assert a.get("year"), f"award missing year: {a}"
@@ -244,11 +252,10 @@ jobs:
           # are accepted; the value must be a non-empty string.
           vo = yaml.safe_load(pathlib.Path("_data/venue_overrides.yml").read_text())
           assert isinstance(vo, dict), "venue_overrides.yml not a dict"
-          import re as _re
           for k, v in vo.items():
               ks = str(k)
-              ok_new = _re.match(r"^[0-9]{4}\.[0-9]{4,6}$", ks)
-              ok_old = _re.match(r"^[a-z-]+/[0-9]{7}$", ks)
+              ok_new = re.match(r"^[0-9]{4}\.[0-9]{4,6}$", ks)
+              ok_old = re.match(r"^[a-z-]+/[0-9]{7}$", ks)
               assert ok_new or ok_old, \
                   f"venue_overrides key {ks!r} doesn't look like an arxiv id"
               assert isinstance(v, str) and v.strip(), \
