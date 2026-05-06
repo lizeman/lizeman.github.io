@@ -1,0 +1,72 @@
+name: link-check
+
+# Weekly probe of every external link the site renders, so
+# rotted URLs (paper PDFs, advisor pages, profile links) surface
+# as a CI annotation before a visitor finds them.
+#
+# Failure is annotation-only — broken links shouldn't fail builds,
+# they're a notification to manually update content.
+
+on:
+  schedule:
+    - cron: "0 8 * * 1"   # Mondays at 08:00 UTC
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+          bundler-cache: true
+
+      - name: Build site
+        run: bundle exec jekyll build
+
+      - name: Extract external URLs
+        id: extract
+        run: |
+          python - <<'PY' > urls.txt
+          import re, pathlib
+          html_files = list(pathlib.Path("_site").rglob("*.html"))
+          urls = set()
+          for f in html_files:
+              text = f.read_text(errors="ignore")
+              for m in re.finditer(r'href="(https?://[^"]+)"', text):
+                  urls.add(m.group(1))
+          # filter known-flaky / known-noise hosts
+          skip_hosts = ("plausible.io/js/", "gc.zgo.at/")
+          out = sorted(u for u in urls if not any(s in u for s in skip_hosts))
+          for u in out:
+              print(u)
+          PY
+          echo "found $(wc -l < urls.txt) urls"
+
+      - name: Probe each URL (HEAD, then GET fallback)
+        run: |
+          set +e
+          fail=0
+          while IFS= read -r url; do
+            [ -z "$url" ] && continue
+            code=$(curl -sIL -o /dev/null -w "%{http_code}" --max-time 20 -A "Mozilla/5.0 link-check" "$url")
+            if [ "$code" -ge "400" ] || [ "$code" = "000" ]; then
+              # try GET — many servers reject HEAD
+              code=$(curl -sL -o /dev/null -w "%{http_code}" --max-time 20 -A "Mozilla/5.0 link-check" "$url")
+            fi
+            if [ "$code" -ge "400" ] || [ "$code" = "000" ]; then
+              echo "::warning::$code $url"
+              fail=$((fail+1))
+            fi
+          done < urls.txt
+          if [ "$fail" -gt 0 ]; then
+            echo "$fail URL(s) returned >=400 — see annotations above"
+          else
+            echo "all URLs OK"
+          fi
+          # don't exit non-zero — broken links are notification, not failure
