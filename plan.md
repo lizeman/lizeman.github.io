@@ -830,3 +830,58 @@ clean.
 ## v2.11 Progress Log
 - [x] Person.alumniOf + Person.knowsAbout
 - [x] noscript fallback for reveal animations
+
+---
+
+# v2.12 — Title polish + freshness signal + skip-link plumbing (2026-05-06, ralph iter 18)
+
+## Why
+Browser-tab title was "Home · Zeman Li" — both halves shouting his name.
+Live deploy verification surfaced two duplicate-tag issues
+(`<title>` and `<meta name="description">` were each emitted twice
+because jekyll-seo-tag was emitting them alongside our manual ones).
+Visitors landing on the publications list had no way to tell if the
+data was current. Skip-link's target `<main>` wasn't programmatically
+focusable, so VoiceOver wouldn't move focus there — partly defeating
+the purpose.
+
+## What landed
+- `index.md`:
+  - `title: "Zeman Li"` (was "Home") so jekyll-seo-tag's og:title
+    becomes "Zeman Li".
+  - New `description:` keyed for the homepage SEO snippet, mentioning
+    optimization, foundation models, test-time memorization, and DP-ML.
+- `_includes/head.html`:
+  - Homepage title is now "Zeman Li (李泽慢) · USC Ph.D. Candidate";
+    other pages keep "<page-title> · Zeman Li"; pages whose title
+    equals site.title fall back to plain site.title.
+  - `{% seo title=false %}` so jekyll-seo-tag doesn't emit a duplicate
+    `<title>`.
+  - Drop the manual `<meta name="description">` — jekyll-seo-tag
+    handles it from `page.description | default: site.description`.
+- `_includes/publications.html` — `<p class="pub-fresh">⟳ Auto-synced
+  from Semantic Scholar — last build May 6, 2026.</p>` directly under
+  the heading, with a `<time datetime="...">` for SR-friendly markup.
+  `site.time` updates whenever the daily scholar-sync pushes a commit.
+- `assets/css/main.css`:
+  - `.pub-fresh` styling: small sans, soft color, accent ⟳ glyph,
+    tabular-nums on the date.
+  - `main:focus` outline suppressed (skip-link target shouldn't draw
+    a 2px ring around the entire content region).
+  - Print stylesheet hides `.pub-fresh` (digital-only signal).
+- `_layouts/default.html` — `<main tabindex="-1">` so the skip-link
+  can programmatically move focus on screen readers that require it.
+
+## v2.12 Verification
+- `curl https://lizeman.github.io/ | grep -c '<title>'` → 1.
+- `curl ... | grep -c 'name="description"'` → 1.
+- Browser tab now reads "Zeman Li (李泽慢) · USC Ph.D. Candidate".
+- `<p class="pub-fresh"><time datetime="2026-05-06T20:51:13+00:00">May 6, 2026</time>` confirmed live.
+
+## v2.12 Progress Log
+- [x] homepage `<title>` polish
+- [x] page-level homepage `description`
+- [x] suppress duplicate jekyll-seo-tag title
+- [x] suppress duplicate manual meta-description
+- [x] `.pub-fresh` last-build timestamp
+- [x] tabindex=-1 + focus-ring suppression for skip-link target
