@@ -23,7 +23,12 @@
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
 <link rel="canonical" href="{{ page.url | absolute_url }}">
 {%- if page.url == '/' -%}
-<link rel="preload" as="image" href="{{ '/assets/img/zemanli_picture.jpg' | relative_url }}" fetchpriority="high">
+{%- comment -%}
+  preload the WebP variant — modern browsers (>96% globally) accept it.
+  Old browsers will fall back to the JPG via the <picture> element's <img>
+  fallback; that path skips the preload but the image is small (54 KB).
+{%- endcomment -%}
+<link rel="preload" as="image" href="{{ '/assets/img/zemanli_picture_600.webp' | relative_url }}" type="image/webp" fetchpriority="high">
 {%- endif -%}
 <noscript>
   <style>[data-reveal]{opacity:1!important;transform:none!important;}</style>

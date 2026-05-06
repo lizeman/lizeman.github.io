@@ -9,7 +9,15 @@
 
   <main class="page" id="main-content" tabindex="-1">
     <header class="site-header" data-reveal>
-      <img class="profile" src="{{ '/assets/img/zemanli_picture.jpg' | relative_url }}" alt="Zeman Li" width="240" height="240" decoding="async" fetchpriority="high" />
+      <picture>
+        <source srcset="{{ '/assets/img/zemanli_picture_600.webp' | relative_url }}" type="image/webp">
+        <img class="profile"
+             src="{{ '/assets/img/zemanli_picture_600.jpg' | relative_url }}"
+             alt="Zeman Li"
+             width="240" height="240"
+             decoding="async"
+             fetchpriority="high" />
+      </picture>
       <div class="site-title">
         <h1 class="display-name">
           {%- assign name = "Zeman Li" -%}
