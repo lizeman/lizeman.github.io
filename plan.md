@@ -35,6 +35,7 @@
 - **v2.28** — 4s AbortController timeout on third-party fetches
 - **v2.29** — `/manifest.json` for Add-to-Home-Screen on mobile
 - **v2.30** — Drop duplicate `<link rel="canonical">`
+- **v2.31** — Atom feed `<rights>`, `<icon>`, `<logo>`
 
 ## Context
 
@@ -1510,3 +1511,23 @@ for the various third-party endpoints).
 ## v2.30 Progress Log
 - [x] dedup canonical link
 - [x] verified live: 1 canonical, intentional 2x theme-color, etc.
+
+---
+
+# v2.31 — Atom feed metadata polish (2026-05-06, ralph iter 38)
+
+## What landed
+- `publications.xml`:
+  - `<rights>` — channel-level licensing note: "Bibliographic
+    metadata only; rights to each paper belong to its publisher /
+    authors." Avoids ambiguity for republishers / aggregators.
+  - `<icon>` — points at `/assets/img/apple-touch-icon.png` (180×180
+    PNG). Atom spec uses this for favicon-equivalent.
+  - `<logo>` — points at `/assets/img/zemanli_picture_600.jpg` (600×600
+    JPG). Atom spec uses this for channel branding.
+
+RSS readers use icon+logo to render visual identity next to the
+feed name; without them, readers fall back to text-only.
+
+## v2.31 Progress Log
+- [x] Atom <rights> / <icon> / <logo>
