@@ -27,6 +27,7 @@
 - **v2.20** — News dates → datetime= attr + Atom `<category>` tags
 - **v2.21** — `/humans.txt` (transparency about owner + stack + privacy)
 - **v2.22** — a11y polish: `lang="zh-Hans"` + JS-off visitor hide + `:target` flash + `og:image:type`
+- **v2.23** — Atom sort-key + visible Atom subscribe pill + sitemap ping
 
 ## Context
 
@@ -1266,3 +1267,31 @@ privacy posture.
 - [x] noscript: hide visitor-line for JS-off visitors
 - [x] :target flash for anchor confirmation
 - [x] og:image:type meta
+
+---
+
+# v2.23 — Atom sort-key + visible Atom pill + sitemap ping (2026-05-06, ralph iter 29)
+
+## What landed
+- `publications.xml` — encode YAML order into the `<updated>`
+  seconds field (entry 0 → :08, entry 1 → :07, …) so RSS readers
+  sorting by timestamp preserve the fetch_scholar order within a
+  given year. Fits up to ~60 entries; we have 8.
+- `_includes/publications.html` + `assets/css/main.css` — visible
+  "⊕ Atom" pill next to the freshness line links to
+  `/publications.xml`. Was discoverable only via `<link rel=
+  "alternate">` in `<head>`; now it's a one-click subscribe option.
+- `.github/workflows/scholar-sync.yml` — after a real commit (not
+  no-op), ping Google + Bing sitemap endpoints. Best-effort, gated
+  on `steps.push.outputs.pushed == 'true'`. Google deprecated their
+  ping endpoint in 2023 (we still hit it for completeness — it's
+  harmless), but Bing still acts on these.
+- `_includes/head.html` — explicit `https://` for the GoatCounter
+  script src (was protocol-relative, fine in practice but the
+  modern best practice is explicit scheme).
+
+## v2.23 Progress Log
+- [x] Atom feed sort-key encoding
+- [x] visible "⊕ Atom" subscribe pill
+- [x] post-sync search-engine sitemap ping (Google + Bing)
+- [x] explicit https for GoatCounter script
