@@ -47,6 +47,7 @@ jobs:
           grep -q "rou-wheel" _site/roulette/index.html
           grep -qi "peak profit" _site/roulette/index.html
           grep -q "auto-bet" _site/roulette/index.html
+          grep -qi "monte carlo\|aggregate" _site/roulette/index.html
           grep -q "prefers-reduced-motion" _site/assets/js/roulette.js
           grep -qi "buffalo buffalo" _site/buffalo/index.html
           grep -q "auto-grow" _site/buffalo/index.html
@@ -59,14 +60,14 @@ jobs:
           grep -q "Visiting from" _site/index.html
           grep -q "ipapi.co" _site/index.html
           grep -q "prefers-reduced-motion" _site/assets/css/main.css
-          test -f _site/404.html
-          grep -q "wandered off" _site/404.html
-          grep -q 'application/ld+json' _site/index.html
-          grep -q '"@type": "Person"' _site/index.html
-          grep -q "zemanli_picture.jpg" _site/index.html
-          grep -q 'rel="icon"' _site/index.html
-          grep -q 'rel="apple-touch-icon"' _site/index.html
-          grep -q 'property="og:image"' _site/index.html
+          test -f _site/404.html || { echo "missing _site/404.html"; exit 1; }
+          grep -q "wandered off" _site/404.html || { echo "missing 404 copy"; exit 1; }
+          grep -q 'application/ld+json' _site/index.html || { echo "missing JSON-LD block"; exit 1; }
+          grep -q '"@type": "Person"' _site/index.html || { echo "missing Person schema"; exit 1; }
+          grep -q "zemanli_picture.jpg" _site/index.html || { echo "missing profile img reference"; exit 1; }
+          grep -q 'rel="icon"' _site/index.html || { echo "missing favicon link"; exit 1; }
+          grep -q 'rel="apple-touch-icon"' _site/index.html || { echo "missing apple-touch-icon"; exit 1; }
+          grep -q 'property="og:image"' _site/index.html || { echo "missing og:image meta"; exit 1; }
 
       - uses: actions/setup-python@v5
         with:

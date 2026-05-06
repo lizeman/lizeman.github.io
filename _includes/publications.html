@@ -18,7 +18,6 @@
     <div class="pub-meta">
       <em>{{ pub.venue }}</em>{% if pub.year %} · {{ pub.year }}{% endif %}
       {% if pub.url %} · <a href="{{ pub.url }}" rel="noopener" target="_blank">paper</a>{% endif %}
-      {% if pub.citations and pub.citations > 0 %} · {{ pub.citations }} citation{% if pub.citations != 1 %}s{% endif %}{% endif %}
     </div>
   </li>
 {% endfor %}
