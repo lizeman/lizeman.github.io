@@ -8,6 +8,14 @@
 {%- endcomment -%}
 <meta name="theme-color" content="#fbf8f3" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1c1c1c" media="(prefers-color-scheme: dark)">
+{%- comment -%}
+  The page CSS is intentionally light-only (warm-paper aesthetic).
+  color-scheme=only-light tells browsers to render UA controls
+  (scrollbars, form widgets) in light variants regardless of the
+  OS preference. theme-color above still provides dark-OS harmony
+  for the mobile chrome bar.
+{%- endcomment -%}
+<meta name="color-scheme" content="only light">
 {%- if page.layout == 'game' -%}
 <meta name="robots" content="noindex">
 {%- else -%}
