@@ -17,13 +17,26 @@ layout: null
     <uri>{{ site.url }}</uri>
   </author>
   <generator>Jekyll {{ jekyll.version }}</generator>
+  {%- comment -%}
+    Within a year SS only gives year-precision dates, so all entries
+    in 2026 would otherwise share an identical <updated>. Encode the
+    YAML order (= sort order from fetch_scholar) into the second
+    field so RSS readers sorting by <updated> preserve the order:
+    entry 0 → :07, entry 1 → :06, … (max ~60 entries).
+  {%- endcomment -%}
   {% for pub in site.data.publications %}
+  {%- assign rev = forloop.length | minus: forloop.index0 -%}
+  {%- if rev < 10 -%}
+    {%- assign secstr = "0" | append: rev -%}
+  {%- else -%}
+    {%- assign secstr = rev | append: "" -%}
+  {%- endif -%}
   <entry>
     <title>{{ pub.title | xml_escape }}</title>
     <id>{% if pub.url %}{{ pub.url | xml_escape }}{% else %}{{ '/#publications' | absolute_url }}#{{ pub.title | slugify }}{% endif %}</id>
     {% if pub.url %}<link rel="alternate" href="{{ pub.url | xml_escape }}" type="text/html"/>{% endif %}
-    <updated>{% if pub.year %}{{ pub.year }}-01-01T00:00:00Z{% else %}{{ site.time | date_to_xmlschema }}{% endif %}</updated>
-    <published>{% if pub.year %}{{ pub.year }}-01-01T00:00:00Z{% else %}{{ site.time | date_to_xmlschema }}{% endif %}</published>
+    <updated>{% if pub.year %}{{ pub.year }}-01-01T00:00:{{ secstr }}Z{% else %}{{ site.time | date_to_xmlschema }}{% endif %}</updated>
+    <published>{% if pub.year %}{{ pub.year }}-01-01T00:00:{{ secstr }}Z{% else %}{{ site.time | date_to_xmlschema }}{% endif %}</published>
     {% for a in pub.authors %}
     <author><name>{{ a.name | xml_escape }}</name>{% if a.url %}<uri>{{ a.url | xml_escape }}</uri>{% endif %}</author>
     {% endfor %}
