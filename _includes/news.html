@@ -2,26 +2,32 @@
 <ul class="news-list">
 {% for item in site.data.news %}
   {%- comment -%}
-    Try to parse "Nov 2025" / "Sep 2025" etc. into YYYY-MM. Liquid's
-    date filter is unreliable on bare strings, so we map month names
-    by hand. Falls through to plain <time> on unparseable strings.
+    Parse "Nov 2025" / "Sep 2025" etc. into YYYY-MM. Liquid's
+    date filter is unreliable on bare strings; case/when is the
+    most idiomatic Liquid way to do this map. Falls through to
+    plain <time> on unparseable strings.
   {%- endcomment -%}
-  {%- assign month_map = "Jan,01;Feb,02;Mar,03;Apr,04;May,05;Jun,06;Jul,07;Aug,08;Sep,09;Oct,10;Nov,11;Dec,12" -%}
   {%- assign date_parts = item.date | split: " " -%}
   {%- assign month_part = date_parts | first -%}
   {%- assign year_part = date_parts | last -%}
-  {%- assign iso = "" -%}
-  {%- if year_part contains "20" -%}
-    {%- for kv in month_map | split: ";" -%}
-      {%- assign mk = kv | split: "," -%}
-      {%- if mk[0] == month_part -%}
-        {%- assign iso = year_part | append: "-" | append: mk[1] -%}
-      {%- endif -%}
-    {%- endfor -%}
-  {%- endif -%}
+  {%- assign mn = nil -%}
+  {%- case month_part -%}
+    {%- when "Jan" -%}{%- assign mn = "01" -%}
+    {%- when "Feb" -%}{%- assign mn = "02" -%}
+    {%- when "Mar" -%}{%- assign mn = "03" -%}
+    {%- when "Apr" -%}{%- assign mn = "04" -%}
+    {%- when "May" -%}{%- assign mn = "05" -%}
+    {%- when "Jun" -%}{%- assign mn = "06" -%}
+    {%- when "Jul" -%}{%- assign mn = "07" -%}
+    {%- when "Aug" -%}{%- assign mn = "08" -%}
+    {%- when "Sep" -%}{%- assign mn = "09" -%}
+    {%- when "Oct" -%}{%- assign mn = "10" -%}
+    {%- when "Nov" -%}{%- assign mn = "11" -%}
+    {%- when "Dec" -%}{%- assign mn = "12" -%}
+  {%- endcase -%}
   <li data-reveal>
-    {%- if iso != "" -%}
-      <time class="cv-when" datetime="{{ iso }}">{{ item.date }}</time>
+    {%- if mn -%}
+      <time class="cv-when" datetime="{{ year_part }}-{{ mn }}">{{ item.date }}</time>
     {%- else -%}
       <time class="cv-when">{{ item.date }}</time>
     {%- endif -%}
