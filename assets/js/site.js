@@ -78,6 +78,16 @@
       if (city && country) cityEl.textContent = city + ', ' + country;
       else if (country) cityEl.textContent = country;
     }
+    // small fetch wrapper with a 4s AbortController timeout so a
+    // slow third party can't hold a Promise open indefinitely
+    function timedFetch(url) {
+      var ctl = ('AbortController' in window) ? new AbortController() : null;
+      var to = ctl ? setTimeout(function () { ctl.abort(); }, 4000) : null;
+      var opts = { cache: 'no-store' };
+      if (ctl) opts.signal = ctl.signal;
+      return fetch(url, opts).finally(function () { if (to) clearTimeout(to); });
+    }
+
     if (dnt && cityEl) {
       cityEl.textContent = 'somewhere (Do Not Track respected)';
     } else {
@@ -88,7 +98,7 @@
         if (fresh && cached.city) {
           paintCity(cached.city, cached.country);
         } else {
-          fetch('https://ipapi.co/json/', { cache: 'no-store' })
+          timedFetch('https://ipapi.co/json/')
             .then(function (r) { return r.ok ? r.json() : null; })
             .then(function (j) {
               if (!j) return;
@@ -110,7 +120,7 @@
     var totalEl = widget.querySelector('[data-visitor-total]');
     var gcCode = widget.getAttribute('data-goatcounter-code') || '';
     if (totalEl && gcCode) {
-      fetch('https://' + gcCode + '.goatcounter.com/counter/TOTAL.json', { cache: 'no-store' })
+      timedFetch('https://' + gcCode + '.goatcounter.com/counter/TOTAL.json')
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (j) {
           if (j && (j.count_unique != null || j.count != null)) {
