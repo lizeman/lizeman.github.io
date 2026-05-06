@@ -23,6 +23,7 @@
 - **v2.16** — Data validators (news.yml + cv.yml) + CI gap closures
 - **v2.17** — Do Not Track support + link-check summary table
 - **v2.18** — `scroll-margin-top` for anchor nav breathing room
+- **v2.19** — Atom feed for publications + scholar-sync regex tighten
 
 ## Context
 
@@ -1118,3 +1119,53 @@ stylesheet is clean.
 ## v2.18 Progress Log
 - [x] scroll-margin-top on section anchors
 - [x] CSS unused-selector audit (clean — no dead classes)
+
+---
+
+# v2.19 — Publications Atom feed (2026-05-06, ralph iter 25)
+
+## Why
+Academics commonly follow each other through RSS / Atom readers
+(NewsBlur, Inoreader, Feedly, Bear, etc.). The default jekyll-feed
+output (`/feed.xml`) was empty because publications live in
+`_data/publications.yml`, not in `_posts/`. There was no
+machine-readable way to subscribe to new papers from this site.
+
+## What landed
+- `publications.xml` — Liquid template producing a valid Atom 1.0
+  feed:
+  - Channel-level: title, subtitle, self+alternate links,
+    `<updated>` from `site.time`, author block.
+  - One `<entry>` per `_data/publications.yml` row with title,
+    `<id>` (the arXiv URL when available), `<link rel="alternate">`,
+    `<published>`/`<updated>` (year-as-Jan-01 ISO datetime since SS
+    only gives year-precision), one `<author><name>...</name>` per
+    coauthor (with `<uri>` if known), and a `<summary>` of
+    `Venue · Year`.
+  - All user-controlled strings go through `xml_escape`.
+  - `sitemap: false` (the homepage is the canonical alternate).
+- `_includes/head.html` — added
+  `<link rel="alternate" type="application/atom+xml">` so
+  RSS readers auto-discover the feed.
+- `.github/workflows/build-check.yml`:
+  - Asserts `_site/publications.xml` exists and the homepage
+    references it.
+  - Extended JSON-LD validation step also parses the Atom feed via
+    `xml.etree.ElementTree`, asserts ≥1 `<entry>`, each with
+    `<title>`, `<author><name>`, and `<id>`.
+- Tightened `scholar-sync.yml` coauthor count regex from
+  `^.[0-9].*:$` (over-broad) to `^'[0-9]+':$` (matches the actual
+  single-quoted authorId key shape).
+
+## v2.19 Verification
+- Live `/publications.xml` returns 200 with `application/xml`,
+  feed title "Zeman Li — Publications", 8 entries.
+- `python -c "import xml.etree.ElementTree as ET; ET.fromstring(...)"`
+  parses without errors.
+- Build-check passes the new ≥1 entry assertion.
+
+## v2.19 Progress Log
+- [x] Atom feed at `/publications.xml`
+- [x] auto-discovery via `<link rel="alternate">`
+- [x] CI: parse feed + assert entry shape
+- [x] scholar-sync coauthor regex tighten
