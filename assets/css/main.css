@@ -73,6 +73,48 @@ a {
 }
 a:hover { background-size: 100% 1px; color: var(--accent); }
 
+/* keyboard-only skip link — slides in when focused */
+.skip-link {
+  position: absolute;
+  left: 0.6rem;
+  top: -40px;
+  z-index: 999;
+  background: var(--accent);
+  color: #fff;
+  padding: 0.55rem 0.9rem;
+  border-radius: 4px;
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  font-weight: 600;
+  background-image: none;
+  transition: top 0.2s var(--ease);
+}
+.skip-link:hover { color: #fff; background-size: 0% 0; }
+.skip-link:focus,
+.skip-link:focus-visible {
+  top: 0.6rem;
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* visible focus ring across all interactive elements */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+a:focus-visible {
+  background-size: 100% 1px;
+  color: var(--accent);
+}
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 /* ---------- Header ---------- */
 .site-header {
   display: grid;
@@ -513,4 +555,27 @@ body.game .game-back {
   font-size: 0.85rem;
   color: var(--muted);
   margin-bottom: 1.2rem;
+}
+
+/* ---------- Print stylesheet (CV-friendly) ---------- */
+@media print {
+  :root { --bg: #fff; --paper: #fff; --rule: #ccc; }
+  html, body { background: #fff; color: #000; font-size: 11pt; }
+  .grain, .skip-link, .anchor-nav, .visitor-line,
+  #playground, .playground-grid, .play-card,
+  .site-footer .disclaimer, .cipher,
+  body.game .game-back { display: none !important; }
+  main.page { max-width: 100%; margin: 0; padding: 0.5in 0.6in; }
+  a { color: #000; background: none !important; text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 9pt; color: #444; }
+  a[href^="#"]::after, a[href^="mailto:"]::after { content: ""; }
+  .pubs li, h2, h3 { break-inside: avoid; page-break-inside: avoid; }
+  .site-header {
+    display: block;
+    border-bottom: 1px solid #999;
+    padding-bottom: 0.4rem;
+    margin-bottom: 1rem;
+  }
+  .profile { display: none; }
+  [data-reveal] { opacity: 1 !important; transform: none !important; }
 }

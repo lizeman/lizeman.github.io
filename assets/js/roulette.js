@@ -1066,6 +1066,7 @@
 
     // sim
     if (simRunBtn) simRunBtn.addEventListener('click', runSimulation);
+    if (simMcBtn) simMcBtn.addEventListener('click', runMonteCarlo);
 
     // leaderboard
     if (leaderClearBtn) {

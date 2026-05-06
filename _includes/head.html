@@ -9,6 +9,14 @@
 
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
 <link rel="canonical" href="{{ page.url | absolute_url }}">
+
+{%- assign og_image = page.image | default: site.image | default: '/assets/img/zemanli_picture.jpg' -%}
+<meta property="og:image" content="{{ og_image | absolute_url }}">
+<meta property="og:image:alt" content="Portrait of Zeman Li">
+<meta property="og:type" content="profile">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="{{ og_image | absolute_url }}">
+
 {%- feed_meta -%}
 {%- seo -%}
 

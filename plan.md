@@ -476,6 +476,24 @@ real Playground entry, with the same depth as Beaver/Buffalo/Typing.
 - [x] CI assertions in build-check.yml
 - [x] Playground card + plan.md update
 
+## v2.4.1 — Monte Carlo aggregate + strategy telemetry (2026-05-05, ralph iter 3)
+- Added a "Monte Carlo" block to the simulator: K independent runs
+  (50–5000, default 500), surfacing P(profit > 0), P(bust), median /
+  mean final bankroll, and median / best peak across the cohort.
+  Result distribution drawn as a 30-bucket SVG histogram with a zero
+  line and a median marker (symmetric ±range around 0). Best peak
+  observed across the cohort is auto-recorded to the leaderboard with
+  the strategy label suffixed " (MC)" so simulated highs don't masquerade
+  as manual play.
+- `simulate()` now also returns per-strategy telemetry: max bet placed,
+  longest losing/winning streak, peak Fibonacci index, peak D'Alembert
+  units, longest Labouchère list. Rendered as a "strategy state"
+  dashed-border block under the single-run output.
+- `runMonteCarlo()` defers heavy work via `setTimeout(..., 16)` so the
+  button's "running…" state actually paints before the loop starts.
+- `.github/workflows/build-check.yml` — added grep for "monte carlo" or
+  "aggregate" in the built page.
+
 ---
 
 # v2.5 — SEO & meta polish (2026-05-05, ralph iter 11)
@@ -518,3 +536,61 @@ public academic homepage that gets shared as a link.
 - [x] JSON-LD Person schema
 - [x] branded 404 page
 - [x] CI assertions for the above
+
+---
+
+# v2.6 — SEO/a11y/print polish (2026-05-06, ralph iter 12)
+
+## Why
+v2.5 left the og:image assertion red because the github-pages gem's
+`jekyll-seo-tag` version doesn't pick up `site.image` reliably. While
+fixing that I added the small accessibility / SEO bits the audit flagged
+but I had punted on: skip-link, focus-visible ring, sitemap.xml,
+robots.txt, print stylesheet. Also dropped the "N citations" suffix from
+publication entries per Zeman's request — the citation counts were
+noisy and unstable across syncs.
+
+## What landed
+- `_includes/head.html` — explicit `og:image`, `og:image:alt`,
+  `og:type=profile`, `twitter:card`, `twitter:image` emitted directly
+  before `{% seo %}`. No longer depends on jekyll-seo-tag's
+  `site.image` discovery.
+- `_config.yml` — added `jekyll-sitemap` to plugins (whitelisted by
+  GitHub Pages) so `/sitemap.xml` is auto-generated. The 404 page is
+  excluded via `sitemap: false`.
+- `robots.txt` — explicit `User-agent: *`, `Allow: /`, `Crawl-delay: 5`,
+  and a `Sitemap:` line that resolves to `{{ site.url }}/sitemap.xml`.
+- `_layouts/default.html` — `<a class="skip-link" href="#main-content">`
+  immediately after `<body>`; the `<main>` got `id="main-content"`.
+- `assets/css/main.css`:
+  - `.skip-link` — visually hidden until keyboard focus, then slides
+    into the top-left as an accent-orange pill.
+  - Global `:focus-visible` outline (2px solid `--accent`, 2px offset)
+    so keyboard users have a clear indicator everywhere.
+  - `@media print` block — drops grain/nav/footer/playground, expands
+    to full width, expands hyperlinks inline (`a[href]::after`), and
+    forces `data-reveal` content to be visible. Makes Cmd-P
+    publications-list export usable as a plain CV.
+- `_includes/publications.html` — removed the `· N citation(s)` suffix.
+  Citation counts were jittery across daily Semantic Scholar syncs and
+  not load-bearing on an academic homepage where the publication list
+  itself is the signal.
+- `.github/workflows/build-check.yml` — assertions for: sitemap.xml
+  exists with `<loc>` entries, robots.txt exists with `Sitemap:` line,
+  `skip-link` in homepage, `@media print` in CSS, no `[0-9]+ citation`
+  in homepage, 404 not in sitemap.
+
+## v2.6 Verification
+- og:image now present (manual emission, regardless of seo-tag version).
+- `_site/sitemap.xml` lists every page except `/404.html`.
+- `_site/robots.txt` parseable, points at sitemap.
+- Tab-from-page-load triggers the skip-link.
+- Cmd-P preview shows clean CV-style print layout.
+
+## v2.6 Progress Log
+- [x] manual og:image / twitter:image fallback
+- [x] jekyll-sitemap + robots.txt
+- [x] skip-to-content link + focus-visible ring
+- [x] print stylesheet
+- [x] drop citation count from publications
+- [x] CI assertions for all of the above

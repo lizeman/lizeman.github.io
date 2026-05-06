@@ -68,6 +68,14 @@ jobs:
           grep -q 'rel="icon"' _site/index.html || { echo "missing favicon link"; exit 1; }
           grep -q 'rel="apple-touch-icon"' _site/index.html || { echo "missing apple-touch-icon"; exit 1; }
           grep -q 'property="og:image"' _site/index.html || { echo "missing og:image meta"; exit 1; }
+          test -f _site/sitemap.xml || { echo "missing sitemap.xml — jekyll-sitemap not building"; exit 1; }
+          grep -q "<loc>" _site/sitemap.xml || { echo "sitemap.xml has no <loc> entries"; exit 1; }
+          test -f _site/robots.txt || { echo "missing robots.txt"; exit 1; }
+          grep -q "Sitemap:" _site/robots.txt || { echo "robots.txt missing Sitemap line"; exit 1; }
+          grep -q "skip-link" _site/index.html || { echo "missing skip-to-content link"; exit 1; }
+          grep -q "@media print" _site/assets/css/main.css || { echo "missing print stylesheet"; exit 1; }
+          ! grep -Eq "[0-9]+ citation" _site/index.html || { echo "publications still show citation count"; exit 1; }
+          ! grep -q "/404.html" _site/sitemap.xml || { echo "404 leaked into sitemap"; exit 1; }
 
       - uses: actions/setup-python@v5
         with:

@@ -1,0 +1,11 @@
+---
+permalink: /robots.txt
+sitemap: false
+---
+User-agent: *
+Allow: /
+
+# Polite-bot ask: please don't hammer the site every minute.
+Crawl-delay: 5
+
+Sitemap: {{ site.url }}{{ site.baseurl }}/sitemap.xml
