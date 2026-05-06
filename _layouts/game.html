@@ -7,6 +7,12 @@
   <div class="grain" aria-hidden="true"></div>
   <main class="page">
     <a class="game-back" href="{{ '/' | relative_url }}">&larr; back to home</a>
+    <noscript>
+      <p style="padding:1rem;border:1px dashed #ccc;border-radius:6px;color:#666;font-family:sans-serif;font-size:0.9rem;">
+        This page is an interactive game and needs JavaScript to run.
+        It’ll load fine if you re-enable JS for this site.
+      </p>
+    </noscript>
     {{ content }}
     <footer class="site-footer" style="margin-top:3rem;">
       <p class="meta">a hidden page · &copy; Zeman Li</p>
