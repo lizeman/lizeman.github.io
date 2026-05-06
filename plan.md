@@ -26,6 +26,7 @@
 - **v2.19** — Atom feed for publications + scholar-sync regex tighten
 - **v2.20** — News dates → datetime= attr + Atom `<category>` tags
 - **v2.21** — `/humans.txt` (transparency about owner + stack + privacy)
+- **v2.22** — a11y polish: `lang="zh-Hans"` + JS-off visitor hide + `:target` flash + `og:image:type`
 
 ## Context
 
@@ -1240,3 +1241,28 @@ privacy posture.
 
 ## v2.21 Progress Log
 - [x] /humans.txt served + CI-asserted
+
+---
+
+# v2.22 — A11y/UX micro-polish (2026-05-06, ralph iter 28)
+
+## What landed
+- `_includes/bio.html` + `_layouts/default.html` — added
+  `lang="zh-Hans"` to the `<span>李泽慢</span>` so multilingual
+  screen readers / TTS engines pick the right pronunciation rules.
+- `_includes/visitor.html` — `<noscript><style>` hides the dynamic
+  visitor-line when JS is disabled, so JS-off visitors see only the
+  privacy disclosure rather than placeholders that never resolve.
+- `assets/css/main.css`:
+  - `section[id]:target { animation: hash-flash 1.6s ... }` — subtle
+    accent tint when the URL hash points at a section, so anchor-nav
+    clicks have visual confirmation. Honors prefers-reduced-motion.
+- `_includes/head.html` — added `<meta property="og:image:type"
+  content="image/jpeg">` so social platforms skip the
+  Content-Type sniff round-trip.
+
+## v2.22 Progress Log
+- [x] lang="zh-Hans" on Chinese name spans
+- [x] noscript: hide visitor-line for JS-off visitors
+- [x] :target flash for anchor confirmation
+- [x] og:image:type meta
