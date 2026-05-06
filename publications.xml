@@ -27,6 +27,8 @@ layout: null
     {% for a in pub.authors %}
     <author><name>{{ a.name | xml_escape }}</name>{% if a.url %}<uri>{{ a.url | xml_escape }}</uri>{% endif %}</author>
     {% endfor %}
+    {% if pub.venue %}<category term="{{ pub.venue | xml_escape }}" label="{{ pub.venue | xml_escape }}"/>{% endif %}
+    {% if pub.year %}<category term="{{ pub.year }}" label="Year {{ pub.year }}"/>{% endif %}
     <summary>{{ pub.venue | xml_escape }}{% if pub.year %} · {{ pub.year }}{% endif %}</summary>
   </entry>
   {% endfor %}
