@@ -34,7 +34,7 @@ def main() -> int:
 
     # 600×600 variants for the homepage <picture>
     im = src_im.copy()
-    im.thumbnail(TARGET_SIZE, Image.LANCZOS)
+    im.thumbnail(TARGET_SIZE, Image.Resampling.LANCZOS)
     im.save(OUT_WEBP, "WEBP", quality=85, method=6)
     print(f"wrote {OUT_WEBP.relative_to(ROOT)}: {OUT_WEBP.stat().st_size:,} bytes")
     im.save(OUT_JPG, "JPEG", quality=85, optimize=True, progressive=True)
@@ -42,7 +42,7 @@ def main() -> int:
 
     # 180×180 PNG for apple-touch-icon (iOS home screen)
     apple = src_im.copy()
-    apple.thumbnail(APPLE_SIZE, Image.LANCZOS)
+    apple.thumbnail(APPLE_SIZE, Image.Resampling.LANCZOS)
     apple.save(OUT_APPLE, "PNG", optimize=True)
     print(f"wrote {OUT_APPLE.relative_to(ROOT)}: {OUT_APPLE.stat().st_size:,} bytes")
     return 0
