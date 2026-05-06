@@ -216,9 +216,14 @@ jobs:
               assert ed.get("degree"), f"education entry missing degree: {ed}"
               assert ed.get("school"), f"education entry missing school: {ed}"
               assert ed.get("years"), f"education entry missing years: {ed}"
+          last_award_year = 9999
           for a in cv.get("awards", []):
               assert a.get("year"), f"award missing year: {a}"
               assert a.get("text"), f"award missing text: {a}"
+              y = int(str(a["year"]))
+              assert y <= last_award_year, \
+                  f"awards out of reverse-chrono order: {a['year']} > {last_award_year}"
+              last_award_year = y
           print(
               f"OK — cv.yml: {len(cv.get('education', []))} education, "
               f"{len(cv.get('awards', []))} awards"
