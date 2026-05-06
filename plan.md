@@ -406,3 +406,115 @@ action — surfaced here so they don't get lost:
 7. **News refresh** — last entry is Nov 2025 (TNT acceptance). New
    preprints (ATLAS, Memory Caching, Mem3R) could each get a line; left
    to Zeman to decide which to highlight and with what dates.
+
+---
+
+# v2.4 — Roulette (2026-05-05, ralph iter 1–2)
+
+## Why
+The half-finished `/roulette/` placeholder from v2.3 needed to ship as a
+real Playground entry, with the same depth as Beaver/Buffalo/Typing.
+
+## What landed
+- `roulette/index.html` — Jekyll page with the chip stack, betting felt
+  (12 outside-bet types: red/black, even/odd, low/high, 3 dozens, 3
+  columns), strategy panel, simulator, and leaderboard. New "peak profit
+  ever" headline above the leaderboard with a green pulse animation when
+  bumped.
+- `assets/js/roulette.js` (~640 lines, vanilla, no deps):
+  - Canvas-rendered European single-zero wheel with 37 pockets in
+    standard order (0,32,15,19,…,26). Idle drift keeps the wheel feeling
+    alive between spins; disabled under `prefers-reduced-motion`.
+  - Spin animation: wheel rotates forward 5 turns (`easeOutQuart`), ball
+    orbits backward 7 turns (`easeOutQuint`) with a damped settle wobble
+    in the last 8% of the timeline. Ends with the winning pocket aligned
+    under the fixed top pointer; ball lands at angle 0 (mod 2π).
+  - Chip stack visualization: greedy decomposition of the total bet into
+    500 / 100 / 25 / 5 / 1 chip denominations, rendered as colored stacks
+    with `n×denom` labels.
+  - Five betting strategies: flat, Martingale (×2 on loss), Fibonacci
+    (idx+1 on loss, idx-2 on win), D'Alembert (±1 unit), Labouchère
+    ([1,2,3] start, append loss / cross out win). Strategy state is
+    persistent across the manual-play session; "auto-bet" button + `A`
+    keyboard shortcut places the strategy's suggested wager on the
+    selected target.
+  - Fast Monte Carlo simulator: runs up to 50 000 spins per run, returns
+    bankroll trajectory, peak/trough, bust info. Renders as SVG bankroll
+    sparkline (downsampled to ≤600 points) + 21-bucket profit histogram.
+  - Persistent records via `localStorage`:
+    - `zl_roulette_peak_v1` — all-time peak profit ever observed.
+    - `zl_roulette_leaders_v1` — top-10 runs (manual + simulated).
+- `_includes/playground.html` — new Roulette card.
+- `.github/workflows/build-check.yml` — extended assertions:
+  `Martingale`, `Labouch`, `peak profit`, `auto-bet`,
+  `prefers-reduced-motion` in the built JS.
+
+## Cross-cutting
+- All animations honor `prefers-reduced-motion: reduce` (idle drift off,
+  spin snaps to result instantly).
+- Keyboard shortcuts: <kbd>Space</kbd> spin, <kbd>A</kbd> auto-bet,
+  <kbd>C</kbd> clear, <kbd>S</kbd> simulate.
+- Disclaimer prominently states the negative expected value and that the
+  simulation is to make the house edge visible — not to recommend
+  strategy.
+
+## v2.4 Verification
+- `node --check assets/js/roulette.js` passes.
+- All 24 referenced DOM ids in `roulette.js` exist in
+  `roulette/index.html`.
+- All 12 `data-bet` keys in HTML have corresponding `BETS[k]` entries.
+- After CI run: `_site/roulette/index.html` greps for "Roulette",
+  "Martingale", "Labouch", "peak profit", "auto-bet"; `roulette.js`
+  greps for "prefers-reduced-motion".
+
+## v2.4 Progress Log
+- [x] Wheel canvas + spin animation + reduced-motion fallback
+- [x] Multi-bet placement + chip-stack visualization
+- [x] Five strategies + auto-bet wiring
+- [x] Monte Carlo simulator + sparkline + histogram
+- [x] Peak-profit headline + leaderboard (localStorage)
+- [x] CI assertions in build-check.yml
+- [x] Playground card + plan.md update
+
+---
+
+# v2.5 — SEO & meta polish (2026-05-05, ralph iter 11)
+
+## Why
+Audit pass after v2.4: site had no og:image, no favicon, no structured
+data, and no branded 404 page — all small but visible misses for a
+public academic homepage that gets shared as a link.
+
+## What landed
+- `_config.yml` — added top-level `image: /assets/img/zemanli_picture.jpg`
+  so `jekyll-seo-tag` emits `og:image` + `twitter:image` on every page.
+- `_includes/head.html`:
+  - Inline SVG favicon as a data URI (✦ glyph in `--accent` `#b85c38`
+    on `--paper` `#fbf8f3`) — zero extra HTTP request, matches the
+    portal/footer cipher mark.
+  - `apple-touch-icon` pointing at the existing profile photo.
+  - JSON-LD `Person` schema with name, alternateName "李泽慢", jobTitle,
+    affiliations (USC + Google Research), and `sameAs` links to
+    Scholar / GitHub / Semantic Scholar — picks up canonical URLs
+    from existing `_config.yml` keys.
+- `404.html` — branded "This page wandered off." card with 4.4rem accent
+  glyph, pill-style links to home / publications / vita / portal, and a
+  fine-print canonical URL line. Uses `layout: game` (clean chrome) and
+  `sitemap: false` so it isn't crawled as content.
+- `.github/workflows/build-check.yml` — extended assertions:
+  `_site/404.html` exists, "wandered off" string present,
+  `application/ld+json` block emitted, `"@type": "Person"` present,
+  `og:image` meta present, favicon + apple-touch-icon link tags present.
+
+## v2.5 Verification
+- `_site/index.html` contains the JSON-LD block, og:image meta, favicon
+  link, apple-touch-icon link, and references `zemanli_picture.jpg`.
+- `_site/404.html` exists and contains the "wandered off" copy.
+- All checks now part of `build-check` CI.
+
+## v2.5 Progress Log
+- [x] og:image config for jekyll-seo-tag
+- [x] inline SVG favicon + apple-touch-icon
+- [x] JSON-LD Person schema
+- [x] branded 404 page
+- [x] CI assertions for the above

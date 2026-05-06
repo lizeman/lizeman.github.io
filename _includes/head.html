@@ -12,6 +12,29 @@
 {%- feed_meta -%}
 {%- seo -%}
 
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;utf8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20viewBox=%220%200%2032%2032%22%3E%3Crect%20width=%2232%22%20height=%2232%22%20rx=%226%22%20fill=%22%23fbf8f3%22/%3E%3Ctext%20x=%2216%22%20y=%2222%22%20text-anchor=%22middle%22%20font-family=%22Georgia,serif%22%20font-size=%2222%22%20fill=%22%23b85c38%22%3E%E2%9C%A6%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="{{ '/assets/img/zemanli_picture.jpg' | relative_url }}">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Zeman Li",
+  "alternateName": "李泽慢",
+  "url": "{{ site.url }}",
+  "image": "{{ '/assets/img/zemanli_picture.jpg' | absolute_url }}",
+  "jobTitle": "Ph.D. Candidate in Industrial and Systems Engineering",
+  "affiliation": [
+    { "@type": "Organization", "name": "University of Southern California" },
+    { "@type": "Organization", "name": "Google Research" }
+  ],
+  "sameAs": [
+    "https://scholar.google.com/citations?user={{ site.scholar_id }}",
+    "https://github.com/{{ site.github_username }}",
+    "https://www.semanticscholar.org/author/{{ site.semantic_scholar_author_id }}"
+  ]
+}
+</script>
+
 {%- if site.analytics.provider == "plausible" and site.analytics.domain -%}
 <script defer data-domain="{{ site.analytics.domain }}" src="{{ site.analytics.script_src | default: 'https://plausible.io/js/script.js' }}"></script>
 {%- elsif site.analytics.provider == "umami" and site.analytics.website_id -%}

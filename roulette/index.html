@@ -280,6 +280,41 @@ game_script: /assets/js/roulette.js
     color: var(--soft); margin-top: 0.2rem;
   }
 
+  /* strategy state + monte carlo block */
+  .sim-strat-state {
+    margin-top: 0.7rem;
+    padding: 0.55rem 0.75rem;
+    border: 1px dashed var(--rule);
+    border-radius: 5px;
+    background: var(--bg);
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.55;
+  }
+  .sim-strat-state strong { color: var(--text); font-weight: 600; }
+  .sim-strat-state code {
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 0.74rem;
+    background: var(--paper);
+    padding: 0.05em 0.45em;
+    border-radius: 3px;
+    color: var(--text);
+  }
+  .sim-mc {
+    margin-top: 0.9rem;
+    padding-top: 0.7rem;
+    border-top: 1px dashed var(--rule);
+  }
+  .sim-mc .sim-summary { margin-bottom: 0.4rem; }
+  #sim-mc-hist { width: 100%; height: 80px; display: block; }
+  #sim-mc-hist rect.pos { fill: #1b6e3a; }
+  #sim-mc-hist rect.neg { fill: var(--accent); }
+  #sim-mc-hist rect.zero { fill: var(--rule); }
+  #sim-mc-hist line.median { stroke: var(--text); stroke-width: 1.2; stroke-dasharray: 3 2; }
+  #sim-mc-hist line.zero { stroke: var(--soft); stroke-width: 0.6; stroke-dasharray: 2 3; }
+  #sim-mc-hist text { font-family: var(--sans); font-size: 9px; fill: var(--soft); }
+
   /* leaderboard */
   .rou-leader {
     margin-top: 1rem;
@@ -479,12 +514,23 @@ game_script: /assets/js/roulette.js
       <span>spins, starting bankroll $</span>
       <input type="number" id="rou-sim-bank" min="50" max="100000" step="50" value="1000" />
       <button id="rou-sim-run" class="primary">run</button>
+      <span style="opacity:0.5">|</span>
+      <span>Monte Carlo</span>
+      <input type="number" id="rou-sim-runs" min="50" max="5000" step="50" value="500" />
+      <span>runs</span>
+      <button id="rou-sim-mc">aggregate</button>
     </div>
     <div class="sim-out">
       <div class="sim-summary" id="rou-sim-summary">no simulation yet — click run.</div>
       <svg id="sim-spark" viewBox="0 0 600 60" preserveAspectRatio="none" aria-label="bankroll over time"></svg>
       <div id="sim-hist" aria-label="profit distribution"></div>
       <div class="sim-hist-axis"><span>-bankroll</span><span>0</span><span>+bankroll</span></div>
+      <div class="sim-strat-state" id="rou-sim-strat-state" style="display:none;"></div>
+      <div class="sim-mc" id="rou-sim-mc-out" style="display:none;">
+        <div class="sim-summary" id="rou-sim-mc-summary"></div>
+        <svg id="sim-mc-hist" viewBox="0 0 600 80" preserveAspectRatio="none" aria-label="final bankroll distribution"></svg>
+        <div class="sim-hist-axis"><span id="sim-mc-axis-lo">−</span><span>0</span><span id="sim-mc-axis-hi">+</span></div>
+      </div>
     </div>
   </div>
 

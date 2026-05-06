@@ -11,6 +11,9 @@ scholar_id: 3cHbgQQAAAAJ                      # Google Scholar (display-only)
 semantic_scholar_author_id: "2000315380"      # used by scripts/fetch_scholar.py
 github_username: lizeman
 
+# Picked up by jekyll-seo-tag for og:image + twitter:image.
+image: /assets/img/zemanli_picture.jpg
+
 # Visitor analytics. Sign up at plausible.io and add this domain to
 # start receiving data; the tag is harmless if the domain is not yet
 # registered there.

@@ -1,0 +1,88 @@
+---
+layout: game
+title: Not found
+permalink: /404.html
+game: notfound
+sitemap: false
+---
+
+<style>
+  .nf-card {
+    max-width: 540px;
+    margin: 3rem auto 0;
+    padding: 2rem 2rem 2.4rem;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 10px;
+    box-shadow: 0 8px 28px -18px rgba(0,0,0,0.35);
+    text-align: center;
+  }
+  .nf-glyph {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 4.4rem;
+    line-height: 1;
+    color: var(--accent);
+    letter-spacing: -0.04em;
+    margin: 0 0 0.6rem;
+  }
+  .nf-card h1 {
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: 1.4rem;
+    margin: 0 0 0.6rem;
+  }
+  .nf-card p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0 0 1rem;
+  }
+  .nf-links {
+    display: flex; flex-wrap: wrap; gap: 0.6rem;
+    justify-content: center;
+    margin-top: 1.2rem;
+  }
+  .nf-links a {
+    font-family: var(--sans); font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--rule);
+    border-radius: 999px;
+    color: var(--text);
+    text-decoration: none;
+    background-image: none;
+    transition: all 0.2s var(--ease);
+  }
+  .nf-links a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    transform: translateY(-1px);
+  }
+  .nf-fine {
+    margin-top: 1.4rem;
+    font-family: var(--sans); font-size: 0.78rem;
+    color: var(--soft);
+  }
+</style>
+
+<div class="nf-card" data-reveal>
+  <p class="nf-glyph">404</p>
+  <h1>This page wandered off.</h1>
+  <p>
+    Either the URL was mistyped, or the page used to exist and has since
+    moved &mdash; this site is autonomously rebuilt by an AI agent, so
+    occasional broken links are expected. Try one of the entry points
+    below, or email <a href="mailto:zemanli@usc.edu">zemanli@usc.edu</a>
+    if you were looking for something specific.
+  </p>
+  <div class="nf-links">
+    <a href="{{ '/' | relative_url }}">home</a>
+    <a href="{{ '/#publications' | relative_url }}">publications</a>
+    <a href="{{ '/#vita' | relative_url }}">cv</a>
+    <a href="{{ '/portal/' | relative_url }}">✦ portal</a>
+  </div>
+  <p class="nf-fine">
+    If a search engine sent you here, the canonical homepage is
+    <a href="{{ '/' | absolute_url }}">{{ site.url }}</a>.
+  </p>
+</div>

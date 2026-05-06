@@ -75,6 +75,14 @@
   var simSummaryEl = $('rou-sim-summary');
   var simSparkEl = $('sim-spark');
   var simHistEl = $('sim-hist');
+  var simRunsEl = $('rou-sim-runs');
+  var simMcBtn = $('rou-sim-mc');
+  var simMcOutEl = $('rou-sim-mc-out');
+  var simMcSummaryEl = $('rou-sim-mc-summary');
+  var simMcHistEl = $('sim-mc-hist');
+  var simMcAxisLo = $('sim-mc-axis-lo');
+  var simMcAxisHi = $('sim-mc-axis-hi');
+  var simStratStateEl = $('rou-sim-strat-state');
   var leaderBody = $('rou-leader-body');
   var leaderClearBtn = $('rou-leader-clear');
   var autobetBtn = $('rou-autobet');
@@ -638,49 +646,67 @@
 
   // ---------- simulation ----------
   // Returns { trajectory, finalBankroll, peak, trough, busted, wins, losses }
-  function simulate(strat, base, betKey, bankroll0, spins) {
+  function simulate(strat, base, betKey, bankroll0, spins, opts) {
+    opts = opts || {};
+    var keepTraj = opts.keepTraj !== false; // pass false to skip Float32Array allocation
     var state = newStrategyState(strat, base);
     var bk = bankroll0;
-    var peak = 0;     // max profit above start
-    var trough = 0;   // most negative profit
+    var peak = 0;
+    var trough = 0;
     var wins = 0, losses = 0;
-    var traj = new Float32Array(spins + 1);
-    traj[0] = 0;
+    var traj = keepTraj ? new Float32Array(spins + 1) : null;
+    if (traj) traj[0] = 0;
     var betDef = BETS[betKey];
     if (!betDef) betDef = BETS.red;
 
+    // strategy telemetry
+    var maxBet = 0, maxLossStreak = 0, maxWinStreak = 0, lossStreak = 0, winStreak = 0;
+    var maxFibIdx = 0, maxDAUnits = 1, maxLabLen = 0;
+
     for (var i = 1; i <= spins; i++) {
       var bet = suggestBet(state);
-      // table-edge clamp: cannot bet more than bankroll
       if (bet > bk) bet = bk;
-      if (bet <= 0) { traj[i] = bk - bankroll0; continue; }
+      if (bet <= 0) { if (traj) traj[i] = bk - bankroll0; continue; }
+      if (bet > maxBet) maxBet = bet;
       var roll = Math.floor(Math.random() * N_POCKETS);
       var won = betDef.test(roll);
       var lastUnits = Math.max(1, Math.round(bet / state.base));
       if (won) {
-        bk += bet * betDef.pay; // net gain
+        bk += bet * betDef.pay;
         wins++;
+        winStreak++; if (winStreak > maxWinStreak) maxWinStreak = winStreak;
+        lossStreak = 0;
       } else {
         bk -= bet;
         losses++;
+        lossStreak++; if (lossStreak > maxLossStreak) maxLossStreak = lossStreak;
+        winStreak = 0;
       }
       updateStrategy(state, won, lastUnits);
+      // capture per-strategy telemetry
+      if (state.idx > maxFibIdx) maxFibIdx = state.idx;
+      if (state.units && state.units > maxDAUnits) maxDAUnits = state.units;
+      if (state.list && state.list.length > maxLabLen) maxLabLen = state.list.length;
+
       var prof = bk - bankroll0;
       if (prof > peak) peak = prof;
       if (prof < trough) trough = prof;
-      traj[i] = prof;
+      if (traj) traj[i] = prof;
       if (bk <= 0) {
-        // bust — fill remaining with last value
-        for (var j = i + 1; j <= spins; j++) traj[j] = bk - bankroll0;
+        if (traj) for (var j = i + 1; j <= spins; j++) traj[j] = bk - bankroll0;
         return {
           trajectory: traj, finalBankroll: bk, peak: peak, trough: trough,
-          busted: true, wins: wins, losses: losses, lastSpin: i
+          busted: true, wins: wins, losses: losses, lastSpin: i,
+          maxBet: maxBet, maxLossStreak: maxLossStreak, maxWinStreak: maxWinStreak,
+          finalState: state, maxFibIdx: maxFibIdx, maxDAUnits: maxDAUnits, maxLabLen: maxLabLen
         };
       }
     }
     return {
       trajectory: traj, finalBankroll: bk, peak: peak, trough: trough,
-      busted: false, wins: wins, losses: losses, lastSpin: spins
+      busted: false, wins: wins, losses: losses, lastSpin: spins,
+      maxBet: maxBet, maxLossStreak: maxLossStreak, maxWinStreak: maxWinStreak,
+      finalState: state, maxFibIdx: maxFibIdx, maxDAUnits: maxDAUnits, maxLabLen: maxLabLen
     };
   }
 
@@ -708,7 +734,158 @@
 
     paintSpark(res.trajectory);
     paintHist(res.trajectory, bank);
+    paintStrategyState(res);
     recordResult(res.peak, strategy, res.lastSpin, strategy);
+  }
+
+  function paintStrategyState(res) {
+    if (!simStratStateEl) return;
+    var html = '<strong>Strategy telemetry — ' + strategy + ':</strong> ';
+    var bits = [
+      'peak wager <code>$' + Math.round(res.maxBet).toLocaleString('en-US') + '</code>',
+      'max loss streak <code>' + res.maxLossStreak + '</code>',
+      'max win streak <code>' + res.maxWinStreak + '</code>'
+    ];
+    if (strategy === 'fibonacci') {
+      bits.push('peak Fibonacci index <code>' + res.maxFibIdx + '</code>');
+    } else if (strategy === 'dalembert') {
+      bits.push('peak units <code>' + res.maxDAUnits + '</code>');
+    } else if (strategy === 'labouchere' && res.finalState && res.finalState.list) {
+      bits.push('peak list length <code>' + res.maxLabLen + '</code>');
+      var L = res.finalState.list;
+      var preview = L.length > 10 ? L.slice(0, 10).join(', ') + ', …(' + L.length + ' total)' : (L.join(', ') || 'empty');
+      bits.push('final list <code>[' + preview + ']</code>');
+    }
+    simStratStateEl.innerHTML = html + bits.join(' · ') + '.';
+    simStratStateEl.style.display = 'block';
+  }
+
+  // ---------- Monte Carlo aggregate ----------
+  // Run K independent sims with the current settings; report distribution.
+  function runMonteCarlo() {
+    var spins = Math.max(1, Math.min(50000, parseInt(simSpinsEl.value, 10) || 500));
+    var bank = Math.max(10, parseInt(simBankEl.value, 10) || 1000);
+    var base = Math.max(1, parseInt(baseEl.value, 10) || 5);
+    var betKey = stratBetEl.value || 'red';
+    var K = Math.max(1, Math.min(5000, parseInt(simRunsEl ? simRunsEl.value : 500, 10) || 500));
+
+    if (simMcBtn) { simMcBtn.disabled = true; simMcBtn.textContent = 'running…'; }
+
+    // run on next tick so the disabled state paints first
+    setTimeout(function () {
+      var t0 = performance.now();
+      var finals = new Float32Array(K);
+      var peaks = new Float32Array(K);
+      var lastSpins = new Int32Array(K);
+      var busts = 0, profitable = 0;
+      for (var k = 0; k < K; k++) {
+        var r = simulate(strategy, base, betKey, bank, spins, { keepTraj: false });
+        var prof = r.finalBankroll - bank;
+        finals[k] = prof;
+        peaks[k] = r.peak;
+        lastSpins[k] = r.lastSpin;
+        if (r.busted) busts++;
+        if (prof > 0) profitable++;
+      }
+      var dt = performance.now() - t0;
+
+      // compute summary stats
+      var sortedFinals = Array.prototype.slice.call(finals).sort(function (a, b) { return a - b; });
+      var median = sortedFinals[Math.floor(K / 2)];
+      var mean = sortedFinals.reduce(function (s, v) { return s + v; }, 0) / K;
+      var sortedPeaks = Array.prototype.slice.call(peaks).sort(function (a, b) { return a - b; });
+      var medianPeak = sortedPeaks[Math.floor(K / 2)];
+      var bestPeak = sortedPeaks[K - 1];
+
+      var pBust = (100 * busts / K).toFixed(1);
+      var pProfit = (100 * profitable / K).toFixed(1);
+
+      simMcSummaryEl.innerHTML =
+        '<strong>Monte Carlo:</strong> ' + K.toLocaleString('en-US') + ' independent runs of ' +
+        spins.toLocaleString('en-US') + ' spins · ' +
+        'P(profit > 0) <strong>' + pProfit + '%</strong> · ' +
+        'P(bust) <strong style="color:var(--accent)">' + pBust + '%</strong> · ' +
+        'median final ' + fmtSigned(median) + ' · ' +
+        'mean final ' + fmtSigned(mean) + ' · ' +
+        'median peak ' + fmtSigned(medianPeak) + ' · ' +
+        'best peak <strong style="color:#1b6e3a">' + fmtSigned(bestPeak) + '</strong> · ' +
+        dt.toFixed(0) + 'ms';
+
+      paintMcHist(finals, median, bank);
+      simMcOutEl.style.display = 'block';
+
+      // record best peak across the whole MC sweep
+      recordResult(bestPeak, strategy + ' (MC)', spins * K, strategy);
+
+      if (simMcBtn) { simMcBtn.disabled = false; simMcBtn.textContent = 'aggregate'; }
+    }, 16);
+  }
+
+  function paintMcHist(finals, median, bank0) {
+    if (!simMcHistEl) return;
+    simMcHistEl.innerHTML = '';
+    var W = 600, H = 80, P = 4;
+    var n = finals.length;
+    if (!n) return;
+    var minV = Infinity, maxV = -Infinity;
+    for (var i = 0; i < n; i++) {
+      if (finals[i] < minV) minV = finals[i];
+      if (finals[i] > maxV) maxV = finals[i];
+    }
+    // symmetric range around 0 if both signs present, else clamp
+    var span = Math.max(Math.abs(minV), Math.abs(maxV), bank0 / 4);
+    var lo = -span, hi = span;
+    var BUCKETS = 30;
+    var counts = new Array(BUCKETS).fill(0);
+    for (var j = 0; j < n; j++) {
+      var b = Math.floor((finals[j] - lo) / (hi - lo) * BUCKETS);
+      if (b < 0) b = 0; if (b >= BUCKETS) b = BUCKETS - 1;
+      counts[b]++;
+    }
+    var maxC = 1;
+    for (var c = 0; c < BUCKETS; c++) if (counts[c] > maxC) maxC = counts[c];
+
+    var bw = (W - 2 * P) / BUCKETS;
+    for (var k = 0; k < BUCKETS; k++) {
+      var x = P + k * bw;
+      var h = (counts[k] / maxC) * (H - 2 * P - 8);
+      if (counts[k] > 0 && h < 1) h = 1;
+      var y = H - P - h;
+      var rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      var bucketCenter = lo + (k + 0.5) * (hi - lo) / BUCKETS;
+      rect.setAttribute('class', counts[k] === 0 ? 'zero' :
+                                  bucketCenter > 0 ? 'pos' :
+                                  bucketCenter < 0 ? 'neg' : 'zero');
+      rect.setAttribute('x', x.toFixed(1));
+      rect.setAttribute('y', y.toFixed(1));
+      rect.setAttribute('width', Math.max(1, bw - 0.6).toFixed(1));
+      rect.setAttribute('height', Math.max(1, h).toFixed(1));
+      simMcHistEl.appendChild(rect);
+    }
+
+    // zero line
+    var zeroX = P + (0 - lo) / (hi - lo) * (W - 2 * P);
+    var zline = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    zline.setAttribute('class', 'zero');
+    zline.setAttribute('x1', zeroX.toFixed(1));
+    zline.setAttribute('x2', zeroX.toFixed(1));
+    zline.setAttribute('y1', P);
+    zline.setAttribute('y2', H - P);
+    simMcHistEl.appendChild(zline);
+
+    // median line
+    var medX = P + (median - lo) / (hi - lo) * (W - 2 * P);
+    var mline = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    mline.setAttribute('class', 'median');
+    mline.setAttribute('x1', medX.toFixed(1));
+    mline.setAttribute('x2', medX.toFixed(1));
+    mline.setAttribute('y1', P);
+    mline.setAttribute('y2', H - P);
+    simMcHistEl.appendChild(mline);
+
+    // labels
+    if (simMcAxisLo) simMcAxisLo.textContent = fmtSigned(lo);
+    if (simMcAxisHi) simMcAxisHi.textContent = fmtSigned(hi);
   }
 
   function paintSpark(traj) {

@@ -59,6 +59,14 @@ jobs:
           grep -q "Visiting from" _site/index.html
           grep -q "ipapi.co" _site/index.html
           grep -q "prefers-reduced-motion" _site/assets/css/main.css
+          test -f _site/404.html
+          grep -q "wandered off" _site/404.html
+          grep -q 'application/ld+json' _site/index.html
+          grep -q '"@type": "Person"' _site/index.html
+          grep -q "zemanli_picture.jpg" _site/index.html
+          grep -q 'rel="icon"' _site/index.html
+          grep -q 'rel="apple-touch-icon"' _site/index.html
+          grep -q 'property="og:image"' _site/index.html
 
       - uses: actions/setup-python@v5
         with:
