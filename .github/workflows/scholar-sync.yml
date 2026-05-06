@@ -67,9 +67,11 @@ jobs:
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Commit and push if there are changes
+        id: push
         run: |
           if git diff --quiet _data/publications.yml _data/coauthors.yml; then
             echo "No changes to publications.yml or coauthors.yml."
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git config user.name "github-actions[bot]"
@@ -77,3 +79,14 @@ jobs:
           git add _data/publications.yml _data/coauthors.yml
           git commit -m "chore: scholar sync"
           git push
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Ping search engines about updated sitemap
+        if: steps.push.outputs.pushed == 'true'
+        run: |
+          # Best-effort sitemap ping. Failures are silent — search
+          # engines will rediscover the site on their own schedule.
+          curl -s -o /dev/null -w "google: %{http_code}\n" \
+            "https://www.google.com/ping?sitemap=https://lizeman.github.io/sitemap.xml" || true
+          curl -s -o /dev/null -w "bing: %{http_code}\n" \
+            "https://www.bing.com/ping?sitemap=https://lizeman.github.io/sitemap.xml" || true
