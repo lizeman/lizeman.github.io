@@ -8,3 +8,5 @@ Gemfile.lock
 .DS_Store
 *.log
 .claude/
+__pycache__/
+*.pyc
