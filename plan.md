@@ -21,6 +21,7 @@
 - **v2.15** — WebP/JPG `<picture>` variants (190 KB LCP win) +
   apple-touch-icon
 - **v2.16** — Data validators (news.yml + cv.yml) + CI gap closures
+- **v2.17** — Do Not Track support + link-check summary table
 
 ## Context
 
@@ -1057,3 +1058,38 @@ worth the complexity for a one-sentence description.
 - [x] explored SS tldr enrichment, reverted (API limitation)
 - [x] CI: assert apple-touch-icon PNG built + referenced
 - [x] CI: shape-validate news.yml + cv.yml
+
+---
+
+# v2.17 — Do Not Track + link-check UX (2026-05-06, ralph iter 23)
+
+## Why
+Two privacy / ergonomics bits:
+
+1. The visitor widget claims "nothing is logged on this site" but
+   was unconditionally fetching ipapi.co for the geo lookup —
+   exposing the visitor's IP to a third party regardless of their
+   stated preference. Wiring `navigator.doNotTrack === '1'` lets
+   privacy-conscious users skip that fetch entirely.
+2. The weekly link-check workflow logged broken URLs as Actions
+   warnings, but the UI summary just said "1 URL(s) returned >=400
+   — see annotations above". A markdown summary table lets the user
+   glance at the run and immediately see what's broken.
+
+## What landed
+- `assets/js/site.js` — gated the ipapi.co fetch on
+  `!(navigator.doNotTrack === '1' || window.doNotTrack === '1' ||
+  navigator.msDoNotTrack === '1')`. When DNT is on, paints
+  "somewhere (DNT respected)" so the choice is visible.
+  Aggregate GoatCounter call is unaffected (no PII).
+  Local-only visit count is unaffected.
+- `_includes/visitor.html` — privacy fine print now mentions DNT
+  explicitly: "suppressed if your browser sends Do Not Track."
+- `.github/workflows/link-check.yml` — writes a markdown table to
+  `$GITHUB_STEP_SUMMARY`: ✓ all-clear row when healthy, status +
+  URL row per failure, plus a `**N of M URLs broken**` line.
+
+## v2.17 Progress Log
+- [x] DNT respect for ipapi.co geo lookup
+- [x] privacy disclosure mentions DNT
+- [x] link-check writes a markdown summary table
