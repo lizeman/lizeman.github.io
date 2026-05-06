@@ -654,3 +654,64 @@ landmarks, aria-current sync on the active nav link, and a
 - [x] aria-current sync on active section
 - [x] `.visually-hidden` helper
 - [x] CI: parse all JSON-LD blocks; assert structured data + a11y attrs
+
+---
+
+# v2.8 — Polish + dedup-test guardrails (2026-05-06, ralph iter 14)
+
+## Why
+Live deploy verification surfaced two cleanups: jekyll-seo-tag v2.8.0
+(GitHub Pages bundle) DOES emit `og:type` / `twitter:card` itself, so
+my v2.5 manual versions duplicated and conflicted (last wins).
+Conversely, jekyll-seo-tag v2.8.0 does NOT emit `og:image` even with
+`site.image` set — so the manual emission stays.
+
+Also fixed a long-standing duplicate `id="bio"` between `<section
+id="bio">` (in index.md) and `<h2 id="bio">About</h2>` (bio.html).
+Anchor nav targets the section, so the heading id was redundant.
+
+Added dedup-by-author-id and venue-year-extraction unit tests to CI
+to catch regressions in `fetch_scholar.py` — the dedup logic is
+subtle (rank by has_arxiv, citations, year) and the year-from-venue
+override isn't obvious from reading the code.
+
+## What landed
+- `_includes/head.html` — drop conflicting `og:type` /
+  `twitter:card` from manual emission; keep `og:image`,
+  `og:image:alt`, `twitter:image` (which jekyll-seo-tag won't emit
+  at this version). Added a comment explaining why.
+- `_includes/head.html` — meta description now uses
+  `page.description | default: site.description` so each page can
+  ship its own snippet for share previews.
+- `_includes/bio.html` — drop `id="bio"` from `<h2>`; the section
+  wrapper already owns it.
+- `.github/workflows/build-check.yml`:
+  - New step: import `scripts/fetch_scholar.py` and exercise
+    `_dedup_papers` (collapses duplicate by author-id set, keeps
+    arXiv variant; preserves no-author-id records) and
+    `build_publications` (venue override + year extraction from
+    "ICLR 2026 (Spotlight)" via `\b(20\d{2})\b`).
+  - Extended JSON-LD parse step to also assert all `id="..."` attrs
+    on the homepage are unique.
+- `_layouts/default.html` — profile photo gets `width="240"
+  height="240"`, `decoding="async"`, `fetchpriority="high"` to
+  prevent CLS and prioritize the above-the-fold hero.
+- Game pages (portal/typing/beaver/buffalo/roulette) — `sitemap:
+  false` front matter so they no longer leak into `/sitemap.xml`
+  while their layout's `noindex` meta is in place.
+
+## v2.8 Verification
+- Live `https://lizeman.github.io/sitemap.xml` lists `/` only.
+- Live homepage has exactly one `og:image`, one `og:type`, one
+  `twitter:card`.
+- CI runs the dedup unit tests against the live `fetch_scholar.py`.
+- Duplicate-id check would have failed before this change, passes now.
+
+## v2.8 Progress Log
+- [x] drop duplicate og:type / twitter:card
+- [x] page-aware meta description
+- [x] fix `id="bio"` duplication
+- [x] dedup + venue-year unit tests in CI
+- [x] dupe-id CI guard
+- [x] profile-img CLS guard
+- [x] game pages out of sitemap.xml
