@@ -76,6 +76,9 @@ jobs:
           grep -q "@media print" _site/assets/css/main.css || { echo "missing print stylesheet"; exit 1; }
           ! grep -Eq "[0-9]+ citation" _site/index.html || { echo "publications still show citation count"; exit 1; }
           ! grep -q "/404.html" _site/sitemap.xml || { echo "404 leaked into sitemap"; exit 1; }
+          for path in /portal/ /typing/ /beaver/ /buffalo/ /roulette/; do
+            ! grep -q "$path" _site/sitemap.xml || { echo "noindex page $path leaked into sitemap"; exit 1; }
+          done
           grep -q "ItemList" _site/index.html || { echo "missing publications ItemList JSON-LD"; exit 1; }
           grep -q "ScholarlyArticle" _site/index.html || { echo "missing ScholarlyArticle JSON-LD"; exit 1; }
           grep -q 'name="theme-color"' _site/index.html || { echo "missing theme-color meta"; exit 1; }
