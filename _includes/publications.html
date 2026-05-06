@@ -22,7 +22,7 @@
       {%- endfor -%}
     </div>
     <div class="pub-meta">
-      <em>{{ pub.venue | escape }}</em>{% if pub.year %} · {{ pub.year | escape }}{% endif %}
+      <em>{{ pub.venue | escape }}</em>{% if pub.year %} · <time datetime="{{ pub.year | escape }}">{{ pub.year | escape }}</time>{% endif %}
       {% if pub.url %} · <a href="{{ pub.url | escape }}" rel="noopener" target="_blank">paper</a>{% endif %}
     </div>
   </li>
