@@ -99,8 +99,9 @@
 
     // site-wide total via GoatCounter — public hits endpoint
     var totalEl = widget.querySelector('[data-visitor-total]');
-    if (totalEl) {
-      fetch('https://lizeman.goatcounter.com/counter//TOTAL.json', { cache: 'no-store' })
+    var gcCode = widget.getAttribute('data-goatcounter-code') || '';
+    if (totalEl && gcCode) {
+      fetch('https://' + gcCode + '.goatcounter.com/counter/TOTAL.json', { cache: 'no-store' })
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (j) {
           if (j && (j.count_unique != null || j.count != null)) {
