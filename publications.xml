@@ -16,6 +16,7 @@ layout: null
     {%- if site.email %}<email>{{ site.email }}</email>{% endif %}
     <uri>{{ site.url }}</uri>
   </author>
+  <rights>Bibliographic metadata only; rights to each paper belong to its publisher / authors.</rights>
   <generator>Jekyll {{ jekyll.version }}</generator>
   {%- comment -%}
     Within a year SS only gives year-precision dates, so all entries
