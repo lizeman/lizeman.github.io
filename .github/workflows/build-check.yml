@@ -225,8 +225,9 @@ jobs:
                   print(f"--- block {i} ---\n{raw[:400]}\n---")
                   raise
               assert "@type" in obj, f"block {i}: no @type"
-          # duplicate-id check
-          ids = re.findall(r'\bid="([^"]+)"', html)
+          # duplicate-id check. Negative lookbehind so data-id= /
+          # aria-labelledby="id-foo" / etc don't match as `id=` attrs.
+          ids = re.findall(r'(?<![a-zA-Z-])id="([^"]+)"', html)
           dupes = [k for k, v in collections.Counter(ids).items() if v > 1]
           assert not dupes, f"duplicate id attrs in homepage: {dupes}"
           print(f"OK — {len(blocks)} JSON-LD blocks parsed; {len(ids)} ids unique.")
