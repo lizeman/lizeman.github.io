@@ -91,6 +91,8 @@ jobs:
           ! grep -q 'rel="preload" as="image"' _site/roulette/index.html || { echo "preload leaked onto game page"; exit 1; }
           test -f _site/assets/img/zemanli_picture_600.webp || { echo "missing 600px WebP variant"; exit 1; }
           test -f _site/assets/img/zemanli_picture_600.jpg || { echo "missing 600px JPG variant"; exit 1; }
+          test -f _site/assets/img/apple-touch-icon.png || { echo "missing apple-touch-icon PNG"; exit 1; }
+          grep -q "apple-touch-icon.png" _site/index.html || { echo "homepage not pointing at the dedicated apple-touch-icon"; exit 1; }
           grep -q '<picture>' _site/index.html || { echo "homepage missing <picture> element"; exit 1; }
           grep -q 'type="image/webp"' _site/index.html || { echo "homepage missing webp source"; exit 1; }
 
