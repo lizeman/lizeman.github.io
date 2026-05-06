@@ -71,14 +71,28 @@ jobs:
             echo "| status | url |"
             echo "|---|---|"
           } > "$GITHUB_STEP_SUMMARY"
+          probe() {
+            local url="$1"
+            local code
+            code=$(curl -sIL -o /dev/null -w "%{http_code}" --max-time 20 -A "Mozilla/5.0 link-check" "$url")
+            if [ "$code" -ge "400" ] || [ "$code" = "000" ]; then
+              # many servers reject HEAD — fall back to GET
+              code=$(curl -sL -o /dev/null -w "%{http_code}" --max-time 20 -A "Mozilla/5.0 link-check" "$url")
+            fi
+            echo "$code"
+          }
           while IFS= read -r url; do
             [ -z "$url" ] && continue
             checked=$((checked+1))
-            code=$(curl -sIL -o /dev/null -w "%{http_code}" --max-time 20 -A "Mozilla/5.0 link-check" "$url")
-            if [ "$code" -ge "400" ] || [ "$code" = "000" ]; then
-              # try GET — many servers reject HEAD
-              code=$(curl -sL -o /dev/null -w "%{http_code}" --max-time 20 -A "Mozilla/5.0 link-check" "$url")
-            fi
+            code=$(probe "$url")
+            # On transient failures (5xx, 408, 429, 000), wait + retry once
+            # so a flaky paper-server doesn't false-positive.
+            case "$code" in
+              5*|408|429|000)
+                sleep 3
+                code=$(probe "$url")
+                ;;
+            esac
             if [ "$code" -ge "400" ] || [ "$code" = "000" ]; then
               echo "::warning::$code $url"
               echo "| ❌ $code | $url |" >> "$GITHUB_STEP_SUMMARY"
