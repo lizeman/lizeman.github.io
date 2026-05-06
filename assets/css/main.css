@@ -116,6 +116,12 @@ a:hover { background-size: 100% 1px; color: var(--accent); }
   outline-offset: 2px;
   border-radius: 2px;
 }
+/* skip-link targets <main>, but a 2px ring around the whole <main>
+   looks like a layout glitch, so suppress it when <main> takes focus. */
+main:focus,
+main:focus-visible {
+  outline: none;
+}
 a:focus-visible {
   background-size: 100% 1px;
   color: var(--accent);
