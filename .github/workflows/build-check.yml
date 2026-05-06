@@ -86,6 +86,8 @@ jobs:
           grep -q "visually-hidden" _site/assets/css/main.css || { echo "missing .visually-hidden helper"; exit 1; }
           grep -q 'class="pub-fresh"' _site/index.html || { echo "missing pub-fresh timestamp"; exit 1; }
           grep -q '<time datetime=' _site/index.html || { echo "missing semantic <time> markup"; exit 1; }
+          # news dates should parse to YYYY-MM (e.g. "Nov 2025" → 2025-11)
+          grep -Eq '<time class="cv-when" datetime="[0-9]{4}-[0-9]{2}">' _site/index.html || { echo "news month-name parser broke (no YYYY-MM datetime found)"; exit 1; }
           grep -q 'rel="preload" as="image"' _site/index.html || { echo "missing profile-img preload on homepage"; exit 1; }
           # game pages should NOT have the homepage-only preload
           ! grep -q 'rel="preload" as="image"' _site/roulette/index.html || { echo "preload leaked onto game page"; exit 1; }
