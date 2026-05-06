@@ -36,7 +36,7 @@ layout: null
   {%- endif -%}
   <entry>
     <title>{{ pub.title | xml_escape }}</title>
-    <id>{% if pub.url %}{{ pub.url | xml_escape }}{% else %}{{ '/#publications' | absolute_url }}#{{ pub.title | slugify }}{% endif %}</id>
+    <id>{% if pub.url %}{{ pub.url | xml_escape }}{% else %}{{ '/' | absolute_url }}#pub-{{ pub.title | slugify }}{% endif %}</id>
     {% if pub.url %}<link rel="alternate" href="{{ pub.url | xml_escape }}" type="text/html"/>{% endif %}
     <updated>{% if pub.year %}{{ pub.year }}-01-01T00:00:{{ secstr }}Z{% else %}{{ site.time | date_to_xmlschema }}{% endif %}</updated>
     <published>{% if pub.year %}{{ pub.year }}-01-01T00:00:{{ secstr }}Z{% else %}{{ site.time | date_to_xmlschema }}{% endif %}</published>
