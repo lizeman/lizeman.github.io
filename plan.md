@@ -715,3 +715,48 @@ override isn't obvious from reading the code.
 - [x] dupe-id CI guard
 - [x] profile-img CLS guard
 - [x] game pages out of sitemap.xml
+
+---
+
+# v2.9 — Stale-text & XSS hygiene (2026-05-06, ralph iter 15)
+
+## Why
+Quick audit pass over the runtime-code paths I'd touched recently.
+Found three concrete issues:
+
+1. The portal greeting still said "Two doors await." after v2.4 added
+   Roulette and Buffalo grew the door grid to four. Manually-counted
+   strings always rot.
+2. The GoatCounter total fetch URL had a double slash
+   (`/counter//TOTAL.json`) and the slug was hard-coded to "lizeman" in
+   site.js. The double slash would have 404'd once the user actually
+   signs up; the hard-code disconnects it from `_config.yml`.
+3. Publication titles / authors went through Liquid as raw HTML. SS
+   never produces malicious data, but a future SS row containing `<`,
+   `>`, or `&` would render as raw HTML or break layout.
+
+## What landed
+- `assets/js/portal.js`:
+  - Read door count off the DOM at unlock time, output a number-word
+    greeting ("Welcome through. Four doors await.") so it scales as
+    games are added/removed.
+- `assets/js/site.js` + `_includes/visitor.html`:
+  - `<aside class="visitor" data-goatcounter-code="{{ site.goatcounter_code }}">`
+  - JS reads the slug off the dataset, builds
+    `https://<slug>.goatcounter.com/counter/TOTAL.json`. Single slash,
+    no hard-code; if `goatcounter_code` is blank the fetch is skipped
+    entirely.
+- `_includes/publications.html` — every user-facing field now goes
+  through `| escape` (title, authors, venue, year, url). The JSON-LD
+  block keeps `| jsonify` (which already escapes for JSON context).
+
+## v2.9 Verification
+- `node --check assets/js/portal.js && node --check assets/js/site.js` pass.
+- Built homepage strips HTML in pub titles (verified via local Liquid
+  reasoning — no SS data currently hits this codepath).
+- Live site shows the unified slug pattern.
+
+## v2.9 Progress Log
+- [x] portal greeting auto-counts doors
+- [x] GoatCounter URL: drop double slash + template the slug
+- [x] escape publication fields against XSS
