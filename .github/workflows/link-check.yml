@@ -64,8 +64,16 @@ jobs:
         run: |
           set +e
           fail=0
+          checked=0
+          {
+            echo "## link-check"
+            echo ""
+            echo "| status | url |"
+            echo "|---|---|"
+          } > "$GITHUB_STEP_SUMMARY"
           while IFS= read -r url; do
             [ -z "$url" ] && continue
+            checked=$((checked+1))
             code=$(curl -sIL -o /dev/null -w "%{http_code}" --max-time 20 -A "Mozilla/5.0 link-check" "$url")
             if [ "$code" -ge "400" ] || [ "$code" = "000" ]; then
               # try GET — many servers reject HEAD
@@ -73,12 +81,16 @@ jobs:
             fi
             if [ "$code" -ge "400" ] || [ "$code" = "000" ]; then
               echo "::warning::$code $url"
+              echo "| ❌ $code | $url |" >> "$GITHUB_STEP_SUMMARY"
               fail=$((fail+1))
             fi
           done < urls.txt
-          if [ "$fail" -gt 0 ]; then
-            echo "$fail URL(s) returned >=400 — see annotations above"
+          if [ "$fail" -eq "0" ]; then
+            echo "| ✓ all $checked URLs returned <400 | |" >> "$GITHUB_STEP_SUMMARY"
+            echo "all URLs OK ($checked checked)"
           else
-            echo "all URLs OK"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "**$fail of $checked URLs broken** — annotations above for details." >> "$GITHUB_STEP_SUMMARY"
+            echo "$fail URL(s) returned >=400 — see annotations above"
           fi
           # don't exit non-zero — broken links are notification, not failure
