@@ -13,9 +13,9 @@
       <p class="meta">a hidden page · &copy; Zeman Li</p>
     </footer>
   </main>
-  <script src="{{ '/assets/js/site.js' | relative_url }}" defer></script>
+  <script src="{{ '/assets/js/site.js' | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>
   {%- if page.game_script -%}
-    <script src="{{ page.game_script | relative_url }}" defer></script>
+    <script src="{{ page.game_script | relative_url }}?v={{ site.time | date: '%s' }}" defer></script>
   {%- endif -%}
 </body>
 </html>
