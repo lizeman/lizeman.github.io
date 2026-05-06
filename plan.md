@@ -33,6 +33,7 @@
 - **v2.26** — Person JSON-LD `mainEntityOfPage` + `description`; tighter dup-id regex
 - **v2.27** — Cache-bust CSS / JS URLs with `?v=site.time`
 - **v2.28** — 4s AbortController timeout on third-party fetches
+- **v2.29** — `/manifest.json` for Add-to-Home-Screen on mobile
 
 ## Context
 
@@ -1460,3 +1461,33 @@ connection. AbortController-based 4s timeout cleans this up.
 
 ## v2.28 Progress Log
 - [x] AbortController-based 4s fetch timeout for ipapi.co + goatcounter
+
+---
+
+# v2.29 — Web app manifest (2026-05-06, ralph iter 36)
+
+## Why
+When a mobile visitor "adds to home screen", the OS asks for an
+icon, label, theme color, and start URL. Without a manifest the
+fallback heuristic uses `<title>` and `apple-touch-icon` and
+guesses the rest. Explicit manifest pins the experience.
+
+## What landed
+- `manifest.json` (Liquid-templated):
+  - `name` / `short_name` from `site.title`, with the Chinese name
+    in the long form
+  - `description` from `site.description`
+  - `start_url` / `scope: "/"` so the app always launches at home
+  - `display: minimal-ui` (this is a website, not a standalone app
+    — keep the URL bar)
+  - `background_color` / `theme_color: #fbf8f3` matching the page
+  - Three `icons` entries: 180×180 apple-touch-icon (PNG),
+    600×600 (JPG), 1181×1181 source (JPG); device picks closest.
+  - `categories: ["education", "science"]`
+- `_includes/head.html` — `<link rel="manifest" href="/manifest.json">`.
+- `.github/workflows/build-check.yml` — assert manifest.json builds,
+  parses as valid JSON, and homepage references it.
+
+## v2.29 Progress Log
+- [x] manifest.json with icons, theme color, name, scope
+- [x] CI: parse manifest.json + assert link tag
