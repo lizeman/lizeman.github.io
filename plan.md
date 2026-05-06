@@ -885,3 +885,25 @@ the purpose.
 - [x] suppress duplicate manual meta-description
 - [x] `.pub-fresh` last-build timestamp
 - [x] tabindex=-1 + focus-ring suppression for skip-link target
+
+---
+
+# v2.13 — Semantic `<time>` markup (2026-05-06, ralph iter 19)
+
+## What landed
+- `_includes/news.html` — news date is `<time class="cv-when">`.
+  No `datetime` attribute since strings like "Nov 2025" aren't ISO.
+- `_includes/vita.html`:
+  - Education entry years are `<time class="cv-when">` (range strings
+    like "2023 – present" aren't valid datetime values, omit attr).
+  - Award years are `<time class="cv-when" datetime="2023">` since
+    a single year is a valid HTML datetime.
+- `_includes/publications.html` — pub year is
+  `<time datetime="2026">2026</time>`.
+
+Pure semantic markup tightening — assistive tech and crawlers can
+now identify date-bearing spans without textual heuristics.
+
+## v2.13 Progress Log
+- [x] news, vita, publications: `<span class="cv-when">` → `<time>`
+- [x] datetime= attr on awards + publication years
