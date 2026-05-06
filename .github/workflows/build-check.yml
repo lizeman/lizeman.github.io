@@ -14,6 +14,12 @@ on:
 permissions:
   contents: read
 
+env:
+  # Opt into Node 24 early so checkout@v4 / setup-python@v5 stop
+  # warning about Node 20 deprecation. GitHub will force this by
+  # June 2026 anyway.
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 jobs:
   build:
     runs-on: ubuntu-latest
