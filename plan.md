@@ -1607,3 +1607,97 @@ Verified live:
 - [x] drop jekyll-feed plugin
 - [x] format-detection: telephone=no
 - [x] rel="author" pointing at /humans.txt
+
+---
+
+# v2.35 — Steady-state polish (2026-05-06, ralph iter 44–84)
+
+## Why
+
+Two dozen small wins after v2.34, none big enough to merit their own
+section. Logging them as a batch so `plan.md` stays a faithful audit
+trail and future-me can find when each landed without `git log`-archeology.
+
+## What landed
+
+**Head metadata** (`_includes/head.html`)
+- `color-scheme=only light` — UA scrollbars/widgets render light to
+  match the warm-paper CSS, regardless of OS dark-mode preference.
+- `referrer-policy=strict-origin-when-cross-origin` — explicit, not
+  UA-default; consistent across browsers.
+- `application-name` + `apple-mobile-web-app-title` — bookmark/iOS
+  home-screen label respects site title.
+- `apple-mobile-web-app-status-bar-style=default` — iOS status bar
+  matches `theme-color`.
+- `msapplication-TileColor` + `msapplication-config=none` — disables
+  IE/Edge's auto-generated browserconfig.xml probe (404 noise gone).
+- SVG favicon `sizes="any"` — tells browsers it scales, so they
+  don't fall back to a raster icon at large sizes.
+
+**Manifest** (`/manifest.json`)
+- `display_override: ["minimal-ui", "browser"]` — fallback chain for
+  PWA chrome.
+
+**Atom feed** (`publications.xml`)
+- `<subtitle>` now names the author and the daily sync cadence so
+  feed readers show meaningful preview text.
+- Fragment-id URLs no longer double-up `#` when entry has no real URL.
+
+**Image build** (`scripts/build_image_variants.py`)
+- Center-crop to square defensively if the source ever stops being
+  square (currently it is — 1181×1181 — but the resize path assumed
+  squareness silently).
+
+**CI hardening** (`.github/workflows/build-check.yml`)
+- Shape-validate `_data/coauthors.yml` (cache schema).
+- Shape-validate `_data/venue_overrides.yml` (also accepts old-style
+  `cs/9999999` arxiv ids alongside `YYYY.NNNNN`).
+- Cache pip dependencies (~30s/build saved).
+- Assert `news.yml`, `cv.yml`-awards, `cv.yml`-education are all in
+  reverse-chronological order.
+- `node --check` on every JS file (syntax errors ≠ silent deploys).
+- `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24=true` env opt-in for
+  GitHub-Actions's Node 24 migration (silences deprecation warning).
+
+**Link-check** (`.github/workflows/link-check.yml`)
+- Retry once after 3s on transient failures (5xx, 408, 429, 000) so a
+  flaky paper-server doesn't false-positive.
+
+**Visitor widget** (`_includes/visitor.html`)
+- "page view #N" instead of "your visit #N" — a non-cookied visitor
+  who returns is the *Nth view*, not their Nth visit; old phrasing
+  was technically wrong.
+
+**Game pages** (`_layouts/game.html`)
+- `<noscript>` block now explains why interactive content is missing
+  for JS-disabled visitors instead of leaving a blank page.
+
+## v2.35 Verification
+
+All 22 commits between `f14b74f` and `71057ad` shipped green
+(build-check + pages-deploy on each). Working tree clean at
+`71057ad`; live site renders correctly.
+
+## v2.35 Progress Log
+- [x] color-scheme + referrer-policy + msapplication housekeeping
+- [x] iOS / Apple home-screen polish
+- [x] manifest display_override
+- [x] Atom feed subtitle + fragment-id fix
+- [x] image build defensive square crop
+- [x] coauthors / venue_overrides / news / cv shape + ordering CI
+- [x] node --check + pip cache + Node 24 opt-in
+- [x] link-check transient retry
+- [x] visitor wording fix
+- [x] game-page noscript notice
+
+## What's left for the user (out of agent scope)
+
+- Refresh `_data/news.yml` (last entry Nov 2025; today is May 2026).
+- Sign up at plausible.io for `lizeman.github.io` if real analytics
+  desired (config keys already in `_config.yml`, just commented).
+- Sign up at goatcounter.com (slug `lizeman` already wired in
+  `_config.yml` / `visitor.html` / `head.html`).
+- Optional: add ORCID iD to `_config.yml` → slots into Person
+  JSON-LD as `identifier`.
+- Optional: custom domain via `CNAME` file at repo root.
+- Optional: Mastodon profile completes the `rel="me"` chain.
