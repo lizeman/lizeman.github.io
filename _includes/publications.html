@@ -3,22 +3,22 @@
 <ol class="pubs" reversed aria-labelledby="publications-heading" aria-describedby="publications-meta">
 {% for pub in site.data.publications %}
   <li data-reveal>
-    <div class="pub-title">{{ pub.title }}</div>
+    <div class="pub-title">{{ pub.title | escape }}</div>
     <div class="pub-authors">
       {%- for a in pub.authors -%}
         {%- if a.is_self -%}
-          <strong>{{ a.name }}</strong>
+          <strong>{{ a.name | escape }}</strong>
         {%- elsif a.url and a.url != "" -%}
-          <a href="{{ a.url }}" rel="noopener" target="_blank">{{ a.name }}</a>
+          <a href="{{ a.url | escape }}" rel="noopener" target="_blank">{{ a.name | escape }}</a>
         {%- else -%}
-          {{ a.name }}
+          {{ a.name | escape }}
         {%- endif -%}
         {%- unless forloop.last %}, {% endunless -%}
       {%- endfor -%}
     </div>
     <div class="pub-meta">
-      <em>{{ pub.venue }}</em>{% if pub.year %} · {{ pub.year }}{% endif %}
-      {% if pub.url %} · <a href="{{ pub.url }}" rel="noopener" target="_blank">paper</a>{% endif %}
+      <em>{{ pub.venue | escape }}</em>{% if pub.year %} · {{ pub.year | escape }}{% endif %}
+      {% if pub.url %} · <a href="{{ pub.url | escape }}" rel="noopener" target="_blank">paper</a>{% endif %}
     </div>
   </li>
 {% endfor %}
