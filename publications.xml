@@ -6,7 +6,7 @@ layout: null
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>{{ site.title }} — Publications</title>
-  <subtitle>Auto-synced from Semantic Scholar.</subtitle>
+  <subtitle>Publications by {{ site.author }}, auto-synced daily from Semantic Scholar.</subtitle>
   <link rel="self" href="{{ '/publications.xml' | absolute_url }}" type="application/atom+xml"/>
   <link rel="alternate" href="{{ '/#publications' | absolute_url }}" type="text/html"/>
   <updated>{{ site.time | date_to_xmlschema }}</updated>
