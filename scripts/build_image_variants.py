@@ -32,6 +32,16 @@ def main() -> int:
     src_im = Image.open(SRC).convert("RGB")
     print(f"source: {src_im.size}, {src_im.mode}")
 
+    # Crop to square (center) so apple-touch-icon and the 600×600 thumbnails
+    # render cleanly even if a future source replacement isn't square.
+    w, h = src_im.size
+    if w != h:
+        side = min(w, h)
+        left = (w - side) // 2
+        top = (h - side) // 2
+        src_im = src_im.crop((left, top, left + side, top + side))
+        print(f"  cropped to square: {src_im.size}")
+
     # 600×600 variants for the homepage <picture>
     im = src_im.copy()
     im.thumbnail(TARGET_SIZE, Image.Resampling.LANCZOS)
