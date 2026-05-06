@@ -66,36 +66,45 @@
       if (countEl) countEl.textContent = '#' + c;
     } catch (e) { /* private mode etc */ }
 
-    // city via ipapi.co (cached for 24h)
+    // city via ipapi.co (cached for 24h). Respect Do Not Track —
+    // if the user has DNT on, skip the third-party geo call entirely
+    // and leave the placeholder. IP doesn't leave their browser.
+    var dnt = (navigator.doNotTrack === '1' ||
+               window.doNotTrack === '1' ||
+               navigator.msDoNotTrack === '1');
     var cityEl = widget.querySelector('[data-visitor-city]');
     function paintCity(city, country) {
       if (!cityEl) return;
       if (city && country) cityEl.textContent = city + ', ' + country;
       else if (country) cityEl.textContent = country;
     }
-    try {
-      var raw = localStorage.getItem('zl_ipapi_v1');
-      var cached = raw ? JSON.parse(raw) : null;
-      var fresh = cached && cached.ts && (Date.now() - cached.ts < 86400000);
-      if (fresh && cached.city) {
-        paintCity(cached.city, cached.country);
-      } else {
-        fetch('https://ipapi.co/json/', { cache: 'no-store' })
-          .then(function (r) { return r.ok ? r.json() : null; })
-          .then(function (j) {
-            if (!j) return;
-            var city = j.city || '';
-            var country = j.country_name || j.country || '';
-            paintCity(city, country);
-            try {
-              localStorage.setItem('zl_ipapi_v1', JSON.stringify({
-                city: city, country: country, ts: Date.now()
-              }));
-            } catch (_) {}
-          })
-          .catch(function () {});
-      }
-    } catch (e) {}
+    if (dnt && cityEl) {
+      cityEl.textContent = 'somewhere (DNT respected)';
+    } else {
+      try {
+        var raw = localStorage.getItem('zl_ipapi_v1');
+        var cached = raw ? JSON.parse(raw) : null;
+        var fresh = cached && cached.ts && (Date.now() - cached.ts < 86400000);
+        if (fresh && cached.city) {
+          paintCity(cached.city, cached.country);
+        } else {
+          fetch('https://ipapi.co/json/', { cache: 'no-store' })
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .then(function (j) {
+              if (!j) return;
+              var city = j.city || '';
+              var country = j.country_name || j.country || '';
+              paintCity(city, country);
+              try {
+                localStorage.setItem('zl_ipapi_v1', JSON.stringify({
+                  city: city, country: country, ts: Date.now()
+                }));
+              } catch (_) {}
+            })
+            .catch(function () {});
+        }
+      } catch (e) {}
+    }
 
     // site-wide total via GoatCounter — public hits endpoint
     var totalEl = widget.querySelector('[data-visitor-total]');
