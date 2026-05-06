@@ -1,0 +1,35 @@
+---
+permalink: /manifest.json
+sitemap: false
+layout: null
+---
+{
+  "name": "{{ site.title }} (李泽慢)",
+  "short_name": "{{ site.title }}",
+  "description": {{ site.description | strip_newlines | jsonify }},
+  "start_url": "/",
+  "scope": "/",
+  "display": "minimal-ui",
+  "background_color": "#fbf8f3",
+  "theme_color": "#fbf8f3",
+  "icons": [
+    {
+      "src": "/assets/img/apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "180x180"
+    },
+    {
+      "src": "/assets/img/zemanli_picture_600.jpg",
+      "type": "image/jpeg",
+      "sizes": "600x600"
+    },
+    {
+      "src": "/assets/img/zemanli_picture.jpg",
+      "type": "image/jpeg",
+      "sizes": "1181x1181",
+      "purpose": "any"
+    }
+  ],
+  "lang": "en",
+  "categories": ["education", "science"]
+}
