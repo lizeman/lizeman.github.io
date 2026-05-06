@@ -143,10 +143,12 @@ jobs:
           print("OK — fetch_scholar unit tests passed.")
           PY
 
-      - name: Validate publications shape
+      - name: Validate _data shapes
         run: |
           python - <<'PY'
-          import yaml, sys, pathlib
+          import yaml, pathlib
+
+          # publications.yml — auto-generated, full-name authors, self flag
           d = yaml.safe_load(pathlib.Path("_data/publications.yml").read_text())
           assert isinstance(d, list) and d, "publications.yml empty"
           for p in d:
@@ -157,6 +159,30 @@ jobs:
               assert any(a.get("is_self") for a in p["authors"]), \
                   f"no is_self author in {p['title']}"
           print(f"OK — {len(d)} publications validated.")
+
+          # news.yml — hand-edited; date + text required
+          n = yaml.safe_load(pathlib.Path("_data/news.yml").read_text())
+          assert isinstance(n, list) and n, "news.yml empty"
+          for item in n:
+              assert isinstance(item, dict), f"news entry not dict: {item}"
+              assert item.get("date"), f"news entry missing date: {item}"
+              assert item.get("text"), f"news entry missing text: {item}"
+          print(f"OK — {len(n)} news items validated.")
+
+          # cv.yml — education + awards
+          cv = yaml.safe_load(pathlib.Path("_data/cv.yml").read_text())
+          assert isinstance(cv, dict), "cv.yml not a dict"
+          for ed in cv.get("education", []):
+              assert ed.get("degree"), f"education entry missing degree: {ed}"
+              assert ed.get("school"), f"education entry missing school: {ed}"
+              assert ed.get("years"), f"education entry missing years: {ed}"
+          for a in cv.get("awards", []):
+              assert a.get("year"), f"award missing year: {a}"
+              assert a.get("text"), f"award missing text: {a}"
+          print(
+              f"OK — cv.yml: {len(cv.get('education', []))} education, "
+              f"{len(cv.get('awards', []))} awards"
+          )
           PY
 
       - name: Validate JSON-LD blocks parse + no duplicate IDs
