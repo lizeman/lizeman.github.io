@@ -32,6 +32,7 @@
 - **v2.25** — JSON-LD `</script>`-injection defense
 - **v2.26** — Person JSON-LD `mainEntityOfPage` + `description`; tighter dup-id regex
 - **v2.27** — Cache-bust CSS / JS URLs with `?v=site.time`
+- **v2.28** — 4s AbortController timeout on third-party fetches
 
 ## Context
 
@@ -1439,3 +1440,23 @@ caches has more cost than benefit.
 
 ## v2.27 Progress Log
 - [x] Cache-bust CSS / JS / per-game script URLs
+
+---
+
+# v2.28 — Third-party fetch timeouts (2026-05-06, ralph iter 35)
+
+## Why
+The visitor widget's `ipapi.co` and `<slug>.goatcounter.com` fetches
+had no timeout. If either service was slow or hung, the Promise
+would stay open until the user navigated away — burning a network
+slot and (on GoatCounter, in some setups) holding open a TCP
+connection. AbortController-based 4s timeout cleans this up.
+
+## What landed
+- `assets/js/site.js` — small `timedFetch(url)` helper wraps
+  `fetch` with a 4-second `AbortController` timeout. Replaces both
+  visitor-widget calls. Falls through to no-op fetch if
+  AbortController isn't supported (very old browsers).
+
+## v2.28 Progress Log
+- [x] AbortController-based 4s fetch timeout for ipapi.co + goatcounter
