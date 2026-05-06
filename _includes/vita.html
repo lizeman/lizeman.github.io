@@ -4,7 +4,7 @@
 <ul class="cv-list">
 {% for ed in site.data.cv.education %}
   <li data-reveal>
-    <span class="cv-when">{{ ed.years }}</span>
+    <time class="cv-when">{{ ed.years }}</time>
     <span class="cv-what">
       {{ ed.degree }}, <em>{{ ed.school }}</em>
       {%- if ed.advisor %}<br/><span class="cv-sub">Advisor:
@@ -21,7 +21,7 @@
 <ul class="cv-list">
 {% for a in site.data.cv.awards %}
   <li data-reveal>
-    <span class="cv-when">{{ a.year }}</span>
+    <time class="cv-when" datetime="{{ a.year }}">{{ a.year }}</time>
     <span class="cv-what">
       {%- if a.link -%}
         <a href="{{ a.link }}" rel="noopener" target="_blank">{{ a.text }}</a>
