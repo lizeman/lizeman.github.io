@@ -24,6 +24,7 @@
 - **v2.17** — Do Not Track support + link-check summary table
 - **v2.18** — `scroll-margin-top` for anchor nav breathing room
 - **v2.19** — Atom feed for publications + scholar-sync regex tighten
+- **v2.20** — News dates → datetime= attr + Atom `<category>` tags
 
 ## Context
 
@@ -1169,3 +1170,48 @@ machine-readable way to subscribe to new papers from this site.
 - [x] auto-discovery via `<link rel="alternate">`
 - [x] CI: parse feed + assert entry shape
 - [x] scholar-sync coauthor regex tighten
+
+---
+
+# v2.20 — Machine-readable news dates + Atom categories (2026-05-06, ralph iter 26)
+
+## Why
+Two semantic-markup wins:
+
+1. News entries have human-readable dates ("Nov 2025") with no
+   `datetime=` attribute, so crawlers and SR users can't surface
+   the actual month. Liquid's date filter is unreliable on bare
+   strings (silently returns the input verbatim on parse failure),
+   so the first attempt — `{{ item.date | date: "%Y-%m" }}` —
+   produced no datetime. Switched to a `case/when` mapping
+   "Jan"-"Dec" → "01"-"12" (after a `for kv | split: ","` attempt
+   also misbehaved on the github-pages Liquid runtime — likely an
+   array-indexing edge case).
+2. The publications Atom feed didn't expose categories, so RSS
+   readers couldn't filter by venue or year. Added `<category>`
+   tags for both dimensions.
+
+## What landed
+- `_includes/news.html` — Liquid `case/when` block maps month name
+  to MM, then emits `<time class="cv-when" datetime="2025-11">Nov
+  2025</time>`. Falls through to plain `<time>` on unparseable
+  strings.
+- `publications.xml` — each `<entry>` now emits two `<category>`
+  tags: `term="Venue Name"` and `term="2026"`.
+- `.github/workflows/build-check.yml` — asserts a regex match for
+  `<time class="cv-when" datetime="[0-9]{4}-[0-9]{2}">` on the
+  homepage so a future Liquid regression in news.html surfaces in
+  CI.
+
+## v2.20 Verification
+- Live homepage shows `datetime="2025-11"`, `datetime="2025-09"`,
+  etc. on every news entry.
+- Live `/publications.xml` has `<category>` tags per entry.
+- CI assertion catches the regression I encountered while
+  iterating (the array-indexing version that silently dropped
+  datetime).
+
+## v2.20 Progress Log
+- [x] news month-name → datetime= via Liquid case/when
+- [x] CI guard for news datetime regex
+- [x] publications.xml Atom `<category>` tags (venue + year)
