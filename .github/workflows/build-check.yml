@@ -109,6 +109,21 @@ jobs:
       - name: Install Python deps
         run: pip install -r scripts/requirements.txt
 
+      - name: Smoke-test build_image_variants.py (Pillow API compat)
+        run: |
+          # Run the script and verify it produces all three variants
+          # at expected file sizes. Catches Pillow version drift +
+          # source-image deletion.
+          python scripts/build_image_variants.py
+          test -f assets/img/zemanli_picture_600.webp
+          test -f assets/img/zemanli_picture_600.jpg
+          test -f assets/img/apple-touch-icon.png
+          # all three should be non-trivial (>10 KB)
+          for f in assets/img/zemanli_picture_600.webp assets/img/zemanli_picture_600.jpg assets/img/apple-touch-icon.png; do
+            sz=$(wc -c < "$f")
+            [ "$sz" -gt 10000 ] || { echo "$f suspiciously small ($sz B)"; exit 1; }
+          done
+
       - name: Unit-test fetch_scholar dedup + venue-year extraction
         run: |
           python - <<'PY'
