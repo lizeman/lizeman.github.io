@@ -92,6 +92,46 @@ jobs:
       - name: Install Python deps
         run: pip install -r scripts/requirements.txt
 
+      - name: Unit-test fetch_scholar dedup + venue-year extraction
+        run: |
+          python - <<'PY'
+          import sys, pathlib
+          sys.path.insert(0, str(pathlib.Path("scripts").resolve()))
+          import fetch_scholar as fs
+
+          # _dedup_papers: two records describing the same paper (same
+          # author-id set), one with arxiv, the other without — should
+          # keep the arxiv one.
+          a = {"authors": [{"authorId": "1"}, {"authorId": "2"}], "externalIds": {}, "citationCount": 5, "year": 2025}
+          b = {"authors": [{"authorId": "2"}, {"authorId": "1"}], "externalIds": {"ArXiv": "2511.99999"}, "citationCount": 3, "year": 2025}
+          out = fs._dedup_papers([a, b])
+          assert len(out) == 1, f"expected dedup to 1, got {len(out)}"
+          assert out[0]["externalIds"].get("ArXiv") == "2511.99999", "arxiv variant should win"
+
+          # records with no author IDs pass through untouched
+          c = {"authors": [], "externalIds": {}, "citationCount": 0, "year": 2024}
+          d = {"authors": [], "externalIds": {}, "citationCount": 0, "year": 2024}
+          out = fs._dedup_papers([c, d])
+          assert len(out) == 2, "no-author-id records must not collapse"
+
+          # build_publications: venue override picks year out of "ICLR 2026"
+          paper = {
+            "title": "Test paper", "year": 2025, "authors": [{"authorId": "X", "name": "Self"}],
+            "externalIds": {"ArXiv": "2511.12345"}, "venue": "Preprint",
+            "publicationVenue": {}, "url": "",
+          }
+          pubs = fs.build_publications(
+            [paper],
+            coauthors={"X": {"name": "Zeman Li", "url": ""}},
+            venue_overrides={"2511.12345": "ICLR 2026 (Spotlight)"},
+            self_id="X",
+          )
+          assert len(pubs) == 1
+          assert pubs[0]["venue"] == "ICLR 2026 (Spotlight)"
+          assert pubs[0]["year"] == "2026", f"venue-year should be 2026, got {pubs[0]['year']}"
+          print("OK — fetch_scholar unit tests passed.")
+          PY
+
       - name: Validate publications shape
         run: |
           python - <<'PY'
