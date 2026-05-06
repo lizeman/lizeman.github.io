@@ -1,8 +1,17 @@
 <h2>News</h2>
 <ul class="news-list">
 {% for item in site.data.news %}
+  {%- comment -%}
+    Try to parse "Nov 2025" / "Sep 2025" etc. into a YYYY-MM datetime.
+    Liquid's date filter handles month-name strings via Ruby's parser.
+  {%- endcomment -%}
+  {%- assign iso = item.date | date: "%Y-%m" -%}
   <li data-reveal>
-    <time class="cv-when">{{ item.date }}</time>
+    {%- if iso and iso != item.date -%}
+      <time class="cv-when" datetime="{{ iso }}">{{ item.date }}</time>
+    {%- else -%}
+      <time class="cv-when">{{ item.date }}</time>
+    {%- endif -%}
     <span class="cv-what">{{ item.text }}</span>
   </li>
 {% endfor %}
