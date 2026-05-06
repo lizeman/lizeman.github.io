@@ -7,13 +7,11 @@
 {%- endcomment -%}
 <meta name="theme-color" content="#fbf8f3" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#1c1c1c" media="(prefers-color-scheme: dark)">
-{%- comment -%}
-  Default robots policy: index everything, follow all links, allow
-  large image previews in SERP (helps academic papers stand out).
-  Game pages override this via their own <meta name="robots"
-  content="noindex"> emitted by game.html — last meta wins.
-{%- endcomment -%}
+{%- if page.layout == 'game' -%}
+<meta name="robots" content="noindex">
+{%- else -%}
 <meta name="robots" content="index, follow, max-image-preview:large">
+{%- endif -%}
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
