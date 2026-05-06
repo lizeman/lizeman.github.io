@@ -38,6 +38,7 @@
 - **v2.31** — Atom feed `<rights>`, `<icon>`, `<logo>`
 - **v2.32** — `rel="me"` identity-verification links
 - **v2.33** — Consolidate robots meta to head.html (single tag per page)
+- **v2.34** — Drop jekyll-feed; misc head polish (format-detection, rel=author)
 
 ## Context
 
@@ -1583,3 +1584,26 @@ Verified live:
 ## v2.33 Progress Log
 - [x] page.layout-aware robots meta in head.html
 - [x] dropped duplicate from game.html
+
+---
+
+# v2.34 — Drop jekyll-feed + misc head polish (2026-05-06, ralph iter 43)
+
+## What landed
+- `_config.yml` — removed `jekyll-feed` from plugins. The
+  auto-generated `/feed.xml` was empty (channel-only, no `_posts`)
+  and would mislead RSS subscribers. The meaningful syndication
+  feed is `/publications.xml`. `feed.xml` now returns 404; the
+  publications feed and Atom auto-discovery `<link>` are unaffected.
+- `_includes/head.html` — removed the `{% feed_meta %}` Liquid call
+  (no longer defined without jekyll-feed).
+- `<meta name="format-detection" content="telephone=no">` — stops
+  iOS Safari from auto-converting digit strings (paper years,
+  arxiv IDs, contest team-counts) into tel: links on mobile.
+- `<link rel="author" href="/humans.txt">` — humanstxt.org
+  discovery convention.
+
+## v2.34 Progress Log
+- [x] drop jekyll-feed plugin
+- [x] format-detection: telephone=no
+- [x] rel="author" pointing at /humans.txt
