@@ -11,6 +11,8 @@ layout: null
   <link rel="alternate" href="{{ '/#publications' | absolute_url }}" type="text/html"/>
   <updated>{{ site.time | date_to_xmlschema }}</updated>
   <id>{{ '/publications.xml' | absolute_url }}</id>
+  <icon>{{ '/assets/img/apple-touch-icon.png' | absolute_url }}</icon>
+  <logo>{{ '/assets/img/zemanli_picture_600.jpg' | absolute_url }}</logo>
   <author>
     <name>{{ site.author }}</name>
     {%- if site.email %}<email>{{ site.email }}</email>{% endif %}
