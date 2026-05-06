@@ -63,7 +63,7 @@ jobs:
             fi
             echo ""
             echo "Publications: $(grep -c '^- title:' _data/publications.yml)"
-            echo "Coauthors: $(grep -c '^.[0-9].*:$' _data/coauthors.yml | head -1) cached"
+            echo "Coauthors: $(grep -cE "^'[0-9]+':$" _data/coauthors.yml) cached"
           } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Commit and push if there are changes
