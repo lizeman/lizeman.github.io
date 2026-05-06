@@ -7,6 +7,14 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://ipapi.co">
+{%- if site.analytics.provider == "plausible" and site.analytics.domain -%}
+<link rel="dns-prefetch" href="https://plausible.io">
+{%- endif -%}
+{%- if site.goatcounter_code -%}
+<link rel="dns-prefetch" href="https://gc.zgo.at">
+<link rel="dns-prefetch" href="https://{{ site.goatcounter_code }}.goatcounter.com">
+{%- endif -%}
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
