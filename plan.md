@@ -31,6 +31,7 @@
 - **v2.24** — Pillow 10 compat fix + image-script smoke test + robots policy
 - **v2.25** — JSON-LD `</script>`-injection defense
 - **v2.26** — Person JSON-LD `mainEntityOfPage` + `description`; tighter dup-id regex
+- **v2.27** — Cache-bust CSS / JS URLs with `?v=site.time`
 
 ## Context
 
@@ -1405,3 +1406,36 @@ mitigation needed there.
 - [x] Person.mainEntityOfPage + Person.description
 - [x] dup-id regex tightened (negative lookbehind)
 - [x] explored + reverted jekyll-last-modified-at
+
+---
+
+# v2.27 — Cache-bust CSS / JS via `?v=site.time` (2026-05-06, ralph iter 34)
+
+## Why
+GitHub Pages serves with `cache-control: max-age=600` (10 min).
+Returning visitors who reload within that window see stale CSS / JS
+even after I deploy a fix. Appending `?v=<build-epoch>` changes the
+URL on every build, so cache invalidates aligned with deploys.
+
+Within a build, every page references the same `?v=<n>` so the
+cache hits across page navigation. Across builds, the value changes
+and the browser re-fetches.
+
+## What landed
+- `_includes/head.html` — `main.css?v={{ site.time | date: '%s' }}`.
+- `_layouts/default.html` — `site.js` with the same query.
+- `_layouts/game.html` — `site.js` and the per-game `game_script`
+  with the same query.
+
+The og:image / apple-touch-icon / favicon are not cache-busted —
+they're long-lived assets that change rarely (every replacement is
+a content edit, not a code edit), and breaking social-share preview
+caches has more cost than benefit.
+
+## v2.27 Verification
+- Live homepage shows `main.css?v=1778105150` and
+  `site.js?v=1778105150` (both with the same build-epoch value).
+- og:image still references the bare URL (good).
+
+## v2.27 Progress Log
+- [x] Cache-bust CSS / JS / per-game script URLs
