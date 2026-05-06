@@ -1,5 +1,26 @@
 # Plan: Rebuild Zeman Li's Academic Website
 
+## Versions at a glance
+
+- **v1** — Initial scaffold (Bio, News, Pubs, Vita, Scholar sync)
+- **v2** — Saveski-style polish (typography, anchor nav, profile photo)
+- **v2.1** — Visitor widget (ipapi.co + GoatCounter), Konami portal
+- **v2.2** — Playground (typing, beaver) + portal riddles
+- **v2.3** — Buffalo game + cipher unlock + plan review
+- **v2.4** — Roulette (canvas wheel, 5 strategies, MC sim, leaderboard)
+- **v2.5** — SEO basics (og:image, JSON-LD Person, 404 page, favicon)
+- **v2.6** — a11y/print/sitemap (skip-link, focus-visible, robots.txt)
+- **v2.7** — Structured data (ScholarlyArticle ItemList, theme-color)
+- **v2.8** — Polish (dedup tests, dup-id fix, profile-img CLS guard)
+- **v2.9** — Hygiene (portal greeting, GoatCounter URL, XSS escape)
+- **v2.10** — Perf hints (dns-prefetch, og:image dims, gitignore)
+- **v2.11** — Person knowledge graph (alumniOf, knowsAbout) + noscript
+- **v2.12** — Title polish + freshness signal + skip-link plumbing
+- **v2.13** — Semantic `<time>` markup pass
+- **v2.14** — LCP preload + weekly link-check workflow
+- **v2.15** — WebP/JPG `<picture>` variants (190 KB LCP win) +
+  apple-touch-icon
+
 ## Context
 
 Zeman currently hosts his academic site on Google Sites (https://sites.google.com/usc.edu/zemanli/). He wants to rebuild it as a self-owned, professional academic homepage modeled after Martin Saveski's site (https://faculty.washington.edu/msaveski/index.html) — minimalist, single-page, anchor-navigated. The new site must (1) auto-sync the publications list from Google Scholar daily, (2) collect aggregated visitor analytics, and (3) present a clean Bio/About section. The working directory `/Users/lizeman/Dropbox (GaTech)/Mac/Documents/zemanli_website` is currently empty — we are starting from scratch.
