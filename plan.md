@@ -20,6 +20,7 @@
 - **v2.14** — LCP preload + weekly link-check workflow
 - **v2.15** — WebP/JPG `<picture>` variants (190 KB LCP win) +
   apple-touch-icon
+- **v2.16** — Data validators (news.yml + cv.yml) + CI gap closures
 
 ## Context
 
@@ -1017,3 +1018,42 @@ in `<img src=...>`.
 - [x] preload now points at WebP with explicit type
 - [x] regeneration script + Pillow in requirements
 - [x] CI assertions for variants + picture element
+
+## Update the index above when shipping v2.16+
+
+---
+
+# v2.16 — Data validators + CI gap closures (2026-05-06, ralph iter 22)
+
+## Why
+v2.15 shipped the dedicated apple-touch-icon and the `<picture>`
+element, but the build-check assertions didn't actually verify the
+PNG file was built or that the homepage referenced the new path.
+Separately, `_data/news.yml` and `_data/cv.yml` are hand-edited and
+had no shape validation — typos surfaced only after deploy.
+
+A failed attempt at adding SS `tldr` summaries to the
+ScholarlyArticle JSON-LD was reverted: the SS `/author/{id}/papers`
+endpoint rejects the `tldr` field with `400 Bad Request` ("tldr"
+is only available on the per-paper `/paper/{id}` endpoint, which
+would require N additional rate-limited fetches per sync). Not
+worth the complexity for a one-sentence description.
+
+## What landed
+- `.github/workflows/build-check.yml`:
+  - Asserts `_site/assets/img/apple-touch-icon.png` exists.
+  - Asserts homepage references the new `apple-touch-icon.png`
+    path (not the old `zemanli_picture.jpg`).
+  - Renamed "Validate publications shape" → "Validate _data shapes"
+    and extended it to check news.yml (date/text required) and
+    cv.yml (education degree/school/years; awards year/text).
+
+## v2.16 Verification
+- All 13 live URLs return 200 (homepage, 5 game pages, 404, sitemap,
+  robots, feed, 3 image variants).
+- CI green on the new assertions.
+
+## v2.16 Progress Log
+- [x] explored SS tldr enrichment, reverted (API limitation)
+- [x] CI: assert apple-touch-icon PNG built + referenced
+- [x] CI: shape-validate news.yml + cv.yml
