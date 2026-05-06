@@ -28,6 +28,13 @@ jobs:
       - name: Build site
         run: bundle exec jekyll build --strict_front_matter --trace
 
+      - name: Syntax-check all JS files
+        run: |
+          for f in assets/js/*.js; do
+            node --check "$f" || { echo "JS syntax error in $f"; exit 1; }
+          done
+          echo "OK — all JS files parse"
+
       - name: Verify built homepage has anchors and game pages exist
         run: |
           set -e
