@@ -97,6 +97,8 @@ jobs:
           grep -q "apple-touch-icon.png" _site/index.html || { echo "homepage not pointing at the dedicated apple-touch-icon"; exit 1; }
           test -f _site/publications.xml || { echo "missing publications.xml feed"; exit 1; }
           grep -q "publications.xml" _site/index.html || { echo "homepage missing alternate publications feed link"; exit 1; }
+          test -f _site/humans.txt || { echo "missing humans.txt"; exit 1; }
+          grep -q "Owner: Zeman Li" _site/humans.txt || { echo "humans.txt corrupted"; exit 1; }
           grep -q '<picture>' _site/index.html || { echo "homepage missing <picture> element"; exit 1; }
           grep -q 'type="image/webp"' _site/index.html || { echo "homepage missing webp source"; exit 1; }
 
