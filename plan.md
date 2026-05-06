@@ -29,6 +29,7 @@
 - **v2.22** — a11y polish: `lang="zh-Hans"` + JS-off visitor hide + `:target` flash + `og:image:type`
 - **v2.23** — Atom sort-key + visible Atom subscribe pill + sitemap ping
 - **v2.24** — Pillow 10 compat fix + image-script smoke test + robots policy
+- **v2.25** — JSON-LD `</script>`-injection defense
 
 ## Context
 
@@ -1334,3 +1335,46 @@ preview in SERP — helps academic papers stand out.
 - [x] Pillow 10 LANCZOS API fix
 - [x] CI smoke-test for build_image_variants.py
 - [x] explicit robots meta with max-image-preview:large
+
+---
+
+# v2.25 — JSON-LD `</script>` injection defense (2026-05-06, ralph iter 31)
+
+## Why
+Audit pass over the `<script type="application/ld+json">` blocks
+in `_includes/publications.html`. Liquid's `jsonify` filter
+produces JSON-valid output but doesn't escape the `<` character —
+so a paper title containing `</script>` would break out of the
+surrounding script tag in the HTML parser before the JSON parser
+ran. Visitor's browser would then execute whatever followed in the
+title.
+
+The risk was extremely low (Semantic Scholar wouldn't return a
+malicious title), but the defense costs nothing and the audit
+pass exists to catch this kind of latent vulnerability.
+
+## What landed
+- `_includes/publications.html` — every dynamic field that goes
+  into the ItemList JSON-LD now pipes through `jsonify | replace:
+  "</", "<\/"`. The `<\/` is a valid JSON escape for `/`, so
+  `JSON.parse` round-trips the original string. The HTML parser
+  sees `<\/` which doesn't match `</script>`. Applied to:
+  - `pub.title` (headline)
+  - `pub.url` (url)
+  - `pub.year` (datePublished)
+  - `pub.venue` (publisher.name)
+  - `a.name` (author[].name)
+  - `a.url` (author[].url)
+
+The Person JSON-LD in `head.html` is all hardcoded values, so no
+mitigation needed there.
+
+## v2.25 Verification
+- Build-check JSON-LD parse step (`xml.etree`-equivalent for JSON
+  via `json.loads`) still passes — the `<\/` is valid JSON.
+- Live homepage's three JSON-LD blocks (WebSite + Person +
+  ItemList) all parse cleanly via Python `json.loads`.
+
+## v2.25 Progress Log
+- [x] `</script>` defense on every dynamic JSON-LD field
+- [x] verified live JSON-LD still parses
