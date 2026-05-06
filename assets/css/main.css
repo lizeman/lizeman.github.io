@@ -32,6 +32,9 @@ html {
   scroll-behavior: smooth;
 }
 
+/* breathing room when anchor nav scrolls a section into view */
+section[id] { scroll-margin-top: 1.5rem; }
+
 body {
   font-family: var(--serif);
   font-size: 17.5px;
