@@ -217,6 +217,18 @@ jobs:
               assert "name" in info, f"coauthor {aid} missing name"
               assert "url" in info, f"coauthor {aid} missing url"
           print(f"OK — coauthors.yml: {len(ca)} cached coauthors")
+
+          # venue_overrides.yml — hand-edited arxiv-id → venue map.
+          # Each key should look like an arxiv id (digits.digits).
+          vo = yaml.safe_load(pathlib.Path("_data/venue_overrides.yml").read_text())
+          assert isinstance(vo, dict), "venue_overrides.yml not a dict"
+          import re as _re
+          for k, v in vo.items():
+              assert _re.match(r"^[0-9]{4}\.[0-9]{4,6}$", str(k)), \
+                  f"venue_overrides key {k!r} doesn't look like an arxiv id"
+              assert isinstance(v, str) and v.strip(), \
+                  f"venue_overrides[{k}] empty or not a string"
+          print(f"OK — venue_overrides.yml: {len(vo)} entries")
           PY
 
       - name: Validate JSON-LD blocks parse + no duplicate IDs + Atom feed
