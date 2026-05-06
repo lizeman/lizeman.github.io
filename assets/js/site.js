@@ -79,7 +79,7 @@
       else if (country) cityEl.textContent = country;
     }
     if (dnt && cityEl) {
-      cityEl.textContent = 'somewhere (DNT respected)';
+      cityEl.textContent = 'somewhere (Do Not Track respected)';
     } else {
       try {
         var raw = localStorage.getItem('zl_ipapi_v1');
