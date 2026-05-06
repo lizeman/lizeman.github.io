@@ -25,6 +25,7 @@
 - **v2.18** — `scroll-margin-top` for anchor nav breathing room
 - **v2.19** — Atom feed for publications + scholar-sync regex tighten
 - **v2.20** — News dates → datetime= attr + Atom `<category>` tags
+- **v2.21** — `/humans.txt` (transparency about owner + stack + privacy)
 
 ## Context
 
@@ -1215,3 +1216,27 @@ Two semantic-markup wins:
 - [x] news month-name → datetime= via Liquid case/when
 - [x] CI guard for news datetime regex
 - [x] publications.xml Atom `<category>` tags (venue + year)
+
+---
+
+# v2.21 — humans.txt (2026-05-06, ralph iter 27)
+
+## What landed
+- `humans.txt` (Liquid-templated, served at `/humans.txt` via
+  explicit permalink + `sitemap: false`):
+  - TEAM: owner, site, email, affiliation
+  - SITE: authored by Claude, stack, last-build timestamp from
+    `site.time`, source repo
+  - PUBLICATIONS: SS author id + Atom feed link
+  - PRIVACY: cookie-free, IP-free claims; DNT honored
+- `.github/workflows/build-check.yml` — asserts the file builds and
+  contains the expected `Owner: Zeman Li` line.
+
+## Why
+A small humanstxt.org-style transparency file. Curious developers
+occasionally hit `/humans.txt` to see who/what built a site —
+costs nothing, signals openness about the AI co-author and the
+privacy posture.
+
+## v2.21 Progress Log
+- [x] /humans.txt served + CI-asserted
