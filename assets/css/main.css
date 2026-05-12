@@ -226,6 +226,8 @@ textarea:focus-visible {
   letter-spacing: 0.04em;
   text-transform: uppercase;
   display: flex;
+  flex-wrap: wrap;
+  row-gap: 0.4rem;
   gap: 1.6rem;
   opacity: 0;
   animation: fadeUp 0.6s var(--ease) 0.7s forwards;
@@ -545,6 +547,64 @@ code {
   .pubs li { padding-left: 1.8rem; }
   .pubs li::before { width: 1.4rem; font-size: 0.78rem; }
   #bio .lede::first-letter { font-size: 3em; }
+}
+
+/* ---------- Knowledge Base (homepage section) ---------- */
+.kb-intro {
+  color: var(--muted);
+  margin: 0 0 1.1rem;
+}
+.kb-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.9rem;
+}
+.kb-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.9rem 1.1rem;
+  align-items: start;
+  padding: 1.1rem 1.1rem 1.2rem;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--text);
+  text-decoration: none;
+  background-image: none;
+  transition: transform 0.5s var(--ease),
+              border-color 0.4s var(--ease),
+              box-shadow 0.5s var(--ease);
+}
+.kb-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+  box-shadow: 0 14px 32px -22px rgba(0, 0, 0, 0.45);
+  color: var(--text);
+}
+.kb-glyph {
+  font-size: 1.4rem;
+  line-height: 1;
+  padding-top: 0.15rem;
+}
+.kb-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+.kb-name {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.005em;
+}
+.kb-desc {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.5;
 }
 
 /* ---------- Playground (homepage section) ---------- */

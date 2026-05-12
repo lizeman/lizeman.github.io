@@ -39,6 +39,8 @@
 - **v2.32** — `rel="me"` identity-verification links
 - **v2.33** — Consolidate robots meta to head.html (single tag per page)
 - **v2.34** — Drop jekyll-feed; misc head polish (format-detection, rel=author)
+- **v2.35** — Steady-state polish (iter 44–84): head metadata, manifest fallback, Atom subtitle, CI hardening, link-check retry, visitor wording, noscript notice
+- **v2.36** — Knowledge Base section (LLM Architecture KB link)
 
 ## Context
 
@@ -1701,3 +1703,58 @@ All 22 commits between `f14b74f` and `71057ad` shipped green
   JSON-LD as `identifier`.
 - Optional: custom domain via `CNAME` file at repo root.
 - Optional: Mastodon profile completes the `rel="me"` chain.
+
+---
+
+# v2.36 — Knowledge Base section (2026-05-12, ralph iter 85)
+
+## Why
+User asked for a new homepage section called "Knowledge Base" with a
+reference to https://lizeman.github.io/llm-arch-kb/ — a separate
+GitHub Pages site holding working notes on LLM architecture. The
+homepage previously had no place to surface research-adjacent
+artifacts that aren't peer-reviewed publications.
+
+## What landed
+
+**New section** between Vita and Playground:
+- `_includes/knowledge_base.html` — `<h2>Knowledge Base</h2>`, short
+  intro, single `kb-card` linking out to the KB site (rel=noopener,
+  target=_blank). Single-card list now; structure leaves room for
+  more KB entries without a redesign.
+- `index.md` — adds `<section id="knowledge-base">` between vita and
+  playground.
+- `_layouts/default.html` — adds "Knowledge Base" to the anchor nav
+  (sixth label).
+
+**Styling** (`assets/css/main.css`)
+- New `.kb-*` block mirroring the playground card pattern (border,
+  paper bg, accent on hover, translateY lift, drop-shadow) but
+  scoped to `.kb-list` / `.kb-card` so neither section can drift the
+  other.
+- `.anchor-nav { flex-wrap: wrap; row-gap: 0.4rem }` — six labels
+  could overflow on narrow viewports; wrap keeps it from clipping
+  rather than shrinking the font further.
+
+**CI** (`.github/workflows/build-check.yml`)
+- `id="knowledge-base"` added to the anchor-existence loop.
+- New `grep -q "llm-arch-kb"` assertion so a broken Liquid include
+  doesn't silently drop the KB link.
+
+## v2.36 Verification
+
+- `index.md` renders 6 sections (bio, news, publications, vita,
+  knowledge-base, playground).
+- Anchor nav has 6 links — Bio · News · Publications · Vita ·
+  Knowledge Base · Playground — and wraps cleanly on mobile.
+- `.kb-card` hover/focus matches `.play-card` visual idiom.
+- build-check's `id="knowledge-base"` + `llm-arch-kb` assertions
+  will fail loudly if the include ever stops emitting.
+
+## v2.36 Progress Log
+- [x] `_includes/knowledge_base.html`
+- [x] `index.md` section wiring
+- [x] anchor nav link
+- [x] kb-* CSS + anchor-nav flex-wrap
+- [x] build-check anchor + link assertions
+- [x] plan.md log entry

@@ -20,6 +20,10 @@ description: "Personal academic website of Zeman Li (李泽慢), USC Ph.D. candi
 {% include vita.html %}
 </section>
 
+<section id="knowledge-base">
+{% include knowledge_base.html %}
+</section>
+
 <section id="playground">
 {% include playground.html %}
 </section>

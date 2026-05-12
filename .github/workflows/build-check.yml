@@ -45,9 +45,10 @@ jobs:
         run: |
           set -e
           test -f _site/index.html
-          for anchor in 'id="bio"' 'id="news"' 'id="publications"' 'id="vita"'; do
+          for anchor in 'id="bio"' 'id="news"' 'id="publications"' 'id="vita"' 'id="knowledge-base"'; do
             grep -q "$anchor" _site/index.html || { echo "missing $anchor"; exit 1; }
           done
+          grep -q "llm-arch-kb" _site/index.html || { echo "missing knowledge-base link"; exit 1; }
           test -f _site/portal/index.html
           test -f _site/typing/index.html
           test -f _site/beaver/index.html
