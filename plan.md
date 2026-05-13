@@ -88,6 +88,7 @@
 - **v2.81** — a11y: footer cipher :focus-visible mirrors :hover
 - **v2.82** — a11y: pub-feed Atom pill :focus-visible mirrors :hover
 - **v2.83** — a11y: 404 nf-links :focus-visible mirrors :hover
+- **v2.84** — a11y: keyboard-parity across all game-control button :hover styles
 
 ## Context
 
