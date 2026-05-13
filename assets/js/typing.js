@@ -410,7 +410,9 @@
   // -------- tab handling --------
   function activateTab(set, attr, value) {
     Array.prototype.forEach.call(set.querySelectorAll('button'), function (b) {
-      b.classList.toggle('on', b.getAttribute(attr) === value);
+      var on = b.getAttribute(attr) === value;
+      b.classList.toggle('on', on);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
   }
   activateTab(modeTabs, 'data-mode', mode);
