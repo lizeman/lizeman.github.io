@@ -5,7 +5,7 @@ sitemap: false
 /* TEAM */
 
   Owner: Zeman Li (李泽慢)
-  Site:  https://lizeman.github.io
+  Site:  {{ site.url }}
   Email: zemanli [at] usc.edu
   Affiliation: Ph.D. Candidate, Industrial & Systems Engineering, USC
               Student Researcher, Google Research
