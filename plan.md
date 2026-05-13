@@ -42,6 +42,7 @@
 - **v2.35** — Steady-state polish (iter 44–84): head metadata, manifest fallback, Atom subtitle, CI hardening, link-check retry, visitor wording, noscript notice
 - **v2.36** — Knowledge Base section (LLM Architecture KB link)
 - **v2.37** — site.js: scroll-spy now tracks the Knowledge Base section
+- **v2.38** — site.js: derive scroll-spy sections from the nav DOM (prevents recurrence)
 
 ## Context
 
