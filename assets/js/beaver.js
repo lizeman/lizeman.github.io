@@ -485,6 +485,10 @@
     if (st.playing) { pause(); play(); }
   });
 
+  function clickSpeed(name) {
+    var b = speedTabs.querySelector('[data-speed=' + name + ']');
+    if (b) b.click();
+  }
   document.addEventListener('keydown', function (e) {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
     switch (e.key) {
@@ -496,11 +500,11 @@
         e.preventDefault(); pause(); stepBack(); break;
       case 'r': case 'R':
         e.preventDefault(); reset(st.machineKey); break;
-      case '1': speedTabs.querySelector('[data-speed=slow]').click(); break;
-      case '2': speedTabs.querySelector('[data-speed=medium]').click(); break;
-      case '3': speedTabs.querySelector('[data-speed=fast]').click(); break;
-      case '4': speedTabs.querySelector('[data-speed=blitz]').click(); break;
-      case '5': speedTabs.querySelector('[data-speed=max]').click(); break;
+      case '1': clickSpeed('slow'); break;
+      case '2': clickSpeed('medium'); break;
+      case '3': clickSpeed('fast'); break;
+      case '4': clickSpeed('blitz'); break;
+      case '5': clickSpeed('max'); break;
     }
   });
 
