@@ -298,7 +298,9 @@
   prevBtn.addEventListener('click', function () { stopAuto(); setN(n - 1); });
   nextBtn.addEventListener('click', function () { stopAuto(); setN(n + 1); });
   playBtn.addEventListener('click', function () {
-    if (playing && !looping) stopAuto();
+    // When playing (whether looped or not), the button reads "⏸ pause",
+    // so clicking it should always stop. Only start non-loop when idle.
+    if (playing) stopAuto();
     else startAuto(false);
   });
   loopBtn.addEventListener('click', function () {
