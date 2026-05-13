@@ -1,6 +1,6 @@
 # zemanli.github.io
 
-Personal academic website of Zeman Li (李泽慢), Ph.D. candidate in Industrial and Systems Engineering at the University of Southern California. Built with Jekyll and deployed on GitHub Pages, with a daily Google Scholar sync via GitHub Actions and privacy-friendly visitor analytics.
+Personal academic website of Zeman Li (李泽慢), Ph.D. candidate in Industrial and Systems Engineering at the University of Southern California. Built with Jekyll and deployed on GitHub Pages, with a daily Semantic Scholar sync via GitHub Actions and privacy-friendly visitor analytics.
 
 ## Local development
 
