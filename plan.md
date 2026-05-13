@@ -73,6 +73,7 @@
 - **v2.66** — buffalo: invert speed slider so right = faster (was right = slower)
 - **v2.67** — buffalo: HTML initial buf-n=8 matches JS default (no 1→8 flash)
 - **v2.68** — roulette: don't hijack Ctrl/Cmd/Alt key combos (preserves OS shortcuts)
+- **v2.69** — beaver+buffalo: same modifier guard on document keydown handlers
 
 ## Context
 
