@@ -966,7 +966,7 @@
     var arr = loadLeaders();
     if (!arr.length) {
       leaderBody.innerHTML =
-        '<tr><td colspan="5" style="color:var(--soft); text-align:center; padding:0.6rem;">' +
+        '<tr><td colspan="5" class="leader-empty">' +
         'play a hand or run a simulation to populate.</td></tr>';
       return;
     }
