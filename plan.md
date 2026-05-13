@@ -77,6 +77,7 @@
 - **v2.70** — typing.js: modifier guard prevents Ctrl+C focus-jack and selection clobber
 - **v2.71** — a11y: aria-live on typing result panel announces run completion
 - **v2.72** — a11y: aria-live on roulette wheel overlay + sim summary
+- **v2.73** — a11y: aria-live on beaver halt summary
 
 ## Context
 
