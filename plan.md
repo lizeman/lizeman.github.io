@@ -74,6 +74,7 @@
 - **v2.67** — buffalo: HTML initial buf-n=8 matches JS default (no 1→8 flash)
 - **v2.68** — roulette: don't hijack Ctrl/Cmd/Alt key combos (preserves OS shortcuts)
 - **v2.69** — beaver+buffalo: same modifier guard on document keydown handlers
+- **v2.70** — typing.js: modifier guard prevents Ctrl+C focus-jack and selection clobber
 
 ## Context
 
