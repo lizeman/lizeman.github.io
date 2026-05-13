@@ -511,13 +511,13 @@ sitemap: false
 
     <div class="sim-row">
       <span>simulate</span>
-      <input type="number" id="rou-sim-spins" min="50" max="50000" step="50" value="500" />
+      <input type="number" id="rou-sim-spins" min="50" max="50000" step="50" value="500" aria-label="number of spins to simulate" />
       <span>spins, starting bankroll $</span>
-      <input type="number" id="rou-sim-bank" min="50" max="100000" step="50" value="1000" />
+      <input type="number" id="rou-sim-bank" min="50" max="100000" step="50" value="1000" aria-label="starting bankroll in dollars" />
       <button id="rou-sim-run" class="primary">run</button>
       <span style="opacity:0.5">|</span>
       <span>Monte Carlo</span>
-      <input type="number" id="rou-sim-runs" min="50" max="5000" step="50" value="500" />
+      <input type="number" id="rou-sim-runs" min="50" max="5000" step="50" value="500" aria-label="number of Monte Carlo runs" />
       <span>runs</span>
       <button id="rou-sim-mc">aggregate</button>
     </div>
