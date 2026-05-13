@@ -85,6 +85,7 @@
 - **v2.78** — site.js: Konami handler ignores Ctrl/Cmd/Alt combos
 - **v2.79** — a11y: card :focus-visible mirrors :hover lift for keyboard users
 - **v2.80** — a11y: .pubs li :focus-within mirrors :hover for paper-link tab nav
+- **v2.81** — a11y: footer cipher :focus-visible mirrors :hover
 
 ## Context
 
