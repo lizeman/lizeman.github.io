@@ -140,6 +140,8 @@
                 'b', 'a'];
   var kIdx = 0;
   document.addEventListener('keydown', function (e) {
+    // e.key can be undefined on some IME / synthetic events; bail rather than throw.
+    if (!e.key) return;
     var k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
     if (k === konami[kIdx]) {
       kIdx += 1;
