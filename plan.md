@@ -94,6 +94,7 @@
 - **v2.87** — a11y: buf-token tip on :focus-visible (no sticky after click)
 - **v2.88** — fix: strat-pills .on :focus-visible regression (accent-on-accent invisible text)
 - **v2.89** — a11y: buf-token accessible name de-duplicated (aria-label + aria-hidden on tip)
+- **v2.90** — a11y: role=img on remaining labeled SVGs (sim-spark, mc-hist, t-spark)
 
 ## Context
 
