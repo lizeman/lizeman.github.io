@@ -69,6 +69,7 @@
 - **v2.62** — roulette: shared .leader-empty class for leaderboard empty-state
 - **v2.63** — cleanup: drop unused assets/img/profile.svg
 - **v2.64** — typing.js: try/catch around mode/category localStorage (private-mode)
+- **v2.65** — buffalo.js: pause button now stops in loop mode (was dead-click)
 
 ## Context
 
