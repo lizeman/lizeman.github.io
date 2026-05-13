@@ -1041,6 +1041,8 @@
     document.addEventListener('keydown', function (e) {
       var t = e.target;
       if (t && (t.tagName === 'INPUT' || t.tagName === 'SELECT' || t.tagName === 'TEXTAREA')) return;
+      // don't hijack OS shortcuts like Ctrl/Cmd+A, Ctrl+S, etc.
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
       if (e.key === ' ') { e.preventDefault(); spinPlay(); return; }
       if (e.key === 'a' || e.key === 'A') { autoBet(); return; }
       if (e.key === 'c' || e.key === 'C') { clearBets(); return; }
