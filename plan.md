@@ -79,6 +79,7 @@
 - **v2.72** — a11y: aria-live on roulette wheel overlay + sim summary
 - **v2.73** — a11y: aria-live on beaver halt summary
 - **v2.74** — a11y: aria-live on portal riddle feedback
+- **v2.75** — a11y: roulette heading hierarchy — promote h3 → h2, preserve visual look
 
 ## Context
 
