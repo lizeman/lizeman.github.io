@@ -383,7 +383,8 @@ code {
   font-variant-numeric: tabular-nums;
 }
 .pubs li:last-child { border-bottom: none; }
-.pubs li:hover {
+.pubs li:hover,
+.pubs li:focus-within {
   transform: translateX(4px);
   background-color: rgba(184, 92, 56, 0.03);
 }
