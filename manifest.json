@@ -27,8 +27,7 @@ layout: null
     {
       "src": "/assets/img/zemanli_picture.jpg",
       "type": "image/jpeg",
-      "sizes": "1181x1181",
-      "purpose": "any"
+      "sizes": "1181x1181"
     }
   ],
   "lang": "en",
