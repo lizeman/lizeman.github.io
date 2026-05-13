@@ -69,7 +69,8 @@ sitemap: false
     cursor: pointer;
     transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
   }
-  .buf-controls button:hover { border-color: var(--accent); color: var(--accent); }
+  .buf-controls button:hover,
+  .buf-controls button:focus-visible { border-color: var(--accent); color: var(--accent); }
   .buf-controls .n-display {
     font-family: var(--display); font-weight: 700; font-size: 1.1rem;
     font-variant-numeric: tabular-nums; color: var(--text);

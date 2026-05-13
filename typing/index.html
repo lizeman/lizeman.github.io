@@ -45,7 +45,8 @@ sitemap: false
     cursor: pointer;
     transition: all 0.2s var(--ease);
   }
-  .tabset button:hover { color: var(--accent); border-color: var(--accent); }
+  .tabset button:hover,
+  .tabset button:focus-visible { color: var(--accent); border-color: var(--accent); }
   .tabset button.on {
     background: var(--accent);
     color: white;
@@ -168,7 +169,8 @@ sitemap: false
     cursor: pointer;
     transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
   }
-  .typing-controls button:hover { border-color: var(--accent); color: var(--accent); }
+  .typing-controls button:hover,
+  .typing-controls button:focus-visible { border-color: var(--accent); color: var(--accent); }
   .typing-controls .hint {
     font-size: 0.78rem; color: var(--soft);
     margin-left: auto;
