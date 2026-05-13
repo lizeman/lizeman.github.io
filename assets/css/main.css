@@ -679,6 +679,7 @@ body.game .game-back {
   html, body { background: #fff; color: #000; font-size: 11pt; }
   .grain, .skip-link, .anchor-nav, .visitor-line,
   #playground, .playground-grid, .play-card,
+  #knowledge-base, .kb-list, .kb-card,
   .site-footer .disclaimer, .cipher, .pub-fresh,
   body.game .game-back { display: none !important; }
   main.page { max-width: 100%; margin: 0; padding: 0.5in 0.6in; }
