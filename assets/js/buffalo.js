@@ -283,9 +283,16 @@
         n += 1;
       }
       render();
-      timer = setTimeout(tick, parseInt(speedEl.value, 10));
+      timer = setTimeout(tick, tickDelay());
     }
-    timer = setTimeout(tick, parseInt(speedEl.value, 10));
+    timer = setTimeout(tick, tickDelay());
+  }
+  // Slider reads as "speed" — bigger slider = faster.
+  // Convert to a delay by mirroring around the range midpoint.
+  function tickDelay() {
+    var v = parseInt(speedEl.value, 10);
+    if (isNaN(v)) return 1500;
+    return 3500 - v;
   }
   function stopAuto() {
     playing = false; looping = false;
