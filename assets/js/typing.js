@@ -357,7 +357,10 @@
       backspace();
       return;
     }
-    if (e.key === 'Tab') { e.preventDefault(); return; }
+    // Don't trap Tab — keyboard users need it to navigate to/from the
+    // input (WCAG 2.1.2). The passage doesn't contain literal tabs, and
+    // input type=text doesn't insert a tab character natively anyway.
+    if (e.key === 'Tab') return;
     if (e.key === 'Escape') { e.preventDefault(); reset(false); return; }
     if (e.key === 'Enter') {
       // if finished, retry. otherwise treat as newline if passage has \n.
