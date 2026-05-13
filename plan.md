@@ -71,6 +71,7 @@
 - **v2.64** — typing.js: try/catch around mode/category localStorage (private-mode)
 - **v2.65** — buffalo.js: pause button now stops in loop mode (was dead-click)
 - **v2.66** — buffalo: invert speed slider so right = faster (was right = slower)
+- **v2.67** — buffalo: HTML initial buf-n=8 matches JS default (no 1→8 flash)
 
 ## Context
 
