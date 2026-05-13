@@ -82,6 +82,7 @@
 - **v2.75** — a11y: roulette heading hierarchy — promote h3 → h2, preserve visual look
 - **v2.76** — a11y: typing heading hierarchy — same h3 → h2 fix
 - **v2.77** — a11y: typing input — remove Tab keyboard trap (WCAG 2.1.2)
+- **v2.78** — site.js: Konami handler ignores Ctrl/Cmd/Alt combos
 
 ## Context
 
