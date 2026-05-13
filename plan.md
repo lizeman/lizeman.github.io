@@ -48,6 +48,7 @@
 - **v2.41** — typing.js: same e.key undefined guard on focus-helper keydown
 - **v2.42** — game.html: drop redundant inline footer margin-top
 - **v2.43** — publications.html: ISO 8601 datePublished in JSON-LD (YYYY-01-01)
+- **v2.44** — roulette.js: drop dead lastBets scaffolding
 
 ## Context
 
