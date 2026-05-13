@@ -81,6 +81,7 @@
 - **v2.74** — a11y: aria-live on portal riddle feedback
 - **v2.75** — a11y: roulette heading hierarchy — promote h3 → h2, preserve visual look
 - **v2.76** — a11y: typing heading hierarchy — same h3 → h2 fix
+- **v2.77** — a11y: typing input — remove Tab keyboard trap (WCAG 2.1.2)
 
 ## Context
 
