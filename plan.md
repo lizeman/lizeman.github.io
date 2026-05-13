@@ -56,6 +56,7 @@
 - **v2.49** — a11y: aria-labelledby on portal answer input (live riddle binding)
 - **v2.50** — a11y: aria-label on roulette simulator number inputs
 - **v2.51** — manifest: consistent icon entries (drop redundant purpose=any)
+- **v2.52** — a11y: visitor aside aria-label covers both JS-on and JS-off states
 
 ## Context
 
