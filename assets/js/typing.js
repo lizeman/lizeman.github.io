@@ -390,7 +390,7 @@
       togglePause();
       return;
     }
-    if (e.key.length === 1 || e.key === 'Backspace') focusInput();
+    if (e.key && (e.key.length === 1 || e.key === 'Backspace')) focusInput();
   });
 
   if (newBtn) newBtn.addEventListener('click', function () { reset(true); });
