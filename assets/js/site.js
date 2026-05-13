@@ -32,10 +32,13 @@
   }
 
   // ------- active anchor nav -------
-  var sections = ['bio', 'news', 'publications', 'vita', 'knowledge-base', 'playground']
-    .map(function (id) { return document.getElementById(id); })
-    .filter(Boolean);
-  var navLinks = document.querySelectorAll('#anchor-nav a');
+  // Derive sections from the nav itself so a new nav entry doesn't
+  // require a parallel update here.
+  var navLinks = document.querySelectorAll('#anchor-nav a[href^="#"]');
+  var sections = Array.prototype.map.call(navLinks, function (a) {
+    var href = a.getAttribute('href') || '';
+    return href.length > 1 ? document.getElementById(href.slice(1)) : null;
+  }).filter(Boolean);
   function setActive(id) {
     navLinks.forEach(function (a) {
       var on = a.getAttribute('href') === '#' + id;
