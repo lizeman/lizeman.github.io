@@ -142,6 +142,8 @@
   document.addEventListener('keydown', function (e) {
     // e.key can be undefined on some IME / synthetic events; bail rather than throw.
     if (!e.key) return;
+    // Don't advance Konami on modifier combos (Cmd+ArrowUp = Mission Control etc.).
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
     var k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
     if (k === konami[kIdx]) {
       kIdx += 1;
