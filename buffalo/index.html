@@ -215,8 +215,8 @@ sitemap: false
     <button id="buf-play">▶ auto-grow</button>
     <button id="buf-loop">loop ∞</button>
     <button id="buf-reset">reset</button>
-    <span class="speed-label">speed</span>
-    <input type="range" id="buf-speed" min="500" max="3000" step="100" value="1500" />
+    <span class="speed-label" id="buf-speed-label">speed</span>
+    <input type="range" id="buf-speed" min="500" max="3000" step="100" value="1500" aria-labelledby="buf-speed-label" />
   </div>
 
   <div class="buf-sentence" id="buf-sentence" aria-live="polite"></div>
