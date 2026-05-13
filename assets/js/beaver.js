@@ -477,11 +477,18 @@
     reset(machineSel.value);
   });
 
+  function paintSpeedPills() {
+    Array.prototype.forEach.call(speedTabs.querySelectorAll('button'), function (x) {
+      var on = x.getAttribute('data-speed') === st.speed;
+      x.classList.toggle('on', on);
+      x.setAttribute('aria-pressed', on ? 'true' : 'false');
+    });
+  }
+  paintSpeedPills();
   speedTabs.addEventListener('click', function (e) {
     var b = e.target.closest('button[data-speed]'); if (!b) return;
-    Array.prototype.forEach.call(speedTabs.querySelectorAll('button'),
-      function (x) { x.classList.toggle('on', x === b); });
     st.speed = b.getAttribute('data-speed');
+    paintSpeedPills();
     if (st.playing) { pause(); play(); }
   });
 

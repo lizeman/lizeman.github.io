@@ -1051,13 +1051,19 @@
 
     // strategy
     if (stratPills) {
+      function paintStratPills() {
+        Array.prototype.forEach.call(stratPills.querySelectorAll('button'), function (x) {
+          var on = x.getAttribute('data-s') === strategy;
+          x.classList.toggle('on', on);
+          x.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+      }
+      paintStratPills();
       stratPills.addEventListener('click', function (e) {
         var b = e.target.closest('button[data-s]');
         if (!b) return;
         strategy = b.getAttribute('data-s');
-        Array.prototype.forEach.call(stratPills.querySelectorAll('button'), function (x) {
-          x.classList.toggle('on', x === b);
-        });
+        paintStratPills();
         refreshStrategyDisplay();
       });
     }
