@@ -90,6 +90,7 @@
 - **v2.83** — a11y: 404 nf-links :focus-visible mirrors :hover
 - **v2.84** — a11y: keyboard-parity across all game-control button :hover styles
 - **v2.85** — a11y: bet-grid + portal door :focus-visible mirrors :hover
+- **v2.86** — a11y: anchor-nav :focus-visible mirrors :hover
 
 ## Context
 
