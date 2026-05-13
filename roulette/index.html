@@ -78,11 +78,13 @@ sitemap: false
   }
   .wheel-result.show { opacity: 1; }
 
-  /* sidebar */
-  .rou-side h3 {
+  /* sidebar / panel section headings — h2 for correct hierarchy under
+     the page's h1, styled small to read like a section label.        */
+  .rou-side h2, .rou-grid > div > h2, .rou-strategy h2, .rou-leader h2 {
     font-family: var(--sans); font-size: 0.78rem;
     text-transform: uppercase; letter-spacing: 0.1em;
     color: var(--soft); margin: 0 0 0.4rem;
+    font-weight: 600;
   }
   .rou-stats {
     display: grid;
@@ -456,7 +458,7 @@ sitemap: false
         <canvas id="rou-wheel" width="720" height="720" aria-label="Roulette wheel"></canvas>
         <div class="wheel-result" id="rou-result-overlay" aria-live="polite" aria-atomic="true"></div>
       </div>
-      <h3 style="margin-top:1rem">Recent results</h3>
+      <h2 style="margin-top:1rem">Recent results</h2>
       <div class="recent-row" id="rou-recent" aria-label="recent spins"></div>
     </div>
 
@@ -467,10 +469,10 @@ sitemap: false
         <div class="stat"><div class="v" id="rou-spins">0</div><div class="l">spins</div></div>
       </div>
 
-      <h3>Your bet stack</h3>
+      <h2>Your bet stack</h2>
       <div class="chip-stack" id="rou-stack"></div>
 
-      <h3>Place a bet</h3>
+      <h2>Place a bet</h2>
       <div class="bet-grid">
         <button data-bet="red" class="red">red</button>
         <button data-bet="black" class="black">black</button>
@@ -502,7 +504,7 @@ sitemap: false
   </div>
 
   <div class="rou-strategy">
-    <h3 style="margin-bottom: 0.5rem">Betting strategy</h3>
+    <h2 style="margin-bottom: 0.5rem">Betting strategy</h2>
     <div class="strat-pills" id="rou-strategy">
       <button data-s="flat" class="on">Flat</button>
       <button data-s="martingale">Martingale</button>
@@ -553,7 +555,7 @@ sitemap: false
   </div>
 
   <div class="rou-leader">
-    <h3 style="margin-bottom: 0.5rem">Leaderboard — your top profits</h3>
+    <h2 style="margin-bottom: 0.5rem">Leaderboard — your top profits</h2>
     <table>
       <thead><tr><th>#</th><th>strategy</th><th>spins</th><th>profit</th><th>when</th></tr></thead>
       <tbody id="rou-leader-body">
