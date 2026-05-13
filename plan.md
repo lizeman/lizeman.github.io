@@ -63,6 +63,7 @@
 - **v2.56** — head: enrich Person affiliation/alumniOf with url + tightened @type
 - **v2.57** — beaver.js: null-guard numeric speed shortcuts via clickSpeed helper
 - **v2.58** — publications.xml: RFC 4287 generator with uri+version attributes
+- **v2.59** — README: Semantic Scholar (not Google) is the primary sync source
 
 ## Context
 
