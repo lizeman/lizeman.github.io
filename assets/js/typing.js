@@ -386,6 +386,10 @@
 
   document.addEventListener('keydown', function (e) {
     if (e.target === input) return;
+    // Don't hijack browser/OS shortcuts (Cmd+C, Ctrl+A, etc.) — and
+    // critically, don't focus-jack the input on Ctrl+C, which would
+    // clear any selection the user had outside the input.
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
     if (e.key === 'Escape') { reset(false); return; }
     if (e.key === 'Enter' && finished) { reset(true); return; }
     if (e.key === ' ' && !finished && started) {
