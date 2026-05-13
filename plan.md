@@ -91,6 +91,7 @@
 - **v2.84** — a11y: keyboard-parity across all game-control button :hover styles
 - **v2.85** — a11y: bet-grid + portal door :focus-visible mirrors :hover
 - **v2.86** — a11y: anchor-nav :focus-visible mirrors :hover
+- **v2.87** — a11y: buf-token tip on :focus-visible (no sticky after click)
 
 ## Context
 
