@@ -97,6 +97,7 @@
 - **v2.90** — a11y: role=img on remaining labeled SVGs (sim-spark, mc-hist, t-spark)
 - **v2.91** — a11y: aria-label on obfuscated bio email reads cleanly for SR
 - **v2.92** — a11y: aria-pressed on typing mode/category toggle buttons
+- **v2.93** — a11y: aria-pressed on beaver speed-pills + roulette strat-pills
 
 ## Context
 
