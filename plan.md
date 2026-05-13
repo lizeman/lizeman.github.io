@@ -67,6 +67,7 @@
 - **v2.60** — a11y: role=img + aria-label on bb-minimap, bb-diagram, buf-tree
 - **v2.61** — roulette: extract clear-leaderboard inline style to .rou-leader-clear
 - **v2.62** — roulette: shared .leader-empty class for leaderboard empty-state
+- **v2.63** — cleanup: drop unused assets/img/profile.svg
 
 ## Context
 
