@@ -54,6 +54,7 @@
 - **v2.47** — a11y: aria-labelledby on buffalo speed slider
 - **v2.48** — a11y: aria-label on typing-input
 - **v2.49** — a11y: aria-labelledby on portal answer input (live riddle binding)
+- **v2.50** — a11y: aria-label on roulette simulator number inputs
 
 ## Context
 
