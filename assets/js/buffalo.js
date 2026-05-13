@@ -154,10 +154,14 @@
       sp.className = 'buf-token ' + ROLE_CLASS(t.role);
       sp.textContent = ROLE_TEXT(t.role);
       sp.tabIndex = 0;
+      // SR users tabbing the token should hear the role tip as the
+      // accessible name (not the duplicated word + tip).
+      sp.setAttribute('aria-label', ROLE_TIP(t.role));
       sp.style.animationDelay = (Math.min(i, 30) * 35) + 'ms';
       var tip = document.createElement('span');
       tip.className = 'tip';
       tip.textContent = ROLE_TIP(t.role);
+      tip.setAttribute('aria-hidden', 'true');
       sp.appendChild(tip);
       sentenceEl.appendChild(sp);
       sentenceEl.appendChild(document.createTextNode(' '));
