@@ -50,6 +50,7 @@
 - **v2.43** — publications.html: ISO 8601 datePublished in JSON-LD (YYYY-01-01)
 - **v2.44** — roulette.js: drop dead lastBets scaffolding
 - **v2.45** — portal.js: ASCII-only Unicode escape for combining-char regex
+- **v2.46** — a11y: aria-label on beaver step-back glyph button
 
 ## Context
 
