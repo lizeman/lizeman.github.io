@@ -577,7 +577,8 @@ code {
               border-color 0.4s var(--ease),
               box-shadow 0.5s var(--ease);
 }
-.kb-card:hover {
+.kb-card:hover,
+.kb-card:focus-visible {
   transform: translateY(-3px);
   border-color: var(--accent);
   box-shadow: 0 14px 32px -22px rgba(0, 0, 0, 0.45);
@@ -632,7 +633,8 @@ code {
               border-color 0.4s var(--ease),
               box-shadow 0.5s var(--ease);
 }
-.play-card:hover {
+.play-card:hover,
+.play-card:focus-visible {
   transform: translateY(-3px);
   border-color: var(--accent);
   box-shadow: 0 14px 32px -22px rgba(0, 0, 0, 0.45);
