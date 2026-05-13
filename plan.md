@@ -45,6 +45,7 @@
 - **v2.38** — site.js: derive scroll-spy sections from the nav DOM (prevents recurrence)
 - **v2.39** — print: hide Knowledge Base section (parallels Playground)
 - **v2.40** — site.js: guard Konami handler against undefined e.key
+- **v2.41** — typing.js: same e.key undefined guard on focus-helper keydown
 
 ## Context
 
