@@ -87,6 +87,7 @@
 - **v2.80** — a11y: .pubs li :focus-within mirrors :hover for paper-link tab nav
 - **v2.81** — a11y: footer cipher :focus-visible mirrors :hover
 - **v2.82** — a11y: pub-feed Atom pill :focus-visible mirrors :hover
+- **v2.83** — a11y: 404 nf-links :focus-visible mirrors :hover
 
 ## Context
 
