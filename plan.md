@@ -75,6 +75,7 @@
 - **v2.68** — roulette: don't hijack Ctrl/Cmd/Alt key combos (preserves OS shortcuts)
 - **v2.69** — beaver+buffalo: same modifier guard on document keydown handlers
 - **v2.70** — typing.js: modifier guard prevents Ctrl+C focus-jack and selection clobber
+- **v2.71** — a11y: aria-live on typing result panel announces run completion
 
 ## Context
 
