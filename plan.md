@@ -61,6 +61,7 @@
 - **v2.54** — head: suppress publications Atom link on game/404 pages
 - **v2.55** — a11y: name each homepage section as an ARIA landmark
 - **v2.56** — head: enrich Person affiliation/alumniOf with url + tightened @type
+- **v2.57** — beaver.js: null-guard numeric speed shortcuts via clickSpeed helper
 
 ## Context
 
