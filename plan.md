@@ -59,6 +59,7 @@
 - **v2.52** — a11y: visitor aside aria-label covers both JS-on and JS-off states
 - **v2.53** — humans.txt: Liquid site.url instead of hardcoded host
 - **v2.54** — head: suppress publications Atom link on game/404 pages
+- **v2.55** — a11y: name each homepage section as an ARIA landmark
 
 ## Context
 
