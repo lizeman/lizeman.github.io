@@ -491,6 +491,8 @@
   }
   document.addEventListener('keydown', function (e) {
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') return;
+    // don't hijack browser shortcuts (Ctrl+R reload, Cmd+R reload, etc.)
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
     switch (e.key) {
       case ' ':
         e.preventDefault(); st.playing ? pause() : play(); break;

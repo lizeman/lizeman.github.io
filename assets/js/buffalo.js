@@ -318,6 +318,7 @@
 
   document.addEventListener('keydown', function (e) {
     if (e.target.tagName === 'INPUT') return;
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
     if (e.key === 'ArrowRight') { stopAuto(); setN(n + 1); }
     else if (e.key === 'ArrowLeft') { stopAuto(); setN(n - 1); }
     else if (e.key === ' ') { e.preventDefault(); playing ? stopAuto() : startAuto(false); }
