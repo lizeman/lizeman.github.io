@@ -355,7 +355,8 @@ code {
   border-radius: 3px;
   letter-spacing: 0.04em;
 }
-.pub-feed:hover { color: var(--accent); border-color: var(--accent); background-size: 0% 0; }
+.pub-feed:hover,
+.pub-feed:focus-visible { color: var(--accent); border-color: var(--accent); background-size: 0% 0; }
 .pubs {
   list-style: none;
   padding: 0;
