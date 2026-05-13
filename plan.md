@@ -93,6 +93,7 @@
 - **v2.86** — a11y: anchor-nav :focus-visible mirrors :hover
 - **v2.87** — a11y: buf-token tip on :focus-visible (no sticky after click)
 - **v2.88** — fix: strat-pills .on :focus-visible regression (accent-on-accent invisible text)
+- **v2.89** — a11y: buf-token accessible name de-duplicated (aria-label + aria-hidden on tip)
 
 ## Context
 
