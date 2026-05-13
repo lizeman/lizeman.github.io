@@ -68,6 +68,7 @@
 - **v2.61** — roulette: extract clear-leaderboard inline style to .rou-leader-clear
 - **v2.62** — roulette: shared .leader-empty class for leaderboard empty-state
 - **v2.63** — cleanup: drop unused assets/img/profile.svg
+- **v2.64** — typing.js: try/catch around mode/category localStorage (private-mode)
 
 ## Context
 
