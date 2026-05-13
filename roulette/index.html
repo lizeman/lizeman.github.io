@@ -406,6 +406,18 @@ sitemap: false
     color: var(--muted);
   }
 
+  .rou-leader-clear {
+    margin-top: 0.6rem;
+    font-family: var(--sans);
+    font-size: 0.78rem;
+    padding: 0.32rem 0.7rem;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+    color: var(--muted);
+    border-radius: 999px;
+    cursor: pointer;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .chip-stack .chip { transition: none; }
     .wheel-result { transition: none; }
@@ -543,6 +555,6 @@ sitemap: false
         <tr><td colspan="5" style="color:var(--soft); text-align:center; padding:0.6rem;">play a hand or run a simulation to populate.</td></tr>
       </tbody>
     </table>
-    <button id="rou-leader-clear" style="margin-top:0.6rem; font-family:var(--sans); font-size:0.78rem; padding:0.32rem 0.7rem; border:1px solid var(--rule); background:var(--paper); color:var(--muted); border-radius:999px; cursor:pointer;">clear leaderboard</button>
+    <button id="rou-leader-clear" class="rou-leader-clear">clear leaderboard</button>
   </div>
 </div>
