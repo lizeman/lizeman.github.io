@@ -19,7 +19,7 @@ layout: null
     <uri>{{ site.url }}</uri>
   </author>
   <rights>Bibliographic metadata only; rights to each paper belong to its publisher / authors.</rights>
-  <generator>Jekyll {{ jekyll.version }}</generator>
+  <generator uri="https://jekyllrb.com/" version="{{ jekyll.version }}">Jekyll</generator>
   {%- comment -%}
     Within a year SS only gives year-precision dates, so all entries
     in 2026 would otherwise share an identical <updated>. Encode the
