@@ -53,6 +53,7 @@
 - **v2.46** — a11y: aria-label on beaver step-back glyph button
 - **v2.47** — a11y: aria-labelledby on buffalo speed slider
 - **v2.48** — a11y: aria-label on typing-input
+- **v2.49** — a11y: aria-labelledby on portal answer input (live riddle binding)
 
 ## Context
 
