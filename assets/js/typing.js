@@ -72,8 +72,11 @@
   var perKeyErrors = {};
   var rafId = 0;
 
-  var mode = localStorage.getItem('zl_typing_mode') || 'medium';
-  var category = localStorage.getItem('zl_typing_cat') || 'papers';
+  // private-mode browsers can have localStorage throw on access.
+  function lsGet(k, def) { try { return localStorage.getItem(k) || def; } catch (e) { return def; } }
+  function lsSet(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* quota / private mode */ } }
+  var mode = lsGet('zl_typing_mode', 'medium');
+  var category = lsGet('zl_typing_cat', 'papers');
 
   function loadHistory() {
     try {
@@ -409,14 +412,14 @@
   modeTabs.addEventListener('click', function (e) {
     var b = e.target.closest('button[data-mode]'); if (!b) return;
     mode = b.getAttribute('data-mode');
-    localStorage.setItem('zl_typing_mode', mode);
+    lsSet('zl_typing_mode', mode);
     activateTab(modeTabs, 'data-mode', mode);
     reset(true);
   });
   catTabs.addEventListener('click', function (e) {
     var b = e.target.closest('button[data-cat]'); if (!b) return;
     category = b.getAttribute('data-cat');
-    localStorage.setItem('zl_typing_cat', category);
+    lsSet('zl_typing_cat', category);
     activateTab(catTabs, 'data-cat', category);
     reset(true);
   });
