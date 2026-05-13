@@ -46,7 +46,7 @@
         "@type": "ScholarlyArticle",
         "headline": {{ pub.title | jsonify | replace: "</", "<\/" }},
         {%- if pub.url %}"url": {{ pub.url | jsonify | replace: "</", "<\/" }},{%- endif %}
-        {%- if pub.year %}"datePublished": {{ pub.year | jsonify | replace: "</", "<\/" }},{%- endif %}
+        {%- if pub.year %}"datePublished": {{ pub.year | append: "-01-01" | jsonify | replace: "</", "<\/" }},{%- endif %}
         {%- if pub.venue %}"publisher": { "@type": "Organization", "name": {{ pub.venue | jsonify | replace: "</", "<\/" }} },{%- endif %}
         "author": [
           {%- for a in pub.authors -%}
