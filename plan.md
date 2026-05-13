@@ -44,6 +44,7 @@
 - **v2.37** — site.js: scroll-spy now tracks the Knowledge Base section
 - **v2.38** — site.js: derive scroll-spy sections from the nav DOM (prevents recurrence)
 - **v2.39** — print: hide Knowledge Base section (parallels Playground)
+- **v2.40** — site.js: guard Konami handler against undefined e.key
 
 ## Context
 
