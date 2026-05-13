@@ -239,6 +239,7 @@ textarea:focus-visible {
   padding-bottom: 2px;
 }
 .anchor-nav a:hover,
+.anchor-nav a:focus-visible,
 .anchor-nav a.active {
   color: var(--accent);
   background-size: 100% 1.5px;
