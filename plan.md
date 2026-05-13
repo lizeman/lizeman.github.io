@@ -41,6 +41,7 @@
 - **v2.34** — Drop jekyll-feed; misc head polish (format-detection, rel=author)
 - **v2.35** — Steady-state polish (iter 44–84): head metadata, manifest fallback, Atom subtitle, CI hardening, link-check retry, visitor wording, noscript notice
 - **v2.36** — Knowledge Base section (LLM Architecture KB link)
+- **v2.37** — site.js: scroll-spy now tracks the Knowledge Base section
 
 ## Context
 
