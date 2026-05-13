@@ -51,6 +51,7 @@
 - **v2.44** — roulette.js: drop dead lastBets scaffolding
 - **v2.45** — portal.js: ASCII-only Unicode escape for combining-char regex
 - **v2.46** — a11y: aria-label on beaver step-back glyph button
+- **v2.47** — a11y: aria-labelledby on buffalo speed slider
 
 ## Context
 
