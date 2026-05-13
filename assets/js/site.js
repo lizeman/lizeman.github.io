@@ -32,7 +32,7 @@
   }
 
   // ------- active anchor nav -------
-  var sections = ['bio', 'news', 'publications', 'vita', 'playground']
+  var sections = ['bio', 'news', 'publications', 'vita', 'knowledge-base', 'playground']
     .map(function (id) { return document.getElementById(id); })
     .filter(Boolean);
   var navLinks = document.querySelectorAll('#anchor-nav a');
