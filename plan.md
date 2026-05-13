@@ -92,6 +92,7 @@
 - **v2.85** — a11y: bet-grid + portal door :focus-visible mirrors :hover
 - **v2.86** — a11y: anchor-nav :focus-visible mirrors :hover
 - **v2.87** — a11y: buf-token tip on :focus-visible (no sticky after click)
+- **v2.88** — fix: strat-pills .on :focus-visible regression (accent-on-accent invisible text)
 
 ## Context
 
