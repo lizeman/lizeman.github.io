@@ -96,7 +96,6 @@
   var sessionProfit = 0;
   var spinsCount = 0;
   var bets = {};            // { betKey: stakeDollars }
-  var lastBets = null;      // for a "re-bet" via clicking same button after spin (not in UI)
   var recent = [];          // last winning numbers
   var spinning = false;
   var wheelAngle = 0;       // current rotation (radians)
@@ -516,7 +515,6 @@
       paintRecent();
       paintHeader();
       showOverlay(winNum);
-      lastBets = Object.assign({}, bets);
       // visual: keep losing bets dim, briefly highlight winners
       Array.prototype.forEach.call(betGrid.querySelectorAll('button[data-bet]'), function (b) {
         if (winningBets.indexOf(b.getAttribute('data-bet')) >= 0) {
