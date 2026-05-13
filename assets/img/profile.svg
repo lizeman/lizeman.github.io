@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96">
-  <rect width="96" height="96" fill="#e6e8ec"/>
-  <circle cx="48" cy="38" r="18" fill="#b9bdc4"/>
-  <path d="M16 92c0-18 14-32 32-32s32 14 32 32" fill="#b9bdc4"/>
-  <text x="48" y="92" font-family="-apple-system, sans-serif" font-size="9" fill="#5a6068" text-anchor="middle">add profile.jpg</text>
-</svg>
