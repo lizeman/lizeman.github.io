@@ -159,7 +159,7 @@
   year: '2025'
   url: https://arxiv.org/abs/2505.23735
   arxiv: '2505.23735'
-  citations: 46
+  citations: 47
 - title: Synthetic Text Generation for Training Large Language Models via Gradient Matching
   authors:
   - name: Dang Nguyen
