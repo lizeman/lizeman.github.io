@@ -49,7 +49,7 @@
   year: '2026'
   url: https://arxiv.org/abs/2602.24281
   arxiv: '2602.24281'
-  citations: 0
+  citations: 1
 - title: 'PiKE: Adaptive Data Mixing for Large-Scale Multi-Task Learning Under Low Gradient Conflicts'
   authors:
   - name: Zeman Li
@@ -128,7 +128,7 @@
   year: '2025'
   url: https://arxiv.org/abs/2410.06441
   arxiv: '2410.06441'
-  citations: 11
+  citations: 12
 - title: 'ATLAS: Learning to Optimally Memorize the Context at Test Time'
   authors:
   - name: Ali Behrouz
