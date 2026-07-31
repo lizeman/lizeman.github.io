@@ -111,7 +111,7 @@
   year: '2026'
   url: https://arxiv.org/abs/2502.06244
   arxiv: '2502.06244'
-  citations: 4
+  citations: 5
 - title: 'TNT: Improving Chunkwise Training for Test-Time Memorization'
   authors:
   - name: Zeman Li
