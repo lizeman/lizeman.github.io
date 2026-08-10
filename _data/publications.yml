@@ -142,7 +142,7 @@
   year: '2026'
   url: https://arxiv.org/abs/2511.07343
   arxiv: '2511.07343'
-  citations: 5
+  citations: 6
 - title: 'Addax: Utilizing Zeroth-Order Gradients to Improve Memory Efficiency and Performance of SGD
     for Fine-Tuning Language Models'
   authors:
@@ -199,7 +199,7 @@
   year: '2025'
   url: https://arxiv.org/abs/2505.23735
   arxiv: '2505.23735'
-  citations: 54
+  citations: 55
 - title: Synthetic Text Generation for Training Large Language Models via Gradient Matching
   authors:
   - name: Dang Nguyen
