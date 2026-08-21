@@ -168,7 +168,7 @@
   year: '2025'
   url: https://arxiv.org/abs/2410.06441
   arxiv: '2410.06441'
-  citations: 12
+  citations: 13
 - title: 'ATLAS: Learning to Optimally Memorize the Context at Test Time'
   authors:
   - name: Ali Behrouz
