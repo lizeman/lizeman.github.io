@@ -49,7 +49,7 @@
   year: '2026'
   url: https://arxiv.org/abs/2602.24281
   arxiv: '2602.24281'
-  citations: 10
+  citations: 11
 - title: Online Neural Space Time Memory for Dynamic Novel View Synthesis
   authors:
   - name: Baback Elmieh
@@ -224,7 +224,7 @@
   year: '2025'
   url: https://arxiv.org/abs/2502.17607
   arxiv: '2502.17607'
-  citations: 7
+  citations: 8
 - title: Optimal Differentially Private Model Training with Public Data
   authors:
   - name: Andrew Lowy
