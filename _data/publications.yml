@@ -224,7 +224,7 @@
   year: '2025'
   url: https://arxiv.org/abs/2502.17607
   arxiv: '2502.17607'
-  citations: 10
+  citations: 11
 - title: Optimal Differentially Private Model Training with Public Data
   authors:
   - name: Andrew Lowy
