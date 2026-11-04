@@ -24,7 +24,7 @@
   year: '2026'
   url: https://arxiv.org/abs/2604.07279
   arxiv: '2604.07279'
-  citations: 5
+  citations: 6
 - title: 'Memory Caching: RNNs with Growing Memory'
   authors:
   - name: Ali Behrouz
@@ -111,7 +111,7 @@
   year: '2026'
   url: https://arxiv.org/abs/2502.06244
   arxiv: '2502.06244'
-  citations: 12
+  citations: 13
 - title: 'TNT: Improving Chunkwise Training for Test-Time Memorization'
   authors:
   - name: Zeman Li
@@ -199,7 +199,7 @@
   year: '2025'
   url: https://arxiv.org/abs/2505.23735
   arxiv: '2505.23735'
-  citations: 76
+  citations: 77
 - title: Synthetic Text Generation for Training Large Language Models via Gradient Matching
   authors:
   - name: Dang Nguyen
@@ -224,7 +224,7 @@
   year: '2025'
   url: https://arxiv.org/abs/2502.17607
   arxiv: '2502.17607'
-  citations: 14
+  citations: 15
 - title: Optimal Differentially Private Model Training with Public Data
   authors:
   - name: Andrew Lowy
