@@ -24,7 +24,7 @@
   year: '2026'
   url: https://arxiv.org/abs/2604.07279
   arxiv: '2604.07279'
-  citations: 7
+  citations: 8
 - title: 'Memory Caching: RNNs with Growing Memory'
   authors:
   - name: Ali Behrouz
@@ -199,7 +199,7 @@
   year: '2025'
   url: https://arxiv.org/abs/2505.23735
   arxiv: '2505.23735'
-  citations: 78
+  citations: 79
 - title: Synthetic Text Generation for Training Large Language Models via Gradient Matching
   authors:
   - name: Dang Nguyen
