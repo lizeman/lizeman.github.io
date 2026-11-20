@@ -49,7 +49,7 @@
   year: '2026'
   url: https://arxiv.org/abs/2602.24281
   arxiv: '2602.24281'
-  citations: 17
+  citations: 18
 - title: Online Neural Space Time Memory for Dynamic Novel View Synthesis
   authors:
   - name: Baback Elmieh
@@ -142,7 +142,35 @@
   year: '2026'
   url: https://arxiv.org/abs/2511.07343
   arxiv: '2511.07343'
-  citations: 8
+  citations: 9
+- title: 'Toaster: Nonlinear Memory from Cascaded Linear Memories and Target Propagation'
+  authors:
+  - name: Zeman Li
+    url: https://sites.google.com/corp/usc.edu/zemanli/
+    is_self: true
+  - name: Ali Behrouz
+    url: https://www.semanticscholar.org/author/46211294
+    is_self: false
+  - name: Yuan Deng
+    url: https://www.semanticscholar.org/author/2325194132
+    is_self: false
+  - name: Praneeth Kacham
+    url: https://www.semanticscholar.org/author/1471876925
+    is_self: false
+  - name: Rami Al-Rfou
+    url: https://www.semanticscholar.org/author/2586729736
+    is_self: false
+  - name: Meisam Razaviyayn
+    url: https://www.semanticscholar.org/author/1800298
+    is_self: false
+  - name: V. Mirrokni
+    url: https://www.semanticscholar.org/author/1728881
+    is_self: false
+  venue: arXiv (preprint)
+  year: '2026'
+  url: https://arxiv.org/abs/2611.23648
+  arxiv: '2611.23648'
+  citations: 0
 - title: 'Addax: Utilizing Zeroth-Order Gradients to Improve Memory Efficiency and Performance of SGD
     for Fine-Tuning Language Models'
   authors:
@@ -199,7 +227,7 @@
   year: '2025'
   url: https://arxiv.org/abs/2505.23735
   arxiv: '2505.23735'
-  citations: 79
+  citations: 80
 - title: Synthetic Text Generation for Training Large Language Models via Gradient Matching
   authors:
   - name: Dang Nguyen
