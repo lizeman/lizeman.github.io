@@ -89,7 +89,7 @@
   year: '2026'
   url: https://arxiv.org/abs/2607.15271
   arxiv: '2607.15271'
-  citations: 0
+  citations: 1
 - title: 'PiKE: Adaptive Data Mixing for Large-Scale Multi-Task Learning Under Low Gradient Conflicts'
   authors:
   - name: Zeman Li
@@ -227,7 +227,7 @@
   year: '2025'
   url: https://arxiv.org/abs/2505.23735
   arxiv: '2505.23735'
-  citations: 80
+  citations: 81
 - title: Synthetic Text Generation for Training Large Language Models via Gradient Matching
   authors:
   - name: Dang Nguyen
